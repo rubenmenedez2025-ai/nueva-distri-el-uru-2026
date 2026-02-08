@@ -37,17 +37,32 @@
         </div>
     </div>
 
-    <nav class="bg-white/95 backdrop-blur-md sticky top-0 z-50 p-4 flex justify-between items-center shadow-sm border-b">
-        <div class="flex items-center gap-3">
-            <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-12 h-12 rounded-full border-2 border-blue-900 shadow-md bg-white object-contain">
-            <div>
-                <h1 class="text-xl font-black italic tracking-tighter text-blue-900 leading-none uppercase">Distri El Uru</h1>
-                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter italic">Viedma & Patagones</p>
+    <nav class="bg-white/95 backdrop-blur-md sticky top-0 z-50 p-4 shadow-sm border-b">
+        <div class="max-w-6xl mx-auto flex justify-between items-center text-center sm:text-left">
+            <div class="flex items-center gap-3">
+                <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-14 h-14 rounded-full border-2 border-blue-900 shadow-md bg-white object-contain">
+                <div>
+                    <h1 class="text-xl font-black italic tracking-tighter text-blue-900 leading-none uppercase">Distri El Uru</h1>
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter italic">Viedma & Patagones</p>
+                </div>
             </div>
+
+            <div class="hidden lg:flex items-center bg-green-100 border-2 border-green-500 rounded-2xl px-6 py-2 gap-4 animate-fade-in">
+                <div class="bg-green-500 text-white p-2 rounded-full animate-pulse">
+                    <i class="fas fa-tag"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] font-black text-green-700 uppercase leading-none">Oferta Destacada</p>
+                    <p class="text-xs font-bold text-green-900 italic">¡Precios especiales en packs cerrados!</p>
+                </div>
+            </div>
+
+            <button onclick="document.getElementById('cart').style.display='flex'" class="bg-blue-900 text-white px-5 py-2.5 rounded-2xl font-black shadow-lg flex items-center gap-2 text-xs active:scale-90 transition-transform">
+                <i class="fas fa-shopping-bag text-lg"></i> 
+                <span class="hidden sm:inline">MI PEDIDO</span>
+                <span id="count" class="bg-blue-500 px-2 py-0.5 rounded-full ml-1">0</span>
+            </button>
         </div>
-        <button onclick="document.getElementById('cart').style.display='flex'" class="bg-blue-900 text-white px-5 py-2.5 rounded-2xl font-black shadow-lg flex items-center gap-2 text-xs active:scale-90 transition-transform">
-            <i class="fas fa-shopping-bag"></i> <span id="count">0</span>
-        </button>
     </nav>
 
     <div class="p-6 max-w-5xl mx-auto">
@@ -59,7 +74,7 @@
     </div>
 
     <div class="mb-6 bg-white py-4 border-y border-slate-100 overflow-hidden relative">
-        <p class="text-center text-[8px] font-black text-slate-300 uppercase tracking-[0.4em] mb-4">Nuestras Marcas (Arrastra para mover)</p>
+        <p class="text-center text-[8px] font-black text-slate-300 uppercase tracking-[0.4em] mb-4">Marcas que acompañan (Arrastra para mover)</p>
         <div id="scroll-container" class="grab-scroll no-scrollbar">
             <div id="marcas-track" class="animate-marquee marquee-brands flex items-center gap-16 px-8"></div>
         </div>
@@ -134,10 +149,7 @@
 
         function enableDragScroll() {
             const slider = document.getElementById('scroll-container');
-            let isDown = false;
-            let startX;
-            let scrollLeft;
-
+            let isDown = false, startX, scrollLeft;
             slider.addEventListener('mousedown', (e) => {
                 isDown = true;
                 startX = e.pageX - slider.offsetLeft;
@@ -156,7 +168,6 @@
 
         function initMarcas() {
             const track = document.getElementById('marcas-track');
-            // Se eliminaron las clases grayscale y opacity-40
             const items = marcas.map(m => `<img src="${m}" class="h-10 hover:scale-110 transition-all object-contain min-w-[80px] pointer-events-none px-4">`).join('');
             track.innerHTML = items + items + items;
             enableDragScroll();
@@ -195,7 +206,6 @@
         function render() {
             const query = document.getElementById('search').value.toLowerCase();
             const filtered = data.filter(p => (activeCat === 'TODOS' || p.cat === activeCat) && p.nom.toLowerCase().includes(query));
-            
             document.getElementById('catalogo').innerHTML = filtered.map(p => {
                 const q = cart[p.id] || 0;
                 const isAgotado = p.pre === 0;
@@ -271,11 +281,9 @@
             const direccion = document.getElementById('user-address').value.trim();
             if (Object.keys(cart).length === 0) return alert("El carrito está vacío.");
             if (!nombre || !direccion) return alert("Por favor, ingresa tu nombre y dirección.");
-
-            let m = "*PEDIDO - DISTRI EL URU*%0A%0A";
-            m += `👤 *Cliente:* ${nombre}%0A📍 *Dirección:* ${direccion}%0A%0A━━━━━━━━━━━━━━%0A`;
-            Object.entries(cart).forEach(([id, q]) => m += `✅ *${q}* x ${data[id].nom}%0A`);
-            m += `━━━━━━━━━━━━━━%0A%0A*TOTAL: $${document.getElementById('total').innerText}*`;
+            let m = "*PEDIDO - DISTRI EL URU*%0A%0A👤 *Cliente:* " + nombre + "%0A📍 *Dirección:* " + direccion + "%0A%0A━━━━━━━━━━━━━━%0A";
+            Object.entries(cart).forEach(([id, q]) => m += "✅ *" + q + "* x " + data[id].nom + "%0A");
+            m += "━━━━━━━━━━━━━━%0A%0A*TOTAL: $" + document.getElementById('total').innerText + "*";
             window.open("https://wa.me/5492920248292?text=" + m);
         }
         load();
