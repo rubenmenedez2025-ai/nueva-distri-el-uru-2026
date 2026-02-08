@@ -12,7 +12,7 @@
         .btn-active { background-color: #1e3a8a !important; color: white !important; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         
-        /* Animación del Carrusel */
+        /* Animación del Carrusel de Marcas */
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         .animate-marquee { display: flex; width: max-content; animation: marquee 40s linear infinite; }
         .animate-marquee:hover { animation-play-state: paused; }
@@ -35,7 +35,7 @@
 
     <nav class="bg-white/95 backdrop-blur-md sticky top-0 z-50 p-4 flex justify-between items-center shadow-sm border-b">
         <div class="flex items-center gap-3">
-            <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-12 h-12 rounded-full border-2 border-blue-900 shadow-md bg-white object-contain">
+            <img src="https://i.ibb.co/YFrS7z8/logo-uru.png" class="w-12 h-12 rounded-full border-2 border-blue-900 shadow-md bg-white object-contain">
             <div>
                 <h1 class="text-xl font-black italic tracking-tighter text-blue-900 leading-none uppercase">Distri El Uru</h1>
                 <p class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Viedma & Patagones</p>
@@ -48,14 +48,14 @@
 
     <div class="p-6 max-w-5xl mx-auto">
         <div class="relative group">
-            <input type="text" id="search" onkeyup="render()" placeholder="Busca marcas o productos..." 
+            <input type="text" id="search" onkeyup="render()" placeholder="¿Qué estás buscando hoy?" 
                 class="w-full p-4 pl-12 rounded-[2rem] border-none shadow-xl focus:ring-2 focus:ring-blue-500 outline-none bg-white text-sm transition-all">
             <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-500 transition-colors"></i>
         </div>
     </div>
 
     <div class="mb-6 overflow-hidden bg-white/50 py-4 border-y border-slate-100">
-        <p class="text-center text-[8px] font-black text-slate-400 uppercase tracking-[0.4em] mb-4">Marcas Líderes</p>
+        <p class="text-center text-[8px] font-black text-slate-400 uppercase tracking-[0.4em] mb-4">Marcas que trabajamos</p>
         <div class="relative flex overflow-x-hidden">
             <div id="marcas-track" class="animate-marquee flex items-center gap-16 px-8">
                 </div>
@@ -101,9 +101,9 @@
         const TSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQEemzCvTezcjzZhIUIRIayZ7U81xgssl9G1Vr6Odx7dHGHOARY0iJ-VOL43E17qLVkiIRb0LTurcZU/pub?output=tsv';
         let data = [], cart = {}, activeCat = 'TODOS';
 
-        // Lista de 15 marcas para el carrusel
+        // Logos para el carrusel (puedes cambiar los links en estas líneas)
         const marcas = [
-            'https://i.pinimg.com/474x/8a/59/63/8a5963f932765e4918699a941394934a.jpg',
+            'https://upload.wikimedia.org/wikipedia/commons/c/ce/Coca-Cola_logo.svg',
             'https://upload.wikimedia.org/wikipedia/commons/e/e8/Logo_Brahma.svg',
             'https://upload.wikimedia.org/wikipedia/commons/d/d0/Logo_Quilmes.svg',
             'https://www.pepsi.com/en-us/images/nav-logo.png',
@@ -122,8 +122,8 @@
 
         function initMarcas() {
             const track = document.getElementById('marcas-track');
-            const items = marcas.map(m => `<img src="${m}" class="h-10 grayscale hover:grayscale-0 transition-all opacity-40 hover:opacity-100 object-contain w-24">`).join('');
-            track.innerHTML = items + items; // Duplicado para loop infinito
+            const items = marcas.map(m => `<img src="${m}" class="h-10 grayscale opacity-40 hover:opacity-100 hover:grayscale-0 transition-all object-contain w-20">`).join('');
+            track.innerHTML = items + items; // Duplicado para el efecto infinito
         }
 
         async function load() {
@@ -214,17 +214,19 @@
                 const sub = p.pre * q;
                 t += sub; c += q;
                 html += `
-                <div class="flex items-center gap-4 bg-white p-3 rounded-[1.2rem] border border-slate-100 shadow-sm relative">
+                <div class="flex items-center gap-4 bg-white p-3 rounded-[1.2rem] border border-slate-100 shadow-sm relative animate-fade-in">
                     <img src="${p.img}" class="w-10 h-10 object-contain rounded-lg" onerror="this.src='https://i.ibb.co/YFrS7z8/logo-uru.png'">
                     <div class="flex-1">
                         <h4 class="font-bold text-slate-700 uppercase text-[8px] leading-tight">${p.nom}</h4>
-                        <span class="text-blue-900 font-black text-xs">$${sub.toLocaleString('es-AR')}</span>
+                        <span class="text-blue-900 font-black text-[10px]">$${sub.toLocaleString('es-AR')}</span>
                     </div>
-                    <button onclick="eliminarItem(${id})" class="text-slate-300 hover:text-red-500"><i class="fas fa-times-circle"></i></button>
+                    <button onclick="eliminarItem(${id})" class="text-slate-300 hover:text-red-500 p-2"><i class="fas fa-times-circle text-lg"></i></button>
                 </div>`;
             });
-            document.getElementById('cart-header-actions').innerHTML = entries.length > 0 ? `<button onclick="vaciar()" class="text-[9px] text-red-500 font-black uppercase"><i class="fas fa-trash"></i> Vaciar Carrito</button>` : '';
-            document.getElementById('cart-items').innerHTML = html || '<div class="text-center py-20 text-slate-300 font-black italic uppercase text-xs">Carrito vacío</div>';
+            // BOTÓN VACIAR CARRITO
+            document.getElementById('cart-header-actions').innerHTML = entries.length > 0 ? `<button onclick="vaciar()" class="text-[9px] text-red-500 font-black uppercase tracking-widest"><i class="fas fa-trash"></i> Vaciar Carrito</button>` : '';
+            
+            document.getElementById('cart-items').innerHTML = html || '<div class="text-center py-20 text-slate-300 font-black italic uppercase text-xs">Tu carrito está vacío</div>';
             document.getElementById('total').innerText = t.toLocaleString('es-AR');
             document.getElementById('count').innerText = Math.round(c * 10) / 10;
             render();
@@ -233,8 +235,8 @@
         function enviar() {
             const nombre = document.getElementById('user-name').value.trim();
             const direccion = document.getElementById('user-address').value.trim();
-            if (Object.keys(cart).length === 0) return alert("Carrito vacío");
-            if (!nombre || !direccion) return alert("Completa tus datos");
+            if (Object.keys(cart).length === 0) return alert("Tu carrito está vacío");
+            if (!nombre || !direccion) return alert("Por favor, completa tus datos de entrega");
 
             let m = "*NUEVO PEDIDO - EL URU*%0A%0A";
             m += `👤 *Cliente:* ${nombre}%0A📍 *Dirección:* ${direccion}%0A%0A━━━━━━━━━━━━━━%0A`;
