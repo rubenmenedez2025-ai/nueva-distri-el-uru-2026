@@ -56,7 +56,6 @@
 
     <div id="cart" style="display:none;" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-[100] flex justify-end">
         <div class="bg-white w-full max-w-md h-full flex flex-col shadow-2xl animate-fade-in">
-            
             <div class="p-6 border-b flex justify-between items-start bg-slate-50/50">
                 <div>
                     <h2 class="text-xl font-black text-blue-900 italic uppercase">Mi Pedido</h2>
@@ -124,9 +123,17 @@
             document.getElementById('catalogo').innerHTML = filtered.map(p => {
                 const q = cart[p.id] || 0;
                 const isAgotado = p.pre === 0;
+                const preStr = p.pre.toString();
+                const isPromo = preStr.endsWith('99') || preStr.endsWith('90') || preStr.endsWith('50');
+                const isNuevo = preStr.endsWith('1');
+
                 return `
                 <div class="bg-white p-4 rounded-[2rem] shadow-sm border border-slate-50 flex flex-col relative group transition-all duration-300">
                     ${isAgotado ? '<div class="absolute inset-0 z-20 flex items-center justify-center bg-white/40 rounded-[2rem] pointer-events-none"><span class="bg-slate-900 text-white font-black px-4 py-2 rounded-xl text-[9px] uppercase">Agotado</span></div>' : ''}
+                    <div class="absolute top-4 left-4 z-10 flex flex-col gap-1">
+                        ${isPromo && !isAgotado ? '<span class="bg-red-500 text-white text-[8px] font-black px-3 py-1.5 rounded-full shadow-lg">OFERTA 🔥</span>' : ''}
+                        ${isNuevo && !isAgotado ? '<span class="bg-blue-500 text-white text-[8px] font-black px-3 py-1.5 rounded-full shadow-lg">NUEVO ✨</span>' : ''}
+                    </div>
                     <div class="h-32 mb-4 flex items-center justify-center rounded-[1.5rem] bg-slate-50 p-2">
                         <img src="${p.img}" class="max-h-full max-w-full object-contain ${isAgotado ? 'grayscale opacity-50' : ''}" onerror="this.src='https://via.placeholder.com/150?text=URU'">
                     </div>
@@ -164,7 +171,6 @@
             update();
         };
 
-        // FUNCIÓN CLAVE: ELIMINAR UN PRODUCTO ENTERO DE UN TOQUE
         window.eliminarItem = (id) => {
             delete cart[id];
             update();
@@ -177,7 +183,6 @@
         function update() {
             let t = 0, c = 0, html = '';
             const entries = Object.entries(cart);
-
             entries.forEach(([id, q]) => {
                 const p = data[id];
                 const sub = p.pre * q;
@@ -192,17 +197,15 @@
                             <span class="text-blue-900 font-black text-[10px]">$${sub.toLocaleString('es-AR')}</span>
                         </div>
                     </div>
-                    <button onclick="eliminarItem(${id})" class="w-8 h-8 flex items-center justify-center text-slate-300 hover:text-red-500 transition-colors">
+                    <button onclick="eliminarItem(${id})" class="text-slate-300 hover:text-red-500 p-2">
                         <i class="fas fa-times-circle text-lg"></i>
                     </button>
                 </div>`;
             });
-
             document.getElementById('cart-header-actions').innerHTML = entries.length > 0 
                 ? `<button onclick="vaciar()" class="text-[9px] text-red-500 font-black uppercase tracking-widest"><i class="fas fa-trash-alt"></i> Vaciar todo</button>` 
                 : '';
-            
-            document.getElementById('cart-items').innerHTML = html || '<div class="text-center py-20 text-slate-300 font-black italic uppercase text-xs">Tu carrito está vacío</div>';
+            document.getElementById('cart-items').innerHTML = html || '<div class="text-center py-20 text-slate-300 font-black italic uppercase text-xs">Carrito vacío</div>';
             document.getElementById('total').innerText = t.toLocaleString('es-AR');
             document.getElementById('count').innerText = Math.round(c * 10) / 10;
             render();
@@ -217,7 +220,7 @@
             let m = "*NUEVO PEDIDO - EL URU*%0A%0A";
             m += `👤 *Cliente:* ${nombre}%0A📍 *Dirección:* ${direccion}%0A%0A━━━━━━━━━━━━━━%0A`;
             Object.entries(cart).forEach(([id, q]) => m += `✅ *${q}* x ${data[id].nom}%0A`);
-            m += `━━━━━━━━━━━━━━%0A%0A*TOTAL: $" + document.getElementById('total').innerText + "*";
+            m += `━━━━━━━━━━━━━━%0A%0A*TOTAL: $${document.getElementById('total').innerText}*`;
             window.open("https://wa.me/5492920248292?text=" + m);
         }
         load();
