@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DISTRI EL URU</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-blue-900 text-white p-4 sticky top-0 z-50 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="font-black text-xl italic">EL URU</h1>
+            <button onclick="document.getElementById('cart').style.display='block'" class="bg-white text-blue-900 px-4 py-2 rounded-lg font-bold">
+                🛒 Carrito (<span id="count">0</span>)
+            </button>
+        </div>
+    </nav>
+
+    <div class="p-4 container mx-auto">
+        <input type="text" id="search" onkeyup="render()" placeholder="🔍 Buscar producto..." class="w-full p-4 rounded-xl border-none shadow-md outline-none">
+    </div>
+
+    <main id="catalogo" class="p-4 container mx-auto grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"></main>
+
+    <div id="cart" style="display:none;" class="fixed inset-0 bg-black bg-opacity-50 z-[100]">
+        <div class="bg-white w-full max-w-md ml-auto h-full p-6 shadow-2xl overflow-y-auto">
+            <div class="flex justify-between mb-6">
+                <h2 class="text-2xl font-bold">TU PEDIDO</h2>
+                <button onclick="document.getElementById('cart').style.display='none'" class="text-2xl">&times;</button>
+            </div>
+            <div id="cart-items" class="space-y-4 mb-6"></div>
+            <div class="border-t pt-4 text-2xl font-bold text-green-600 mb-6">
+                Total: $<span id="total">0</span>
+            </div>
+            <button onclick="enviar()" class="w-full bg-green-500 text-white py-4 rounded-xl font-bold text-lg">ENVIAR WHATSAPP</button>
+        </div>
+    </div>
+
+    <script>
+        const TSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQEemzCvTezcjzZhIUIRIayZ7U81xgssl9G1Vr6Odx7dHGHOARY0iJ-VOL43E17qLVkiIRb0LTurcZU/pub?output=tsv';
+        let data = [], cart = {};
+
+        async function load() {
+            try {
+                const res = await fetch(TSV + '&t=' + Date.now());
+                const text = await res.text();
+                const lines = text.split('\n').slice(1);
+                data = lines.map((l, i) => {
+                    const c = l.split('\t');
+                    return { id: i, nom: c[0], pre: parseInt(c[1]) || 0, img: c[3] };
+                }).filter(p => p.nom);
+                render();
+            } catch (e) { console.error(e); }
+        }
+
+        function render() {
+            const query = document.getElementById('search').value.toLowerCase();
+            document.getElementById('catalogo').innerHTML = data
+                .filter(p => p.nom.toLowerCase().includes(query))
+                .map(p => {
+                    const q = cart[p.id] || 0;
+                    return `
+                    <div class="bg-white p-3 rounded-2xl shadow-sm text-center">
+                        <img src="${p.img}" class="h-32 mx-auto object-contain mb-2">
+                        <h3 class="text-xs font-bold uppercase h-8 overflow-hidden">${p.nom}</h3>
+                        <p class="text-blue-900 font-black my-2">$${p.pre}</p>
+                        <div class="flex items-center gap-2 bg-gray-100 p-1 rounded-lg">
+                            <button onclick="add(${p.id},-1)" class="w-8 h-8 bg-white rounded shadow">-</button>
+                            <input type="number" step="0.1" value="${q}" onchange="manual(${p.id},this.value)" class="w-full text-center bg-transparent font-bold text-xs">
+                            <button onclick="add(${p.id},1)" class="w-8 h-8 bg-blue-900 text-white rounded shadow">+</button>
+                        </div>
+                    </div>`;
+                }).join('');
+        }
+
+        window.add = (id, n) => {
+            cart[id] = Math.max(0, ((cart[id] || 0) + n));
+            if (cart[id] === 0) delete cart[id];
+            update();
+        };
+
+        window.manual = (id, v) => {
+            const n = parseFloat(v);
+            if (n > 0) cart[id] = n; else delete cart[id];
+            update();
+        };
+
+        function update() {
+            let t = 0, c = 0, html = '';
+            Object.entries(cart).forEach(([id, q]) => {
+                const p = data[id];
+                t += (p.pre * q); c += q;
+                html += `<div class="flex justify-between border-b pb-2 text-sm font-bold">
+                    <span>${q} x ${p.nom}</span>
+                    <span>$${(p.pre * q)}</span>
+                </div>`;
+            });
+            document.getElementById('cart-items').innerHTML = html || 'Vacio';
+            document.getElementById('total').innerText = t;
+            document.getElementById('count').innerText = c;
+            render();
+        }
+
+        function enviar() {
+            let m = "PEDIDO EL URU%0A";
+            Object.entries(cart).forEach(([id, q]) => m += `%0A✅ ${q} x ${data[id].nom}`);
+            m += "%0A%0ATOTAL: $" + document.getElementById('total').innerText;
+            window.open("https://wa.me/5492920248292?text=" + m);
+        }
+        load();
+    </script>
+</body>
+</html>
