@@ -21,7 +21,6 @@
         
         .grab-scroll { cursor: grab; overflow-x: auto; white-space: nowrap; }
         .grab-scroll:active { cursor: grabbing; }
-        .marquee-brands:hover { animation-play-state: paused; }
     </style>
 </head>
 <body class="text-slate-800">
@@ -30,9 +29,8 @@
         <div class="flex animate-marquee gap-10 font-black text-[9px] uppercase tracking-[0.2em]">
             <span>🚀 ENVÍOS EN EL DÍA (PEDÍ ANTES DE LAS 12:30HS)</span>
             <span>🔥 SOMOS DISTRIBUIDORES MAYORISTAS</span>
-            <span>✨ CALIDAD Y PRECIO EN VIEDMA Y PATAGONES</span>
+            <span>✨ VIEDMA Y PATAGONES</span>
             <span>🚀 ENVÍOS EN EL DÍA (PEDÍ ANTES DE LAS 12:30HS)</span>
-            <span>🔥 SOMOS DISTRIBUIDORES MAYORISTAS</span>
         </div>
     </div>
 
@@ -46,14 +44,28 @@
                 </div>
             </div>
 
-            <div class="hidden md:flex flex-1 max-w-lg mx-6 bg-slate-100 rounded-2xl p-1 items-center justify-between border border-slate-200">
-                <div class="px-4 py-2">
-                    <p class="text-[10px] font-black text-blue-900 uppercase leading-none">¿Dudas con los precios?</p>
-                    <p class="text-[9px] text-slate-500 font-bold uppercase italic mt-1">Hablamos por WhatsApp</p>
-                </div>
-                <a href="https://wa.me/5492920248292" target="_blank" class="bg-green-500 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase shadow-sm hover:bg-green-600 transition-colors flex items-center gap-2">
-                    <i class="fab fa-whatsapp"></i> Consultar
-                </a>
+            <div class="hidden md:flex gap-3">
+                <button onclick="alert('📦 ENVÍOS: \n- Viedma y Patagones: Sin Cargo.\n- Pedidos hasta 12:30hs: Entrega en el día.')" 
+                        class="group flex items-center gap-3 bg-blue-50 hover:bg-blue-100 p-2 pr-4 rounded-2xl border border-blue-100 transition-all active:scale-95">
+                    <div class="w-8 h-8 bg-blue-600 text-white rounded-xl flex items-center justify-center shadow-lg group-hover:rotate-12 transition-transform">
+                        <i class="fas fa-truck-fast text-xs"></i>
+                    </div>
+                    <div class="text-left">
+                        <p class="text-[9px] font-black text-blue-900 uppercase leading-none">Envíos</p>
+                        <p class="text-[8px] text-blue-400 font-bold uppercase italic mt-1">Ver Info</p>
+                    </div>
+                </button>
+
+                <button onclick="window.open('https://wa.me/5492920248292?text=Hola! Me gustaría consultar precios por bulto cerrado.')" 
+                        class="group flex items-center gap-3 bg-green-50 hover:bg-green-100 p-2 pr-4 rounded-2xl border border-green-100 transition-all active:scale-95">
+                    <div class="w-8 h-8 bg-green-500 text-white rounded-xl flex items-center justify-center shadow-lg group-hover:rotate-12 transition-transform">
+                        <i class="fas fa-box-open text-xs"></i>
+                    </div>
+                    <div class="text-left">
+                        <p class="text-[9px] font-black text-green-900 uppercase leading-none">Por Bulto</p>
+                        <p class="text-[8px] text-green-400 font-bold uppercase italic mt-1">Consultar</p>
+                    </div>
+                </button>
             </div>
 
             <button onclick="document.getElementById('cart').style.display='flex'" class="bg-blue-900 text-white px-5 py-3 rounded-2xl font-black shadow-lg flex items-center gap-2 text-xs active:scale-90 transition-transform">
@@ -65,7 +77,7 @@
 
     <div class="p-6 max-w-5xl mx-auto">
         <div class="relative group">
-            <input type="text" id="search" onkeyup="render()" placeholder="Busca tu producto..." 
+            <input type="text" id="search" onkeyup="render()" placeholder="Busca marcas o productos..." 
                 class="w-full p-4 pl-12 rounded-[2rem] border-none shadow-xl focus:ring-2 focus:ring-blue-500 outline-none bg-white text-sm transition-all font-semibold">
             <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-500 transition-colors"></i>
         </div>
@@ -73,7 +85,7 @@
 
     <div class="mb-6 bg-white py-4 border-y border-slate-100 overflow-hidden relative">
         <div id="scroll-container" class="grab-scroll no-scrollbar">
-            <div id="marcas-track" class="animate-marquee marquee-brands flex items-center gap-16 px-8"></div>
+            <div id="marcas-track" class="animate-marquee flex items-center gap-16 px-8"></div>
         </div>
     </div>
 
@@ -87,35 +99,34 @@
         <div class="max-w-4xl mx-auto text-center">
             <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-24 h-24 mx-auto rounded-full bg-white p-1 shadow-2xl mb-6 border-2 border-white">
             <h2 class="text-3xl font-black italic uppercase tracking-tighter mb-2">Distri El Uru</h2>
-            <p class="text-blue-300 text-[10px] font-black uppercase tracking-[0.4em] mb-10">Viedma & Patagones</p>
+            <p class="text-blue-300 text-[10px] font-black uppercase tracking-[0.4em] mb-10 italic">Viedma & Patagones</p>
 
             <div class="grid md:grid-cols-2 gap-4 mb-10 text-left">
                 <div class="bg-white/10 rounded-3xl p-6 backdrop-blur-md border border-white/10">
                     <div class="flex items-center gap-4 mb-3">
-                        <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center shadow-lg">
-                            <i class="fas fa-clock text-white"></i>
+                        <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                            <i class="fas fa-calendar-alt text-white"></i>
                         </div>
                         <h3 class="font-black uppercase tracking-widest text-[11px] text-blue-100">Días de Atención</h3>
                     </div>
                     <p class="text-xl font-bold">Lunes a Sábados</p>
-                    <p class="text-blue-200 text-xs font-medium italic mt-1">Consultas abiertas por WhatsApp</p>
+                    <p class="text-blue-200 text-xs font-medium italic mt-1">Consultas y pedidos por WhatsApp.</p>
                 </div>
                 
                 <div class="bg-blue-800 rounded-3xl p-6 border-2 border-blue-400 shadow-2xl">
                     <div class="flex items-center gap-4 mb-3">
-                        <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
+                        <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center shadow-lg">
                             <i class="fas fa-truck text-white"></i>
                         </div>
-                        <h3 class="font-black uppercase tracking-widest text-[11px] text-green-300">Horario de Reparto</h3>
+                        <h3 class="font-black uppercase tracking-widest text-[11px] text-green-300">Cierre de Pedidos</h3>
                     </div>
-                    <p class="text-xl font-bold text-white">Hasta las 12:30 hs</p>
-                    <p class="text-blue-200 text-xs font-medium italic mt-1">Pedidos después de hora pasan al otro día.</p>
+                    <p class="text-xl font-bold text-white uppercase italic">Hasta las 12:30 hs</p>
+                    <p class="text-blue-200 text-xs font-medium italic mt-1">Para entrega en el transcurso del día.</p>
                 </div>
             </div>
 
             <div class="flex flex-wrap justify-center gap-8 opacity-50 text-[10px] font-black uppercase tracking-[0.2em] pt-6 border-t border-white/10">
                 <span><i class="fas fa-check-circle text-blue-400 mr-2"></i> Mayorista</span>
-                <span><i class="fas fa-check-circle text-blue-400 mr-2"></i> Envío Gratis</span>
                 <span><i class="fas fa-check-circle text-blue-400 mr-2"></i> Local Propio</span>
             </div>
             <p class="text-[8px] mt-10 opacity-30 uppercase tracking-[0.4em]">© 2026 Distri El Uru</p>
@@ -165,19 +176,9 @@
             'https://www.baggio.com.ar/es/images/novedades/grande-21.jpg'
         ];
 
-        function enableDragScroll() {
-            const slider = document.getElementById('scroll-container');
-            let isDown = false, startX, scrollLeft;
-            slider.addEventListener('mousedown', (e) => { isDown = true; startX = e.pageX - slider.offsetLeft; scrollLeft = slider.scrollLeft; });
-            slider.addEventListener('mouseleave', () => { isDown = false; });
-            slider.addEventListener('mouseup', () => { isDown = false; });
-            slider.addEventListener('mousemove', (e) => { if (!isDown) return; e.preventDefault(); const x = e.pageX - slider.offsetLeft; const walk = (x - startX) * 2; slider.scrollLeft = scrollLeft - walk; });
-        }
-
         async function load() {
             const track = document.getElementById('marcas-track');
             track.innerHTML = (marcas.map(m => `<img src="${m}" class="h-10 object-contain min-w-[80px] px-4 pointer-events-none">`).join('')).repeat(3);
-            enableDragScroll();
             try {
                 const res = await fetch(TSV + '&t=' + Date.now());
                 const text = await res.text();
@@ -185,13 +186,7 @@
                 data = lines.map((l, i) => {
                     const c = l.split('\t');
                     const precioCrudo = (c[1]||'').replace(/\D/g,'');
-                    return { 
-                        id: i, 
-                        nom: (c[0]||'').trim(), 
-                        pre: precioCrudo ? parseInt(precioCrudo) : 0, 
-                        cat: (c[2]||'GENERAL').trim().toUpperCase(),
-                        img: (c[3]||'').trim() 
-                    };
+                    return { id: i, nom: (c[0]||'').trim(), pre: precioCrudo ? parseInt(precioCrudo) : 0, cat: (c[2]||'GENERAL').trim().toUpperCase(), img: (c[3]||'').trim() };
                 }).filter(p => p.nom !== "");
                 renderCats();
                 render();
