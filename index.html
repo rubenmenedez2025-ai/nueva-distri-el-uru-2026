@@ -8,14 +8,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; overflow-x: hidden; }
         .btn-active { background-color: #1e3a8a !important; color: white !important; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* Animación del Carrusel de Marcas */
-        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        .animate-marquee { display: flex; width: max-content; animation: marquee 40s linear infinite; }
-        .animate-marquee:hover { animation-play-state: paused; }
+        /* Efecto de desplazamiento suave para el carrusel manual */
+        #marcas-track {
+            scroll-behavior: smooth;
+            cursor: grab;
+        }
+        #marcas-track:active { cursor: grabbing; }
 
         .sold-out { filter: grayscale(1); opacity: 0.5; }
         .animate-fade-in { animation: fadeIn 0.3s ease-out; }
@@ -24,13 +27,10 @@
 </head>
 <body class="text-slate-800">
 
-    <div class="bg-blue-600 text-white py-2 overflow-hidden whitespace-nowrap z-[60] relative shadow-md">
-        <div class="flex animate-marquee gap-10 font-bold text-[10px] uppercase tracking-widest">
-            <span>🚀 ENVÍOS A DOMICILIO EN VIEDMA Y PATAGONES</span>
-            <span>🔥 PRECIOS MAYORISTAS ACTUALIZADOS</span>
-            <span>✨ NUEVOS INGRESOS TODAS LAS SEMANAS</span>
-            <span>🚀 DISTRI EL URU - SIEMPRE TU MEJOR OPCIÓN</span>
-        </div>
+    <div class="bg-blue-600 text-white py-2 text-center shadow-md">
+        <p class="font-bold text-[10px] uppercase tracking-widest animate-pulse">
+            🚀 ENVÍOS A DOMICILIO EN VIEDMA Y PATAGONES
+        </p>
     </div>
 
     <nav class="bg-white/95 backdrop-blur-md sticky top-0 z-50 p-4 flex justify-between items-center shadow-sm border-b">
@@ -54,12 +54,10 @@
         </div>
     </div>
 
-    <div class="mb-6 overflow-hidden bg-white/50 py-4 border-y border-slate-100">
-        <p class="text-center text-[8px] font-black text-slate-400 uppercase tracking-[0.4em] mb-4">Marcas que trabajamos</p>
-        <div class="relative flex overflow-x-hidden">
-            <div id="marcas-track" class="animate-marquee flex items-center gap-16 px-8">
-                </div>
-        </div>
+    <div class="mb-6 bg-white/50 py-4 border-y border-slate-100">
+        <p class="text-center text-[8px] font-black text-slate-400 uppercase tracking-[0.4em] mb-4">Desliza para ver nuestras marcas</p>
+        <div id="marcas-track" class="flex items-center gap-12 px-8 overflow-x-auto no-scrollbar select-none">
+            </div>
     </div>
 
     <div class="px-4 max-w-5xl mx-auto">
@@ -101,29 +99,49 @@
         const TSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQEemzCvTezcjzZhIUIRIayZ7U81xgssl9G1Vr6Odx7dHGHOARY0iJ-VOL43E17qLVkiIRb0LTurcZU/pub?output=tsv';
         let data = [], cart = {}, activeCat = 'TODOS';
 
-        // Logos para el carrusel (puedes cambiar los links en estas líneas)
         const marcas = [
             'https://upload.wikimedia.org/wikipedia/commons/c/ce/Coca-Cola_logo.svg',
             'https://upload.wikimedia.org/wikipedia/commons/e/e8/Logo_Brahma.svg',
             'https://upload.wikimedia.org/wikipedia/commons/d/d0/Logo_Quilmes.svg',
-            'https://www.pepsi.com/en-us/images/nav-logo.png',
-            'https://upload.wikimedia.org/wikipedia/commons/0/06/Stella_Artois_logo.svg',
             'https://upload.wikimedia.org/wikipedia/en/thumb/3/3f/Heineken_logo.svg/1200px-Heineken_logo.svg.png',
             'https://logodownload.org/wp-content/uploads/2014/04/gatorade-logo-1.png',
-            'https://upload.wikimedia.org/wikipedia/commons/0/09/Logo_Villavicencio.svg',
             'https://upload.wikimedia.org/wikipedia/en/7/7e/Fernet_Branca_logo.png',
-            'https://upload.wikimedia.org/wikipedia/commons/2/22/Levit%C3%A9_Logo.png',
-            'https://upload.wikimedia.org/wikipedia/commons/b/b5/Campari_logo.svg',
-            'https://logodownload.org/wp-content/uploads/2014/04/red-bull-logo-0.png',
             'https://upload.wikimedia.org/wikipedia/commons/7/7e/Logo_Budweiser.svg',
+            'https://upload.wikimedia.org/wikipedia/en/3/3b/Monster_Energy_logo.svg',
+            'https://upload.wikimedia.org/wikipedia/commons/b/b5/Campari_logo.svg',
             'https://upload.wikimedia.org/wikipedia/commons/f/f6/Schweppes_logo.svg',
-            'https://upload.wikimedia.org/wikipedia/en/3/3b/Monster_Energy_logo.svg'
+            'https://upload.wikimedia.org/wikipedia/commons/0/09/Logo_Villavicencio.svg',
+            'https://logodownload.org/wp-content/uploads/2014/04/red-bull-logo-0.png',
+            'https://upload.wikimedia.org/wikipedia/commons/2/22/Levit%C3%A9_Logo.png',
+            'https://upload.wikimedia.org/wikipedia/commons/2/24/Logo_Corona.svg',
+            'https://upload.wikimedia.org/wikipedia/commons/a/a2/Jack_Daniel%27s_logo.svg'
         ];
 
         function initMarcas() {
             const track = document.getElementById('marcas-track');
-            const items = marcas.map(m => `<img src="${m}" class="h-10 grayscale opacity-40 hover:opacity-100 hover:grayscale-0 transition-all object-contain w-20">`).join('');
-            track.innerHTML = items + items; // Duplicado para el efecto infinito
+            track.innerHTML = marcas.map(m => `
+                <img src="${m}" class="h-10 grayscale opacity-40 hover:opacity-100 hover:grayscale-0 transition-all object-contain min-w-[80px] pointer-events-none">
+            `).join('');
+
+            // Lógica para arrastrar con el mouse en PC
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            track.addEventListener('mousedown', (e) => {
+                isDown = true;
+                startX = e.pageX - track.offsetLeft;
+                scrollLeft = track.scrollLeft;
+            });
+            track.addEventListener('mouseleave', () => isDown = false);
+            track.addEventListener('mouseup', () => isDown = false);
+            track.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - track.offsetLeft;
+                const walk = (x - startX) * 2;
+                track.scrollLeft = scrollLeft - walk;
+            });
         }
 
         async function load() {
@@ -223,9 +241,7 @@
                     <button onclick="eliminarItem(${id})" class="text-slate-300 hover:text-red-500 p-2"><i class="fas fa-times-circle text-lg"></i></button>
                 </div>`;
             });
-            // BOTÓN VACIAR CARRITO
-            document.getElementById('cart-header-actions').innerHTML = entries.length > 0 ? `<button onclick="vaciar()" class="text-[9px] text-red-500 font-black uppercase tracking-widest"><i class="fas fa-trash"></i> Vaciar Carrito</button>` : '';
-            
+            document.getElementById('cart-header-actions').innerHTML = entries.length > 0 ? `<button onclick="vaciar()" class="text-[9px] text-red-500 font-black uppercase"><i class="fas fa-trash"></i> Vaciar Carrito</button>` : '';
             document.getElementById('cart-items').innerHTML = html || '<div class="text-center py-20 text-slate-300 font-black italic uppercase text-xs">Tu carrito está vacío</div>';
             document.getElementById('total').innerText = t.toLocaleString('es-AR');
             document.getElementById('count').innerText = Math.round(c * 10) / 10;
@@ -236,7 +252,7 @@
             const nombre = document.getElementById('user-name').value.trim();
             const direccion = document.getElementById('user-address').value.trim();
             if (Object.keys(cart).length === 0) return alert("Tu carrito está vacío");
-            if (!nombre || !direccion) return alert("Por favor, completa tus datos de entrega");
+            if (!nombre || !direccion) return alert("Completa tus datos");
 
             let m = "*NUEVO PEDIDO - EL URU*%0A%0A";
             m += `👤 *Cliente:* ${nombre}%0A📍 *Dirección:* ${direccion}%0A%0A━━━━━━━━━━━━━━%0A`;
