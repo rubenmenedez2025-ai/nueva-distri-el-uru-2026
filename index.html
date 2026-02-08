@@ -14,6 +14,7 @@
         .animate-pulse-slow { animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
         @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
         .marquee { animation: marquee 20s linear infinite; }
+        .sold-out-badge { transform: rotate(-10deg); }
     </style>
 </head>
 <body class="text-slate-800">
@@ -56,8 +57,8 @@
 
     <footer class="bg-white border-t p-8 pb-32 text-center space-y-4">
         <div class="flex justify-center gap-6 text-blue-900 text-xl">
-            <i class="fab fa-instagram"></i>
-            <i class="fab fa-facebook"></i>
+            <i class="fab fa-instagram hover:text-blue-500 cursor-pointer"></i>
+            <i class="fab fa-facebook hover:text-blue-500 cursor-pointer"></i>
         </div>
         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Viedma, Río Negro | Patagones, BsAs</p>
         <p class="text-xs font-bold text-slate-600">Lunes a Sábado: 08:30 a 13:00 y 16:30 a 20:30</p>
@@ -70,7 +71,7 @@
     <div id="cart" style="display:none;" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex justify-end">
         <div class="bg-white w-full max-w-md h-full flex flex-col shadow-2xl">
             <div class="p-6 border-b flex justify-between items-center bg-slate-50">
-                <h2 class="text-xl font-black text-blue-900">MI PEDIDO</h2>
+                <h2 class="text-xl font-black text-blue-900 uppercase tracking-tighter">Mi Pedido</h2>
                 <button onclick="document.getElementById('cart').style.display='none'" class="text-3xl text-slate-300 hover:text-red-500">&times;</button>
             </div>
             <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
@@ -124,87 +125,4 @@
             const filtered = data.filter(p => (activeCat === 'TODOS' || p.cat === activeCat) && p.nom.toLowerCase().includes(query));
             
             document.getElementById('catalogo').innerHTML = filtered.map(p => {
-                const q = cart[p.id] || 0;
-                const isAgotado = p.pre === 0;
-                const isPromo = p.pre.toString().endsWith('99');
-                const isNuevo = p.pre.toString().endsWith('1');
-
-                return `
-                <div class="bg-white p-4 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col relative overflow-hidden group hover:shadow-xl transition-all duration-300">
-                    ${isAgotado ? '<div class="absolute inset-0 z-20 bg-white/60 flex items-center justify-center"><span class="bg-slate-800 text-white font-black px-4 py-2 rounded-xl text-[10px] uppercase">Agotado</span></div>' : ''}
-                    
-                    ${isPromo ? '<div class="absolute top-4 left-4 z-10 bg-red-500 text-white text-[8px] font-black px-3 py-1.5 rounded-full shadow-lg animate-pulse">OFERTA 🔥</div>' : ''}
-                    ${isNuevo ? '<div class="absolute top-4 left-4 z-10 bg-blue-500 text-white text-[8px] font-black px-3 py-1.5 rounded-full shadow-lg">NUEVO ✨</div>' : ''}
-
-                    <div class="h-32 mb-4 flex items-center justify-center overflow-hidden rounded-[1.5rem] bg-slate-50 group-hover:bg-white transition-colors">
-                        <img src="${p.img}" class="max-h-full max-w-full object-contain p-2 group-hover:scale-110 transition-transform duration-500" onerror="this.src='https://via.placeholder.com/150?text=URU'">
-                    </div>
-                    
-                    <div class="flex-1 px-1">
-                        <span class="text-[8px] font-black text-blue-400 tracking-widest uppercase mb-1 block">${p.cat}</span>
-                        <h3 class="text-[10px] font-bold text-slate-600 uppercase leading-tight h-8 overflow-hidden">${p.nom}</h3>
-                        <p class="text-blue-900 font-black text-xl mt-2 italic">${isAgotado ? '---' : '$'+p.pre.toLocaleString('es-AR')}</p>
-                    </div>
-
-                    <div class="mt-4">
-                        ${!isAgotado ? `
-                            <div class="flex items-center gap-1 bg-slate-50 p-1.5 rounded-2xl border border-slate-100">
-                                ${q > 0 ? `
-                                    <button onclick="add(${p.id},-1)" class="w-10 h-10 bg-white rounded-xl shadow-sm font-black text-slate-400 hover:text-blue-900">-</button>
-                                    <input type="number" step="0.1" value="${q}" onchange="manual(${p.id},this.value)" class="w-full text-center bg-transparent font-black text-blue-900 text-sm outline-none">
-                                    <button onclick="add(${p.id},1)" class="w-10 h-10 bg-blue-900 text-white rounded-xl shadow-lg font-black">+</button>
-                                ` : `
-                                    <button onclick="add(${p.id},1)" class="w-full bg-blue-900 text-white py-3.5 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-blue-100 active:scale-95 transition-all">Agregar</button>
-                                `}
-                            </div>
-                        ` : ''}
-                    </div>
-                </div>`;
-            }).join('');
-        }
-
-        window.add = (id, n) => {
-            cart[id] = Math.max(0, Math.round(((cart[id] || 0) + n) * 10) / 10);
-            if (cart[id] === 0) delete cart[id];
-            update();
-        };
-
-        window.manual = (id, v) => {
-            const n = parseFloat(v);
-            if (n > 0) cart[id] = n; else delete cart[id];
-            update();
-        };
-
-        function update() {
-            let t = 0, c = 0, html = '';
-            Object.entries(cart).forEach(([id, q]) => {
-                const p = data[id];
-                const sub = p.pre * q;
-                t += sub; c += q;
-                html += `
-                <div class="flex items-center gap-4 bg-slate-50 p-4 rounded-3xl border border-white shadow-sm">
-                    <img src="${p.img}" class="w-12 h-12 object-contain rounded-lg bg-white p-1">
-                    <div class="flex-1">
-                        <h4 class="font-bold text-slate-700 uppercase text-[9px] leading-tight">${p.nom}</h4>
-                        <span class="text-blue-600 font-bold text-[10px]">${q} un. x $${p.pre}</span>
-                    </div>
-                    <div class="font-black text-blue-900 text-sm">$${sub.toLocaleString('es-AR')}</div>
-                </div>`;
-            });
-            document.getElementById('cart-items').innerHTML = html || '<div class="text-center py-20 text-slate-300 font-black italic uppercase tracking-widest">Carrito Vacío</div>';
-            document.getElementById('total').innerText = t.toLocaleString('es-AR');
-            document.getElementById('count').innerText = Math.round(c * 10) / 10;
-            render();
-        }
-
-        function enviar() {
-            if (Object.keys(cart).length === 0) return;
-            let m = "*NUEVO PEDIDO - EL URU*%0A%0A";
-            Object.entries(cart).forEach(([id, q]) => m += `✅ *${q}* x ${data[id].nom}%0A`);
-            m += "%0A*TOTAL ESTIMADO: $" + document.getElementById('total').innerText + "*";
-            window.open("https://wa.me/5492920248292?text=" + m);
-        }
-        load();
-    </script>
-</body>
-</html>
+                const q = cart
