@@ -13,12 +13,20 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* Efecto de desplazamiento suave para el carrusel manual */
-        #marcas-track {
-            scroll-behavior: smooth;
-            cursor: grab;
+        /* Animación infinita */
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
         }
-        #marcas-track:active { cursor: grabbing; }
+        .marquee-content {
+            display: flex;
+            width: max-content;
+            animation: marquee 30s linear infinite;
+        }
+        /* Pausa al tocar o pasar el mouse para permitir control manual */
+        .marquee-content:hover, .marquee-content:active {
+            animation-play-state: paused;
+        }
 
         .sold-out { filter: grayscale(1); opacity: 0.5; }
         .animate-fade-in { animation: fadeIn 0.3s ease-out; }
@@ -28,7 +36,7 @@
 <body class="text-slate-800">
 
     <div class="bg-blue-600 text-white py-2 text-center shadow-md">
-        <p class="font-bold text-[10px] uppercase tracking-widest animate-pulse">
+        <p class="font-bold text-[10px] uppercase tracking-widest">
             🚀 ENVÍOS A DOMICILIO EN VIEDMA Y PATAGONES
         </p>
     </div>
@@ -54,10 +62,12 @@
         </div>
     </div>
 
-    <div class="mb-6 bg-white/50 py-4 border-y border-slate-100">
-        <p class="text-center text-[8px] font-black text-slate-400 uppercase tracking-[0.4em] mb-4">Desliza para ver nuestras marcas</p>
-        <div id="marcas-track" class="flex items-center gap-12 px-8 overflow-x-auto no-scrollbar select-none">
-            </div>
+    <div class="mb-6 bg-white py-4 border-y border-slate-100 overflow-hidden relative">
+        <p class="text-center text-[8px] font-black text-slate-400 uppercase tracking-[0.4em] mb-4">Marcas que distribuimos</p>
+        <div class="overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing">
+            <div id="marcas-track" class="marquee-content flex items-center gap-12 px-8">
+                </div>
+        </div>
     </div>
 
     <div class="px-4 max-w-5xl mx-auto">
@@ -75,14 +85,11 @@
                 </div>
                 <button onclick="document.getElementById('cart').style.display='none'" class="text-3xl text-slate-300 hover:text-red-500">&times;</button>
             </div>
-
             <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-3"></div>
-
             <div class="p-6 bg-slate-50 border-t space-y-3">
                 <input type="text" id="user-name" placeholder="Tu Nombre" class="w-full p-3 rounded-xl border border-slate-200 outline-none text-sm">
                 <input type="text" id="user-address" placeholder="Dirección de entrega" class="w-full p-3 rounded-xl border border-slate-200 outline-none text-sm">
             </div>
-
             <div class="p-6 border-t bg-white space-y-4">
                 <div class="flex justify-between items-center font-black">
                     <span class="text-slate-400 text-xs uppercase tracking-widest">Total:</span>
@@ -119,29 +126,11 @@
 
         function initMarcas() {
             const track = document.getElementById('marcas-track');
-            track.innerHTML = marcas.map(m => `
+            // Duplicamos el contenido para que el loop sea infinito visualmente
+            const itemsHtml = marcas.map(m => `
                 <img src="${m}" class="h-10 grayscale opacity-40 hover:opacity-100 hover:grayscale-0 transition-all object-contain min-w-[80px] pointer-events-none">
             `).join('');
-
-            // Lógica para arrastrar con el mouse en PC
-            let isDown = false;
-            let startX;
-            let scrollLeft;
-
-            track.addEventListener('mousedown', (e) => {
-                isDown = true;
-                startX = e.pageX - track.offsetLeft;
-                scrollLeft = track.scrollLeft;
-            });
-            track.addEventListener('mouseleave', () => isDown = false);
-            track.addEventListener('mouseup', () => isDown = false);
-            track.addEventListener('mousemove', (e) => {
-                if (!isDown) return;
-                e.preventDefault();
-                const x = e.pageX - track.offsetLeft;
-                const walk = (x - startX) * 2;
-                track.scrollLeft = scrollLeft - walk;
-            });
+            track.innerHTML = itemsHtml + itemsHtml + itemsHtml;
         }
 
         async function load() {
