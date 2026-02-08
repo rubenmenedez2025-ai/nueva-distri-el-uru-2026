@@ -26,10 +26,10 @@
 
     <div class="bg-blue-800 text-white py-2.5 overflow-hidden whitespace-nowrap z-[60] relative shadow-md">
         <div class="flex animate-marquee gap-10 font-black text-[10px] uppercase tracking-[0.2em]">
-            <span>🚀 ENVÍOS A DOMICILIO EN VIEDMA Y PATAGONES</span>
+            <span>🚀 PEDÍ ANTES DE LAS 12:30HS PARA ENVÍO EN EL DÍA</span>
             <span>🔥 PRECIOS MAYORISTAS ACTUALIZADOS</span>
             <span>✨ NUEVOS INGRESOS TODAS LAS SEMANAS</span>
-            <span>🚀 ENVÍOS A DOMICILIO EN VIEDMA Y PATAGONES</span>
+            <span>🚀 PEDÍ ANTES DE LAS 12:30HS PARA ENVÍO EN EL DÍA</span>
             <span>🔥 PRECIOS MAYORISTAS ACTUALIZADOS</span>
             <span>✨ NUEVOS INGRESOS TODAS LAS SEMANAS</span>
         </div>
@@ -236,7 +236,7 @@
                     <button onclick="eliminarItem(${id})" class="text-slate-300 hover:text-red-500 transition-colors"><i class="fas fa-trash-alt"></i></button>
                 </div>`;
             });
-            document.getElementById('cart-header-actions').innerHTML = entries.length > 0 ? `<button onclick="vaciar()" class="text-[9px] text-red-500 font-black uppercase"><i class="fas fa-trash"></i> Vaciar Carrito</button>` : '';
+            document.getElementById('cart-header-actions').innerHTML = entries.length > 0 ? `<button onclick="vaciar()" class="text-[9px] text-red-500 font-black uppercase tracking-widest"><i class="fas fa-trash"></i> Vaciar Carrito</button>` : '';
             document.getElementById('cart-items').innerHTML = html || '<div class="text-center py-20 text-slate-300 font-black italic uppercase text-xs tracking-widest">Carrito vacío</div>';
             document.getElementById('total').innerText = t.toLocaleString('es-AR');
             document.getElementById('count').innerText = Math.round(c * 10) / 10;
