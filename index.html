@@ -52,8 +52,8 @@
                     <i class="fas fa-bullhorn animate-bounce"></i>
                 </div>
                 <div class="leading-tight">
-                    <p class="text-[10px] font-black text-green-700 uppercase">Oferta Destacada</p>
-                    <p class="text-[11px] font-bold text-green-900 italic">¡Cerveza Palermo x 10 cajones 24499.99!</p>
+                    <p class="text-[10px] font-black text-red-700 uppercase">Oferta Destacada</p>
+                    <p class="text-[11px] font-bold text-red-900 italic">¡Consultá precios por bulto cerrado!</p>
                 </div>
             </div>
 
@@ -135,7 +135,6 @@
             'https://i.pinimg.com/564x/b1/53/3e/b1533e5f618db4d88b11cbbb73520eb5.jpg',
             'https://logos-world.net/wp-content/uploads/2022/03/Gancia-Logo-1920.png',
             'https://pbs.twimg.com/profile_images/2003162486564929536/_3XuJQ_Y.jpg',
-            'https://mir-s3-cdn-cf.beh6nce.net/project_modules/max_632_webp/5f6931166287249.679134b285d7b.jpg',
             'https://www.baggio.com.ar/es/images/novedades/grande-21.jpg'
         ];
 
@@ -158,7 +157,6 @@
                 const lines = text.split(/\r?\n/).slice(1);
                 data = lines.map((l, i) => {
                     const c = l.split('\t');
-                    // Cambiamos la lógica: si no hay precio o es "0", lo marcamos como agotado
                     const precioCrudo = (c[1]||'').replace(/\D/g,'');
                     return { 
                         id: i, 
@@ -167,7 +165,7 @@
                         cat: (c[2]||'GENERAL').trim().toUpperCase(),
                         img: (c[3]||'').trim() 
                     };
-                }).filter(p => p.nom !== ""); // Solo filtramos si el nombre está vacío
+                }).filter(p => p.nom !== "");
                 renderCats();
                 render();
             } catch (e) { console.error(e); }
@@ -187,12 +185,12 @@
             const filtered = data.filter(p => (activeCat === 'TODOS' || p.cat === activeCat) && p.nom.toLowerCase().includes(query));
             document.getElementById('catalogo').innerHTML = filtered.map(p => {
                 const q = cart[p.id] || 0;
-                const isAgotado = p.pre === 0; // Si el precio es 0 en el sheet
+                const isAgotado = p.pre === 0;
                 return `
                 <div class="bg-white p-4 rounded-[2rem] shadow-sm border border-slate-50 flex flex-col relative animate-fade-in ${isAgotado ? 'sold-out' : ''}">
                     ${isAgotado ? '<div class="absolute inset-x-0 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center"><span class="bg-red-600 text-white font-black px-3 py-1.5 rounded-lg text-[10px] uppercase shadow-xl">Sin Stock</span></div>' : ''}
                     <div class="h-32 mb-4 flex items-center justify-center bg-slate-50 rounded-[1.5rem] p-2">
-                        <img src="${p.img}" class="max-h-full max-w-full object-contain" onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'">
+                        <img src="${p.img}" loading="lazy" class="max-h-full max-w-full object-contain" onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'">
                     </div>
                     <div class="flex-1">
                         <span class="text-[8px] font-black text-blue-400 uppercase tracking-widest">${p.cat}</span>
