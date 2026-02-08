@@ -19,7 +19,6 @@
         .animate-fade-in { animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Cursor de mano para indicar que se puede arrastrar en PC */
         .grab-scroll { cursor: grab; overflow-x: auto; white-space: nowrap; }
         .grab-scroll:active { cursor: grabbing; }
         .marquee-brands:hover { animation-play-state: paused; }
@@ -119,7 +118,6 @@
         const TSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQEemzCvTezcjzZhIUIRIayZ7U81xgssl9G1Vr6Odx7dHGHOARY0iJ-VOL43E17qLVkiIRb0LTurcZU/pub?output=tsv';
         let data = [], cart = {}, activeCat = 'TODOS';
 
-        // Lógica de marcas
         const marcas = [
             'https://images.seeklogo.com/logo-png/2/2/brahma-logo-png_seeklogo-21957.png',
             'https://upload.wikimedia.org/wikipedia/commons/4/40/Quilmes_Logo_Nuevo.png',
@@ -134,7 +132,6 @@
             'https://mayoristaelcondor.com.ar/wp-content/uploads/2024/02/vino-cinas-de-balbo-x-1125-560x560.png.webp'
         ];
 
-        // Función para permitir arrastrar con el mouse en PC
         function enableDragScroll() {
             const slider = document.getElementById('scroll-container');
             let isDown = false;
@@ -159,7 +156,8 @@
 
         function initMarcas() {
             const track = document.getElementById('marcas-track');
-            const items = marcas.map(m => `<img src="${m}" class="h-10 grayscale opacity-40 hover:opacity-100 hover:grayscale-0 transition-all object-contain min-w-[80px] pointer-events-none px-4">`).join('');
+            // Se eliminaron las clases grayscale y opacity-40
+            const items = marcas.map(m => `<img src="${m}" class="h-10 hover:scale-110 transition-all object-contain min-w-[80px] pointer-events-none px-4">`).join('');
             track.innerHTML = items + items + items;
             enableDragScroll();
         }
