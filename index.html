@@ -3,67 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DISTRI EL URU | Ofertas del Día</title>
+    <title>DISTRI EL URU | Catálogo Online</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; overflow-x: hidden; }
-        .btn-active { background-color: #1e3a8a !important; color: white !important; transform: scale(1.05); }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; overflow-x: hidden; }
+        .btn-active { background-color: #1e3a8a !important; color: white !important; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         
-        /* Animación Marcas */
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        .marquee-content { display: flex; width: max-content; animation: marquee 35s linear infinite; }
-        .marquee-content:hover { animation-play-state: paused; }
+        .animate-marquee { display: flex; width: max-content; animation: marquee 25s linear infinite; }
 
-        /* Tarjetas de producto */
-        .product-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .product-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
+        .sold-out { filter: grayscale(1); opacity: 0.5; }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        .animate-fade-in { animation: fadeIn 0.4s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Badge de Oferta */
-        .badge-flash { background: linear-gradient(90deg, #ef4444, #f59e0b); animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+        .marquee-brands:hover { animation-play-state: paused; }
     </style>
 </head>
 <body class="text-slate-800">
 
-    <div class="bg-red-600 text-white py-1.5 text-center shadow-lg sticky top-0 z-[70] px-4">
-        <p class="font-black text-[9px] uppercase tracking-[0.2em] flex items-center justify-center gap-2">
-            <span class="badge-flash px-2 py-0.5 rounded-full">OFERTAS DE HOY 🔥</span> 
-            <span>PEDÍ ANTES DE LAS 20HS PARA ENVÍO EN EL DÍA</span>
-        </p>
+    <div class="bg-blue-800 text-white py-2.5 overflow-hidden whitespace-nowrap z-[60] relative shadow-md">
+        <div class="flex animate-marquee gap-10 font-black text-[10px] uppercase tracking-[0.2em]">
+            <span>🚀 ENVÍOS A DOMICILIO EN VIEDMA Y PATAGONES</span>
+            <span>🔥 PRECIOS MAYORISTAS ACTUALIZADOS</span>
+            <span>✨ NUEVOS INGRESOS TODAS LAS SEMANAS</span>
+            <span>🚀 ENVÍOS A DOMICILIO EN VIEDMA Y PATAGONES</span>
+            <span>🔥 PRECIOS MAYORISTAS ACTUALIZADOS</span>
+            <span>✨ NUEVOS INGRESOS TODAS LAS SEMANAS</span>
+        </div>
     </div>
 
-    <nav class="bg-white/95 backdrop-blur-md sticky top-[28px] z-50 p-4 flex justify-between items-center shadow-md border-b">
+    <nav class="bg-white/95 backdrop-blur-md sticky top-0 z-50 p-4 flex justify-between items-center shadow-sm border-b">
         <div class="flex items-center gap-3">
-            <img src="https://i.ibb.co/YFrS7z8/logo-uru.png" class="w-12 h-12 rounded-full border-2 border-blue-900 bg-white object-contain shadow-sm">
+            <img src="https://i.ibb.co/YFrS7z8/logo-uru.png" class="w-12 h-12 rounded-full border-2 border-blue-900 shadow-md bg-white object-contain">
             <div>
                 <h1 class="text-xl font-black italic tracking-tighter text-blue-900 leading-none uppercase">Distri El Uru</h1>
-                <p class="text-[9px] font-bold text-green-600 uppercase tracking-tighter flex items-center gap-1">
-                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-ping"></span> Abierto Ahora
-                </p>
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter italic">Viedma & Patagones</p>
             </div>
         </div>
-        <button onclick="document.getElementById('cart').style.display='flex'" class="bg-blue-900 text-white px-5 py-2.5 rounded-2xl font-black shadow-lg flex items-center gap-2 text-xs active:scale-90 transition-transform relative">
-            <i class="fas fa-shopping-cart"></i> <span id="count">0</span>
+        <button onclick="document.getElementById('cart').style.display='flex'" class="bg-blue-900 text-white px-5 py-2.5 rounded-2xl font-black shadow-lg flex items-center gap-2 text-xs active:scale-90 transition-transform">
+            <i class="fas fa-shopping-bag"></i> <span id="count">0</span>
         </button>
     </nav>
 
     <div class="p-6 max-w-5xl mx-auto">
         <div class="relative group">
-            <input type="text" id="search" onkeyup="render()" placeholder="¿Qué bebida buscás hoy?" 
-                class="w-full p-4 pl-12 rounded-2xl border-none shadow-xl focus:ring-2 focus:ring-blue-500 outline-none bg-white text-sm transition-all font-medium">
-            <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-500"></i>
+            <input type="text" id="search" onkeyup="render()" placeholder="Busca productos o marcas..." 
+                class="w-full p-4 pl-12 rounded-[2rem] border-none shadow-xl focus:ring-2 focus:ring-blue-500 outline-none bg-white text-sm transition-all font-semibold">
+            <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-500 transition-colors"></i>
         </div>
     </div>
 
-    <div class="mb-6 bg-white py-4 border-y border-slate-100 overflow-hidden group">
+    <div class="mb-6 bg-white py-4 border-y border-slate-100 overflow-hidden relative">
+        <p class="text-center text-[8px] font-black text-slate-300 uppercase tracking-[0.4em] mb-4">Nuestras Marcas</p>
         <div class="overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing">
-            <div id="marcas-track" class="marquee-content flex items-center gap-14 px-8"></div>
+            <div id="marcas-track" class="animate-marquee marquee-brands flex items-center gap-16 px-8"></div>
         </div>
     </div>
 
@@ -71,34 +67,49 @@
         <div id="category-filters" class="flex gap-2 overflow-x-auto pb-6 no-scrollbar"></div>
     </div>
 
-    <main id="catalogo" class="p-4 max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-24"></main>
+    <main id="catalogo" class="p-4 max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-12"></main>
 
-    <a href="https://wa.me/5492920248292?text=Hola!%20Tengo%20una%20consulta%20sobre%20los%20productos" target="_blank" class="fixed bottom-6 left-6 z-40 bg-green-500 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform active:scale-90 flex items-center justify-center">
+    <footer class="bg-blue-900 text-white mt-12 py-10 px-6 text-center border-t-4 border-blue-500">
+        <div class="max-w-xl mx-auto">
+            <img src="https://i.ibb.co/YFrS7z8/logo-uru.png" class="w-20 h-20 mx-auto rounded-full bg-white p-1 shadow-2xl mb-4 border-2 border-white">
+            <h2 class="text-xl font-black italic uppercase tracking-tighter mb-2">Distri El Uru</h2>
+            <div class="bg-white/10 rounded-2xl p-4 backdrop-blur-sm border border-white/20">
+                <p class="text-[10px] font-black uppercase tracking-widest text-blue-200 mb-2">🕒 Horario de Pedidos</p>
+                <p class="text-sm font-bold">Lunes a Sábados hasta las 12:30 hs</p>
+                <p class="text-[9px] text-blue-200 mt-1 uppercase italic">(Para entrega en el transcurso de la tarde)</p>
+            </div>
+            <p class="text-[8px] mt-8 opacity-50 uppercase tracking-[0.3em]">Viedma & Patagones | 2026</p>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/5492920248292" target="_blank" class="fixed bottom-6 left-6 z-40 bg-green-500 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform active:scale-90 flex items-center justify-center">
         <i class="fab fa-whatsapp text-2xl"></i>
     </a>
 
-    <div id="cart" style="display:none;" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[100] flex justify-end">
+    <div id="cart" style="display:none;" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-[100] flex justify-end">
         <div class="bg-white w-full max-w-md h-full flex flex-col shadow-2xl animate-fade-in">
-            <div class="p-6 border-b flex justify-between items-center">
-                <h2 class="text-xl font-black text-blue-900 uppercase italic">Confirmar Pedido</h2>
-                <button onclick="document.getElementById('cart').style.display='none'" class="text-3xl text-slate-400">&times;</button>
+            <div class="p-6 border-b flex justify-between items-start">
+                <div>
+                    <h2 class="text-xl font-black text-blue-900 italic uppercase leading-none">Mi Pedido</h2>
+                    <div id="cart-header-actions" class="mt-2"></div>
+                </div>
+                <button onclick="document.getElementById('cart').style.display='none'" class="text-3xl text-slate-300 hover:text-red-500">&times;</button>
             </div>
-            
-            <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
+
+            <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-3"></div>
 
             <div class="p-6 bg-slate-50 border-t space-y-3">
-                <div id="cart-header-actions" class="flex justify-end mb-2"></div>
-                <input type="text" id="user-name" placeholder="Tu nombre / Local" class="w-full p-4 rounded-xl border-2 border-slate-200 focus:border-blue-500 outline-none text-sm font-bold">
-                <input type="text" id="user-address" placeholder="Dirección exacta de entrega" class="w-full p-4 rounded-xl border-2 border-slate-200 focus:border-blue-500 outline-none text-sm font-bold">
+                <input type="text" id="user-name" placeholder="Nombre / Local" class="w-full p-3 rounded-xl border border-slate-200 outline-none text-sm font-bold focus:ring-2 focus:ring-blue-500">
+                <input type="text" id="user-address" placeholder="Dirección de entrega" class="w-full p-3 rounded-xl border border-slate-200 outline-none text-sm font-bold focus:ring-2 focus:ring-blue-500">
             </div>
 
             <div class="p-6 border-t bg-white space-y-4">
                 <div class="flex justify-between items-center font-black">
-                    <span class="text-slate-400 text-xs uppercase tracking-widest">A pagar en entrega:</span>
-                    <span class="text-blue-900 text-3xl">$<span id="total">0</span></span>
+                    <span class="text-slate-400 text-xs uppercase tracking-widest">Total estimado:</span>
+                    <span class="text-blue-900 text-2xl">$<span id="total">0</span></span>
                 </div>
-                <button onclick="enviar()" class="w-full bg-green-600 hover:bg-green-700 text-white py-5 rounded-2xl font-black text-lg shadow-xl flex items-center justify-center gap-3 transition-all active:scale-95">
-                    <i class="fab fa-whatsapp text-2xl"></i> ENVIAR PEDIDO
+                <button onclick="enviar()" class="w-full bg-[#22c55e] text-white py-5 rounded-[1.5rem] font-black text-lg shadow-xl flex items-center justify-center gap-3 active:scale-95 transition-all">
+                    <i class="fab fa-whatsapp text-2xl"></i> CONFIRMAR POR WHATSAPP
                 </button>
             </div>
         </div>
@@ -119,13 +130,13 @@
             'https://upload.wikimedia.org/wikipedia/en/3/3b/Monster_Energy_logo.svg',
             'https://upload.wikimedia.org/wikipedia/commons/b/b5/Campari_logo.svg',
             'https://upload.wikimedia.org/wikipedia/commons/2/22/Levit%C3%A9_Logo.png',
-            'https://upload.wikimedia.org/wikipedia/commons/2/24/Logo_Corona.svg'
+            'https://upload.wikimedia.org/wikipedia/commons/f/f6/Schweppes_logo.svg'
         ];
 
         function initMarcas() {
             const track = document.getElementById('marcas-track');
-            const itemsHtml = marcas.map(m => `<img src="${m}" class="h-10 grayscale opacity-40 hover:opacity-100 hover:grayscale-0 transition-all object-contain min-w-[90px] pointer-events-none">`).join('');
-            track.innerHTML = itemsHtml + itemsHtml + itemsHtml;
+            const items = marcas.map(m => `<img src="${m}" class="h-10 grayscale opacity-40 hover:opacity-100 hover:grayscale-0 transition-all object-contain min-w-[80px] pointer-events-none">`).join('');
+            track.innerHTML = items + items + items;
         }
 
         async function load() {
@@ -152,7 +163,7 @@
         function renderCats() {
             const cats = ['TODOS', ...new Set(data.map(p => p.cat))];
             document.getElementById('category-filters').innerHTML = cats.map(c => `
-                <button onclick="filter('${c}')" class="px-6 py-2.5 rounded-xl bg-white text-slate-500 font-bold text-[10px] shadow-sm border border-slate-200 uppercase tracking-widest transition-all ${activeCat === c ? 'btn-active' : ''}">${c}</button>
+                <button onclick="filter('${c}')" class="px-6 py-2.5 rounded-[1.2rem] bg-white text-slate-500 font-bold text-[10px] shadow-sm border border-slate-100 uppercase tracking-wider transition-all ${activeCat === c ? 'btn-active' : ''}">${c}</button>
             `).join('');
         }
 
@@ -165,33 +176,26 @@
             document.getElementById('catalogo').innerHTML = filtered.map(p => {
                 const q = cart[p.id] || 0;
                 const isAgotado = p.pre === 0;
-                const isPromo = p.pre > 0 && p.pre < 5000; // Ejemplo para tag de "Más Vendido"
-
                 return `
-                <div class="product-card bg-white p-4 rounded-3xl shadow-sm border border-slate-100 flex flex-col relative animate-fade-in">
-                    ${isAgotado ? '<div class="absolute inset-0 z-20 flex items-center justify-center bg-white/60 rounded-3xl backdrop-blur-[1px]"><span class="bg-slate-800 text-white font-black px-4 py-2 rounded-xl text-[10px] uppercase tracking-tighter">Sin Stock</span></div>' : ''}
-                    
-                    ${isPromo && !isAgotado ? '<div class="absolute top-3 right-3 z-10"><span class="bg-orange-500 text-white text-[8px] font-black px-2 py-1 rounded-lg shadow-lg animate-bounce uppercase">Más Vendido 🔥</span></div>' : ''}
-                    
-                    <div class="h-32 mb-4 flex items-center justify-center bg-slate-50 rounded-2xl p-2">
-                        <img src="${p.img}" class="max-h-full max-w-full object-contain ${isAgotado ? 'grayscale opacity-50' : ''}" onerror="this.src='https://i.ibb.co/YFrS7z8/logo-uru.png'">
+                <div class="bg-white p-4 rounded-[2rem] shadow-sm border border-slate-50 flex flex-col relative animate-fade-in hover:shadow-md transition-shadow">
+                    ${isAgotado ? '<div class="absolute inset-0 z-20 flex items-center justify-center bg-white/40 rounded-[2rem]"><span class="bg-slate-900 text-white font-black px-4 py-2 rounded-xl text-[9px] uppercase">Sin Stock</span></div>' : ''}
+                    <div class="h-32 mb-4 flex items-center justify-center rounded-[1.5rem] bg-slate-50 p-2">
+                        <img src="${p.img}" class="max-h-full max-w-full object-contain ${isAgotado ? 'sold-out' : ''}" onerror="this.src='https://i.ibb.co/YFrS7z8/logo-uru.png'">
                     </div>
-                    
-                    <div class="flex-1">
+                    <div class="flex-1 px-1">
                         <span class="text-[8px] font-black text-blue-400 tracking-widest uppercase mb-1 block">${p.cat}</span>
-                        <h3 class="text-[11px] font-bold text-slate-700 uppercase leading-tight h-8 overflow-hidden">${p.nom}</h3>
-                        <p class="text-blue-900 font-black text-2xl mt-2 italic">${isAgotado ? '---' : '$'+p.pre.toLocaleString('es-AR')}</p>
+                        <h3 class="text-[10px] font-bold text-slate-600 uppercase leading-tight h-8 overflow-hidden">${p.nom}</h3>
+                        <p class="text-blue-900 font-black text-xl mt-2 italic">${isAgotado ? '---' : '$'+p.pre.toLocaleString('es-AR')}</p>
                     </div>
-
                     <div class="mt-4">
                         ${!isAgotado ? `
-                            <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-2xl">
+                            <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-[1.2rem]">
                                 ${q > 0 ? `
-                                    <button onclick="add(${p.id},-1)" class="w-10 h-10 bg-white rounded-xl shadow-sm font-black text-slate-400 hover:text-red-500 transition-colors">-</button>
+                                    <button onclick="add(${p.id},-1)" class="w-8 h-8 bg-white rounded-lg shadow-sm font-black text-slate-400">-</button>
                                     <input type="number" step="0.1" value="${q}" onchange="manual(${p.id},this.value)" class="w-full text-center bg-transparent font-black text-blue-900 text-sm outline-none">
-                                    <button onclick="add(${p.id},1)" class="w-10 h-10 bg-blue-900 text-white rounded-xl shadow-lg font-black">+</button>
+                                    <button onclick="add(${p.id},1)" class="w-8 h-8 bg-blue-900 text-white rounded-lg shadow-lg font-black">+</button>
                                 ` : `
-                                    <button onclick="add(${p.id},1)" class="w-full bg-blue-900 text-white py-4 rounded-xl font-black text-[10px] uppercase shadow-lg hover:bg-blue-800 transition-all">Agregar al Carrito</button>
+                                    <button onclick="add(${p.id},1)" class="w-full bg-blue-900 text-white py-3 rounded-xl font-black text-[10px] uppercase shadow-lg">Agregar</button>
                                 `}
                             </div>
                         ` : ''}
@@ -213,7 +217,7 @@
         };
 
         window.eliminarItem = (id) => { delete cart[id]; update(); };
-        window.vaciar = () => { if(confirm("¿Borrar todo el carrito?")) { cart = {}; update(); } };
+        window.vaciar = () => { if(confirm("¿Deseas vaciar el pedido completo?")) { cart = {}; update(); } };
 
         function update() {
             let t = 0, c = 0, html = '';
@@ -223,21 +227,17 @@
                 const sub = p.pre * q;
                 t += sub; c += q;
                 html += `
-                <div class="flex items-center gap-4 bg-white p-4 rounded-2xl border-2 border-slate-50 shadow-sm animate-fade-in relative">
-                    <img src="${p.img}" class="w-12 h-12 object-contain rounded-lg" onerror="this.src='https://i.ibb.co/YFrS7z8/logo-uru.png'">
+                <div class="flex items-center gap-4 bg-white p-3 rounded-[1.2rem] border border-slate-100 shadow-sm relative">
+                    <img src="${p.img}" class="w-10 h-10 object-contain rounded-lg" onerror="this.src='https://i.ibb.co/YFrS7z8/logo-uru.png'">
                     <div class="flex-1">
-                        <h4 class="font-bold text-slate-800 uppercase text-[9px] leading-tight">${p.nom}</h4>
-                        <div class="flex items-center gap-3 mt-1">
-                            <span class="text-blue-600 font-bold text-xs">${q} un.</span>
-                            <span class="text-blue-900 font-black text-sm">$${sub.toLocaleString('es-AR')}</span>
-                        </div>
+                        <h4 class="font-bold text-slate-700 uppercase text-[8px] leading-tight">${p.nom}</h4>
+                        <span class="text-blue-900 font-black text-xs">$${sub.toLocaleString('es-AR')}</span>
                     </div>
                     <button onclick="eliminarItem(${id})" class="text-slate-300 hover:text-red-500 transition-colors"><i class="fas fa-trash-alt"></i></button>
                 </div>`;
             });
-
-            document.getElementById('cart-header-actions').innerHTML = entries.length > 0 ? `<button onclick="vaciar()" class="text-[9px] text-red-500 font-black uppercase tracking-widest"><i class="fas fa-trash"></i> Vaciar Carrito</button>` : '';
-            document.getElementById('cart-items').innerHTML = html || '<div class="text-center py-20"><i class="fas fa-shopping-basket text-4xl text-slate-200 mb-4 block"></i><p class="text-slate-400 font-black uppercase text-[10px] tracking-widest">Tu carrito está esperando ser llenado</p></div>';
+            document.getElementById('cart-header-actions').innerHTML = entries.length > 0 ? `<button onclick="vaciar()" class="text-[9px] text-red-500 font-black uppercase"><i class="fas fa-trash"></i> Vaciar Carrito</button>` : '';
+            document.getElementById('cart-items').innerHTML = html || '<div class="text-center py-20 text-slate-300 font-black italic uppercase text-xs tracking-widest">Carrito vacío</div>';
             document.getElementById('total').innerText = t.toLocaleString('es-AR');
             document.getElementById('count').innerText = Math.round(c * 10) / 10;
             render();
@@ -246,17 +246,13 @@
         function enviar() {
             const nombre = document.getElementById('user-name').value.trim();
             const direccion = document.getElementById('user-address').value.trim();
-            if (Object.keys(cart).length === 0) return alert("¡Tu carrito está vacío!");
-            if (!nombre || !direccion) return alert("Completá tu nombre y dirección para que podamos llevarte el pedido.");
+            if (Object.keys(cart).length === 0) return alert("El carrito está vacío.");
+            if (!nombre || !direccion) return alert("Por favor, ingresa tu nombre y dirección.");
 
-            let m = "*NUEVO PEDIDO - EL URU*%0A%0A";
-            m += `👤 *Cliente:* ${nombre}%0A📍 *Dirección:* ${direccion}%0A%0A`;
-            m += `━━━━━━━━━━━━━━%0A`;
+            let m = "*PEDIDO - DISTRI EL URU*%0A%0A";
+            m += `👤 *Cliente:* ${nombre}%0A📍 *Dirección:* ${direccion}%0A%0A━━━━━━━━━━━━━━%0A`;
             Object.entries(cart).forEach(([id, q]) => m += `✅ *${q}* x ${data[id].nom}%0A`);
-            m += `━━━━━━━━━━━━━━%0A%0A`;
-            m += "*TOTAL A PAGAR: $" + document.getElementById('total').innerText + "*%0A%0A";
-            m += "_Pedido enviado desde el Catálogo Online_";
-            
+            m += `━━━━━━━━━━━━━━%0A%0A*TOTAL: $${document.getElementById('total').innerText}*`;
             window.open("https://wa.me/5492920248292?text=" + m);
         }
         load();
