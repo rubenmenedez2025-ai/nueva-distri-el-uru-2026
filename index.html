@@ -19,6 +19,9 @@
         .animate-fade-in { animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
+        /* Cursor de mano para indicar que se puede arrastrar en PC */
+        .grab-scroll { cursor: grab; overflow-x: auto; white-space: nowrap; }
+        .grab-scroll:active { cursor: grabbing; }
         .marquee-brands:hover { animation-play-state: paused; }
     </style>
 </head>
@@ -37,7 +40,7 @@
 
     <nav class="bg-white/95 backdrop-blur-md sticky top-0 z-50 p-4 flex justify-between items-center shadow-sm border-b">
         <div class="flex items-center gap-3">
-            <img src="https://i.ibb.co/YFrS7z8/logo-uru.png" class="w-12 h-12 rounded-full border-2 border-blue-900 shadow-md bg-white object-contain">
+            <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-12 h-12 rounded-full border-2 border-blue-900 shadow-md bg-white object-contain">
             <div>
                 <h1 class="text-xl font-black italic tracking-tighter text-blue-900 leading-none uppercase">Distri El Uru</h1>
                 <p class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter italic">Viedma & Patagones</p>
@@ -57,8 +60,8 @@
     </div>
 
     <div class="mb-6 bg-white py-4 border-y border-slate-100 overflow-hidden relative">
-        <p class="text-center text-[8px] font-black text-slate-300 uppercase tracking-[0.4em] mb-4">Nuestras Marcas</p>
-        <div class="overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing">
+        <p class="text-center text-[8px] font-black text-slate-300 uppercase tracking-[0.4em] mb-4">Nuestras Marcas (Arrastra para mover)</p>
+        <div id="scroll-container" class="grab-scroll no-scrollbar">
             <div id="marcas-track" class="animate-marquee marquee-brands flex items-center gap-16 px-8"></div>
         </div>
     </div>
@@ -71,14 +74,14 @@
 
     <footer class="bg-blue-900 text-white mt-12 py-10 px-6 text-center border-t-4 border-blue-500">
         <div class="max-w-xl mx-auto">
-            <img src="https://i.ibb.co/YFrS7z8/logo-uru.png" class="w-20 h-20 mx-auto rounded-full bg-white p-1 shadow-2xl mb-4 border-2 border-white">
+            <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-20 h-20 mx-auto rounded-full bg-white p-1 shadow-2xl mb-4 border-2 border-white">
             <h2 class="text-xl font-black italic uppercase tracking-tighter mb-2">Distri El Uru</h2>
             <div class="bg-white/10 rounded-2xl p-4 backdrop-blur-sm border border-white/20">
                 <p class="text-[10px] font-black uppercase tracking-widest text-blue-200 mb-2">🕒 Horario de Pedidos</p>
                 <p class="text-sm font-bold">Lunes a Sábados hasta las 12:30 hs</p>
                 <p class="text-[9px] text-blue-200 mt-1 uppercase italic">(Para entrega en el transcurso de la tarde)</p>
             </div>
-            <p class="text-[8px] mt-8 opacity-50 uppercase tracking-[0.3em]">Viedma & Patagones | 2026</p>
+            <p class="text-[8px] mt-8 opacity-50 uppercase tracking-[0.3em]">Envios gratis en Viedma & Patagones </p>
         </div>
     </footer>
 
@@ -95,14 +98,11 @@
                 </div>
                 <button onclick="document.getElementById('cart').style.display='none'" class="text-3xl text-slate-300 hover:text-red-500">&times;</button>
             </div>
-
             <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-3"></div>
-
             <div class="p-6 bg-slate-50 border-t space-y-3">
                 <input type="text" id="user-name" placeholder="Nombre / Local" class="w-full p-3 rounded-xl border border-slate-200 outline-none text-sm font-bold focus:ring-2 focus:ring-blue-500">
                 <input type="text" id="user-address" placeholder="Dirección de entrega" class="w-full p-3 rounded-xl border border-slate-200 outline-none text-sm font-bold focus:ring-2 focus:ring-blue-500">
             </div>
-
             <div class="p-6 border-t bg-white space-y-4">
                 <div class="flex justify-between items-center font-black">
                     <span class="text-slate-400 text-xs uppercase tracking-widest">Total estimado:</span>
@@ -119,24 +119,49 @@
         const TSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQEemzCvTezcjzZhIUIRIayZ7U81xgssl9G1Vr6Odx7dHGHOARY0iJ-VOL43E17qLVkiIRb0LTurcZU/pub?output=tsv';
         let data = [], cart = {}, activeCat = 'TODOS';
 
+        // Lógica de marcas
         const marcas = [
-            'https://upload.wikimedia.org/wikipedia/commons/c/ce/Coca-Cola_logo.svg',
-            'https://upload.wikimedia.org/wikipedia/commons/e/e8/Logo_Brahma.svg',
-            'https://upload.wikimedia.org/wikipedia/commons/d/d0/Logo_Quilmes.svg',
-            'https://upload.wikimedia.org/wikipedia/en/thumb/3/3f/Heineken_logo.svg/1200px-Heineken_logo.svg.png',
-            'https://logodownload.org/wp-content/uploads/2014/04/gatorade-logo-1.png',
-            'https://upload.wikimedia.org/wikipedia/en/7/7e/Fernet_Branca_logo.png',
-            'https://upload.wikimedia.org/wikipedia/commons/7/7e/Logo_Budweiser.svg',
-            'https://upload.wikimedia.org/wikipedia/en/3/3b/Monster_Energy_logo.svg',
-            'https://upload.wikimedia.org/wikipedia/commons/b/b5/Campari_logo.svg',
-            'https://upload.wikimedia.org/wikipedia/commons/2/22/Levit%C3%A9_Logo.png',
-            'https://upload.wikimedia.org/wikipedia/commons/f/f6/Schweppes_logo.svg'
+            'https://images.seeklogo.com/logo-png/2/2/brahma-logo-png_seeklogo-21957.png',
+            'https://upload.wikimedia.org/wikipedia/commons/4/40/Quilmes_Logo_Nuevo.png',
+            'https://i.pinimg.com/736x/f3/9c/13/f39c132dda8447653ade3e50784cc805.jpg',
+            'https://e7.pngegg.com/pngimages/169/970/png-clipart-coca-cola-fizzy-drinks-logo-coca-cola-text-logo-thumbnail.png',
+            'https://i.pinimg.com/736x/0e/f3/e2/0ef3e242836d6bead178f011218be130.jpg',
+            'https://i.pinimg.com/564x/b1/53/3e/b1533e5f618db4d88b11cbbb73520eb5.jpg',
+            'https://logos-world.net/wp-content/uploads/2022/03/Gancia-Logo-1920.png',
+            'https://pbs.twimg.com/profile_images/2003162486564929536/_3XuJQ_Y.jpg',
+            'https://mir-s3-cdn-cf.behance.net/project_modules/max_632_webp/5f6931166287249.679134b285d7b.jpg',
+            'https://www.baggio.com.ar/es/images/novedades/grande-21.jpg',
+            'https://mayoristaelcondor.com.ar/wp-content/uploads/2024/02/vino-cinas-de-balbo-x-1125-560x560.png.webp'
         ];
+
+        // Función para permitir arrastrar con el mouse en PC
+        function enableDragScroll() {
+            const slider = document.getElementById('scroll-container');
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            slider.addEventListener('mousedown', (e) => {
+                isDown = true;
+                startX = e.pageX - slider.offsetLeft;
+                scrollLeft = slider.scrollLeft;
+            });
+            slider.addEventListener('mouseleave', () => { isDown = false; });
+            slider.addEventListener('mouseup', () => { isDown = false; });
+            slider.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - slider.offsetLeft;
+                const walk = (x - startX) * 2; 
+                slider.scrollLeft = scrollLeft - walk;
+            });
+        }
 
         function initMarcas() {
             const track = document.getElementById('marcas-track');
-            const items = marcas.map(m => `<img src="${m}" class="h-10 grayscale opacity-40 hover:opacity-100 hover:grayscale-0 transition-all object-contain min-w-[80px] pointer-events-none">`).join('');
+            const items = marcas.map(m => `<img src="${m}" class="h-10 grayscale opacity-40 hover:opacity-100 hover:grayscale-0 transition-all object-contain min-w-[80px] pointer-events-none px-4">`).join('');
             track.innerHTML = items + items + items;
+            enableDragScroll();
         }
 
         async function load() {
