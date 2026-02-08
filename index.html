@@ -77,7 +77,7 @@
 
     <div class="p-6 max-w-5xl mx-auto">
         <div class="relative group">
-            <input type="text" id="search" onkeyup="render()" placeholder="¿Qué estás buscando hoy?..." 
+            <input type="text" id="search" onkeyup="render()" placeholder="Busca productos o marcas..." 
                 class="w-full p-4 pl-12 rounded-[2rem] border-none shadow-xl focus:ring-2 focus:ring-blue-500 outline-none bg-white text-sm font-semibold">
             <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-300"></i>
         </div>
@@ -146,6 +146,9 @@
             </div>
             <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-3"></div>
             <div class="p-6 bg-slate-50 border-t space-y-3">
+                <button onclick="clearCart()" class="w-full bg-red-500 text-white py-3 rounded-xl font-black text-[10px] uppercase shadow-lg mb-2 active:scale-95 transition-all">
+                    <i class="fas fa-trash-alt mr-2"></i>Vaciar Carrito
+                </button>
                 <input type="text" id="user-name" placeholder="Nombre / Local" class="w-full p-3 rounded-xl border border-slate-200 outline-none text-sm font-bold focus:ring-2 focus:ring-blue-500">
                 <input type="text" id="user-address" placeholder="Dirección de entrega" class="w-full p-3 rounded-xl border border-slate-200 outline-none text-sm font-bold focus:ring-2 focus:ring-blue-500">
             </div>
@@ -162,9 +165,11 @@
     </div>
 
     <script>
+        // Tu TSV (Hoja de cálculo) con los datos de productos
         const TSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQEemzCvTezcjzZhIUIRIayZ7U81xgssl9G1Vr6Odx7dHGHOARY0iJ-VOL43E17qLVkiIRb0LTurcZU/pub?output=tsv';
         let data = [], cart = {}, activeCat = 'TODOS';
 
+        // Lista de marcas para el carrusel
         const marcas = [
             'https://images.seeklogo.com/logo-png/2/2/brahma-logo-png_seeklogo-21957.png',
             'https://upload.wikimedia.org/wikipedia/commons/4/40/Quilmes_Logo_Nuevo.png',
@@ -181,17 +186,24 @@
             const track = document.getElementById('marcas-track');
             track.innerHTML = (marcas.map(m => `<img src="${m}" class="h-10 object-contain min-w-[80px] px-4 pointer-events-none">`).join('')).repeat(3);
             try {
-                const res = await fetch(TSV + '&t=' + Date.now());
+                const res = await fetch(TSV + '&t=' + Date.now()); // Agrega timestamp para evitar caché
                 const text = await res.text();
-                const lines = text.split(/\r?\n/).slice(1);
+                const lines = text.split(/\r?\n/).slice(1); // Ignorar la primera línea (encabezados)
                 data = lines.map((l, i) => {
-                    const c = l.split('\t');
-                    const precioCrudo = (c[1]||'').replace(/\D/g,'');
-                    return { id: i, nom: (c[0]||'').trim(), pre: precioCrudo ? parseInt(precioCrudo) : 0, cat: (c[2]||'GENERAL').trim().toUpperCase(), img: (c[3]||'').trim() };
-                }).filter(p => p.nom !== "");
+                    const c = l.split('\t'); // Columnas: nombre, precio, categoría, imagen, tags
+                    const precioCrudo = (c[1]||'').replace(/\D/g,''); // Limpiar precio
+                    return { 
+                        id: i, 
+                        nom: (c[0]||'').trim(), 
+                        pre: precioCrudo ? parseInt(precioCrudo) : 0, // Precio
+                        cat: (c[2]||'GENERAL').trim().toUpperCase(), // Categoría
+                        img: (c[3]||'').trim(), // URL de la imagen
+                        tags: (c[4]||'').trim().toUpperCase().split(',').map(tag => tag.trim()).filter(tag => tag !== "") // Tags para "Oferta", "Nuevo", etc.
+                    };
+                }).filter(p => p.nom !== ""); // Filtrar líneas vacías
                 renderCats();
                 render();
-            } catch (e) { console.error(e); }
+            } catch (e) { console.error("Error al cargar los datos:", e); }
         }
 
         function renderCats() {
@@ -201,16 +213,41 @@
             `).join('');
         }
 
-        window.filter = (c) => { activeCat = c; renderCats(); render(); }
+        window.filter = (c) => { 
+            activeCat = c; 
+            renderCats(); 
+            render(); 
+        }
 
         function render() {
             const query = document.getElementById('search').value.toLowerCase();
-            const filtered = data.filter(p => (activeCat === 'TODOS' || p.cat === activeCat) && p.nom.toLowerCase().includes(query));
+            const filtered = data.filter(p => 
+                (activeCat === 'TODOS' || p.cat === activeCat) && 
+                (p.nom.toLowerCase().includes(query) || p.cat.toLowerCase().includes(query)) // Busca por nombre o categoría
+            );
             document.getElementById('catalogo').innerHTML = filtered.map(p => {
                 const q = cart[p.id] || 0;
                 const isAgotado = p.pre === 0;
+
+                let badgesHtml = '';
+                if (p.tags.includes('OFERTA')) {
+                    badgesHtml += `<span class="bg-red-500 text-white font-black px-2 py-1 rounded-md text-[8px] uppercase absolute top-3 left-3 shadow-md">OFERTA</span>`;
+                }
+                if (p.tags.includes('NUEVO')) {
+                    badgesHtml += `<span class="bg-green-500 text-white font-black px-2 py-1 rounded-md text-[8px] uppercase absolute top-3 right-3 shadow-md">NUEVO</span>`;
+                }
+                if (p.tags.includes('TOP')) {
+                    badgesHtml += `<span class="bg-purple-500 text-white font-black px-2 py-1 rounded-md text-[8px] uppercase absolute bottom-3 left-3 shadow-md">TOP</span>`;
+                }
+                if (p.tags.includes('MAYORISTA')) {
+                    badgesHtml += `<span class="bg-yellow-500 text-white font-black px-2 py-1 rounded-md text-[8px] uppercase absolute bottom-3 right-3 shadow-md">X BULTO</span>`;
+                }
+
+                const shareMessage = encodeURIComponent(`¡Mira este producto de Distri El Uru! ${p.nom} - $${p.pre.toLocaleString('es-AR')}. Encontralo en nuestro catálogo: ${window.location.href}`);
+
                 return `
                 <div class="bg-white p-4 rounded-[2rem] shadow-sm border border-slate-50 flex flex-col relative animate-fade-in ${isAgotado ? 'sold-out' : ''}">
+                    ${badgesHtml}
                     ${isAgotado ? '<div class="absolute inset-x-0 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center"><span class="bg-red-600 text-white font-black px-3 py-1.5 rounded-lg text-[10px] uppercase shadow-xl">Sin Stock</span></div>' : ''}
                     <div class="h-32 mb-4 flex items-center justify-center bg-slate-50 rounded-[1.5rem] p-2">
                         <img src="${p.img}" loading="lazy" class="max-h-full max-w-full object-contain" onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'">
@@ -220,9 +257,9 @@
                         <h3 class="text-[10px] font-bold text-slate-600 uppercase leading-tight h-8 overflow-hidden mt-1">${p.nom}</h3>
                         <p class="text-blue-900 font-black text-lg mt-1 italic">${isAgotado ? '---' : '$'+p.pre.toLocaleString('es-AR')}</p>
                     </div>
-                    <div class="mt-4">
+                    <div class="mt-4 flex items-center gap-2">
                         ${!isAgotado ? `
-                            <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
+                            <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl flex-1">
                                 ${q > 0 ? `
                                     <button onclick="add(${p.id},-1)" class="w-8 h-8 bg-white rounded-lg font-black text-slate-400 shadow-sm">-</button>
                                     <input type="number" step="0.1" value="${q}" onchange="manual(${p.id},this.value)" class="w-full text-center bg-transparent font-black text-blue-900 text-sm outline-none">
@@ -231,7 +268,10 @@
                                     <button onclick="add(${p.id},1)" class="w-full bg-blue-900 text-white py-3 rounded-xl font-black text-[10px] uppercase shadow-lg">Agregar</button>
                                 `}
                             </div>
-                        ` : '<div class="h-10"></div>'}
+                        ` : '<div class="h-10 flex-1"></div>'}
+                        <button onclick="shareProduct(${p.id}, '${shareMessage}')" class="w-8 h-8 flex-shrink-0 bg-slate-200 text-slate-500 rounded-xl flex items-center justify-center shadow-sm hover:bg-slate-300 transition-colors">
+                            <i class="fas fa-share-alt text-xs"></i>
+                        </button>
                     </div>
                 </div>`;
             }).join('');
@@ -241,11 +281,36 @@
         window.manual = (id, v) => { const n = parseFloat(v); if (n > 0) cart[id] = n; else delete cart[id]; update(); };
         window.eliminarItem = (id) => { delete cart[id]; update(); };
         
+        // Nueva función para vaciar todo el carrito
+        window.clearCart = () => { 
+            if (confirm('¿Estás seguro de que quieres vaciar todo el carrito?')) {
+                cart = {}; // Reinicia el objeto del carrito
+                update(); // Actualiza la interfaz
+            }
+        };
+
+        window.shareProduct = (productId, message) => {
+            window.open(`https://wa.me/?text=${message}`, '_blank');
+        };
+
         function update() {
             let t = 0, c = 0, html = '';
             Object.entries(cart).forEach(([id, q]) => {
-                const p = data[id]; const sub = p.pre * q; t += sub; c += q;
-                html += `<div class="flex items-center gap-4 bg-white p-3 rounded-xl border shadow-sm"><img src="${p.img}" class="w-10 h-10 object-contain"><div class="flex-1"><h4 class="font-bold text-[9px] uppercase">${p.nom}</h4><span class="text-blue-900 font-black text-xs">$${sub.toLocaleString('es-AR')}</span></div><button onclick="eliminarItem(${id})" class="text-slate-300 hover:text-red-500"><i class="fas fa-trash-alt"></i></button></div>`;
+                const p = data[id]; 
+                if (p) { // Asegurarse de que el producto exista
+                    const sub = p.pre * q; t += sub; c += q;
+                    html += `
+                    <div class="flex items-center gap-4 bg-white p-3 rounded-xl border shadow-sm">
+                        <img src="${p.img}" class="w-10 h-10 object-contain">
+                        <div class="flex-1">
+                            <h4 class="font-bold text-[9px] uppercase">${p.nom}</h4>
+                            <span class="text-blue-900 font-black text-xs">$${sub.toLocaleString('es-AR')}</span>
+                        </div>
+                        <button onclick="eliminarItem(${id})" class="text-slate-300 hover:text-red-500">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>`;
+                }
             });
             document.getElementById('cart-items').innerHTML = html || '<p class="text-center py-20 text-slate-300 font-black italic uppercase text-xs">Carrito vacío</p>';
             document.getElementById('total').innerText = t.toLocaleString('es-AR');
@@ -254,12 +319,24 @@
         }
 
         function enviar() {
-            const n = document.getElementById('user-name').value; const d = document.getElementById('user-address').value;
-            if (Object.keys(cart).length === 0 || !n || !d) return alert("Completa tus datos y agrega productos.");
-            let m = "*PEDIDO - DISTRI EL URU*%0A👤 *Cliente:* " + n + "%0A📍 *Dirección:* " + d + "%0A%0A";
-            Object.entries(cart).forEach(([id, q]) => m += "✅ *" + q + "* x " + data[id].nom + "%0A");
+            const n = document.getElementById('user-name').value; 
+            const d = document.getElementById('user-address').value;
+            if (Object.keys(cart).length === 0 || !n || !d) {
+                return alert("Por favor, completa tu Nombre/Local y Dirección de entrega, y asegúrate de agregar productos al pedido.");
+            }
+            let m = "*PEDIDO - DISTRI EL URU*%0A";
+            m += "👤 *Cliente:* " + n + "%0A";
+            m += "📍 *Dirección:* " + d + "%0A%0A";
+            Object.entries(cart).forEach(([id, q]) => {
+                const p = data[id];
+                if (p) {
+                    m += "✅ *" + q + "* x " + p.nom + "%0A";
+                }
+            });
             m += "%0A*TOTAL: $" + document.getElementById('total').innerText + "*";
-            window.open("https://wa.me/5492920248292?text=" + m);
+            window.open("https://wa.me/5492920248292?text=" + m, '_blank');
+            clearCart(); // Vaciar carrito después de enviar el pedido
+            document.getElementById('cart').style.display='none'; // Cerrar el carrito
         }
         load();
     </script>
