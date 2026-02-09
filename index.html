@@ -4,131 +4,114 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <title>DISTRI EL URU | Catálogo Online</title>
+    <title>DISTRI EL URU | Premium</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         
-        /* Variables de Tema */
         body.dark-mode { background-color: #1a1a1a; color: #e0e0e0; }
         body.light-mode { background-color: #f3f4f6; color: #1f2937; }
-
-        body { font-family: 'Inter', sans-serif; transition: background 0.3s ease; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Inter', sans-serif; transition: background 0.4s ease; scroll-behavior: smooth; }
         
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* MARQUESINA ORIGINAL (Siempre oscura) */
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         .animate-marquee { display: flex; width: max-content; animation: marquee 25s linear infinite; }
 
-        /* TARJETAS SEGUN TEMA */
-        .dark-mode .card-prod { background-color: #262626; border-color: #404040; }
-        .light-mode .card-prod { background-color: #ffffff; border-color: #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        @keyframes pulse-red { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; background-color: #ef4444; } }
+        .urgent { animation: pulse-red 1s infinite; }
 
-        .img-zoom { transition: transform 0.3s ease; }
-        .card-prod:hover .img-zoom { transform: scale(1.1); }
+        .skeleton { background: linear-gradient(90deg, #333 25%, #444 50%, #333 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 2rem; }
+        @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-        .new-arrival { border: 2px solid #ff6b00 !important; }
+        .card-prod { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .cat-active { background-color: #ff6b00 !important; color: white !important; }
-        
-        @keyframes cartBounce { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
-        .cart-bump { animation: cartBounce 0.4s ease; }
+
+        #go-up { display: none; position: fixed; bottom: 100px; right: 24px; z-index: 90; background: #ff6b00; color: white; width: 45px; height: 45px; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
     </style>
 </head>
-<body class="dark-mode"> <div class="bg-gray-900 text-gray-300 py-2 overflow-hidden border-b border-gray-800">
+<body class="dark-mode">
+
+    <button id="go-up" onclick="window.scrollTo(0,0)"><i class="fas fa-chevron-up"></i></button>
+
+    <div class="bg-gray-900 text-gray-300 py-2 overflow-hidden border-b border-gray-800">
         <div class="animate-marquee gap-10 font-black text-[9px] uppercase tracking-[0.2em]">
             <span>🚀 ENVÍOS EN EL DÍA (PEDÍ ANTES DE LAS 12:30HS)</span>
             <span>🔥 PRECIOS MAYORISTAS ACTUALIZADOS</span>
             <span>✨ DISTRI EL URU - VIEDMA Y PATAGONES</span>
-            <span>🚀 ENVÍOS EN EL DÍA (PEDÍ ANTES DE LAS 12:30HS)</span>
         </div>
     </div>
 
-    <div id="status-bar" class="py-2 px-4 text-center border-b border-gray-800 text-white">
-        <p id="status-text" class="text-[10px] font-black uppercase tracking-widest"></p>
+    <div id="status-bar" class="py-2 px-4 text-center border-b border-gray-800 text-white font-black text-[10px] uppercase tracking-widest transition-colors duration-500">
+        <p id="status-text"></p>
     </div>
 
     <nav class="bg-[#2c2c2c] sticky top-0 z-50 p-3 shadow-lg border-b border-gray-700">
-        <div class="max-w-7xl mx-auto flex justify-between items-center gap-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-12 h-12 rounded-full border-2 border-[#ff6b00] bg-gray-800 object-contain shadow-lg">
+                <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-12 h-12 rounded-full border-2 border-[#ff6b00] bg-gray-800">
                 <div>
                     <div class="flex items-center gap-2">
-                        <h1 class="text-lg md:text-xl font-black italic text-[#ff6b00] leading-none uppercase">El Uru</h1>
-                        <button onclick="toggleTheme()" class="text-gray-400 hover:text-[#ff6b00] transition-colors">
-                            <i id="theme-icon" class="fas fa-moon"></i>
-                        </button>
+                        <h1 class="text-lg font-black italic text-[#ff6b00] uppercase">El Uru</h1>
+                        <button onclick="toggleTheme()" class="text-gray-400"><i id="theme-icon" class="fas fa-moon"></i></button>
                     </div>
-                    <p class="text-[8px] font-bold text-gray-500 uppercase">Viedma & Patagones</p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <button id="btn-cart" onclick="document.getElementById('cart').style.display='flex'" class="bg-[#ff6b00] text-white px-5 py-3 rounded-2xl font-black shadow-lg flex items-center gap-2 text-xs">
-                    <i class="fas fa-shopping-bag text-lg"></i> 
-                    <span id="count" class="bg-orange-700 px-2 py-0.5 rounded-md text-[10px]">0</span>
+                <a href="tel:5492920248292" class="bg-gray-800 text-white p-3 rounded-2xl border border-gray-700 active:scale-90 transition-transform"><i class="fas fa-phone"></i></a>
+                <button onclick="document.getElementById('cart').style.display='flex'" class="bg-[#ff6b00] text-white px-5 py-3 rounded-2xl font-black shadow-lg flex items-center gap-2 text-xs active:scale-95 transition-transform">
+                    <i class="fas fa-shopping-bag"></i> 
+                    <span id="count">0</span>
                 </button>
             </div>
         </div>
     </nav>
 
-    <div class="p-4 md:p-6 max-w-5xl mx-auto space-y-4">
+    <div class="p-4 max-w-5xl mx-auto space-y-4">
         <div class="relative flex gap-2">
             <div class="relative flex-1">
-                <input type="text" id="search" onkeyup="render()" placeholder="Busca productos..." 
-                    class="w-full p-5 pl-12 rounded-[1.5rem] bg-gray-800 dark:bg-gray-800 text-gray-200 font-bold border-none outline-none focus:ring-2 focus:ring-[#ff6b00]">
+                <input type="text" id="search" onkeyup="render()" placeholder="Busca productos..." class="w-full p-5 pl-12 rounded-[1.5rem] bg-gray-800 text-gray-200 font-bold border-none outline-none focus:ring-2 focus:ring-[#ff6b00]">
                 <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-500"></i>
             </div>
-            <button onclick="verFavoritos()" id="btn-favs" class="bg-gray-800 px-5 rounded-[1.5rem] text-gray-400 border border-gray-700">
-                <i id="fav-icon" class="fas fa-heart text-xl"></i>
-            </button>
-        </div>
-        
-        <div class="grid grid-cols-2 gap-2">
-            <button onclick="toggleNovedades()" id="btn-novedades" class="py-4 rounded-2xl bg-gray-800 border border-[#ff6b00] text-[#ff6b00] font-black text-[10px] uppercase flex items-center justify-center gap-2">
-                <i class="fas fa-fire-alt"></i> Novedades (<span id="novedades-count">0</span>)
-            </button>
-            <button onclick="compartir()" class="py-4 rounded-2xl bg-gray-800 border border-gray-700 text-gray-400 font-black text-[10px] uppercase flex items-center justify-center gap-2">
-                <i class="fas fa-share-alt"></i> Compartir
+            <button onclick="verFavoritos()" id="btn-favs" class="bg-gray-800 px-5 rounded-[1.5rem] text-gray-400 border border-gray-700 active:scale-90 transition-transform">
+                <i class="fas fa-heart text-xl"></i>
             </button>
         </div>
     </div>
 
     <div class="px-4 max-w-5xl mx-auto flex gap-2 overflow-x-auto pb-6 no-scrollbar" id="category-filters"></div>
 
-    <main id="catalogo" class="p-4 max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 pb-24"></main>
+    <div id="catalog-anchor"></div>
+
+    <main id="catalogo" class="p-4 max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 pb-24">
+        <div class="skeleton h-64"></div><div class="skeleton h-64"></div><div class="skeleton h-64"></div><div class="skeleton h-64"></div>
+    </main>
 
     <footer class="bg-gray-900 text-gray-300 mt-12 border-t-4 border-[#ff6b00]">
         <div class="max-w-6xl mx-auto px-6 py-12">
-            <div class="grid md:grid-cols-3 gap-12">
-                <div class="text-center md:text-left">
+            <div class="grid md:grid-cols-3 gap-12 text-center md:text-left">
+                <div>
                     <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-20 h-20 rounded-full mx-auto md:mx-0 mb-6 border-2 border-gray-700">
                     <h2 class="text-2xl font-black italic uppercase text-[#ff6b00]">Distri El Uru</h2>
-                    <div class="mt-6 flex justify-center md:justify-start gap-4">
-                        <a href="https://www.instagram.com/distri_el_uru/" target="_blank" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#ff6b00] transition-colors"><i class="fab fa-instagram"></i></a>
-                        <a href="https://wa.me/5492920248292" target="_blank" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-green-600 transition-colors"><i class="fab fa-whatsapp"></i></a>
-                    </div>
                 </div>
-                <div class="space-y-4">
-                    <div class="bg-gray-800 p-5 rounded-3xl border border-gray-700">
-                        <h3 class="text-[10px] font-black uppercase text-gray-500 mb-2 text-center">Horarios de Entrega</h3>
-                        <p class="font-bold text-gray-200 uppercase text-center">Lunes a Sábados</p>
-                        <p class="text-xs text-gray-400 italic text-center">Viedma y Patagones</p>
-                    </div>
-                    <div class="bg-gray-800 p-5 rounded-3xl border border-gray-700">
-                        <h3 class="text-[10px] font-black uppercase text-green-500 mb-2 text-center">Pedidos</h3>
-                        <p class="text-[11px] text-gray-400 text-center">Cierre de pedidos: <span class="text-white font-bold">12:30 HS</span></p>
-                    </div>
+                <div class="bg-gray-800 p-5 rounded-3xl border border-gray-700">
+                    <p class="font-bold uppercase">Lunes a Sábados</p>
+                    <p class="text-xs text-gray-400">Viedma y Patagones</p>
                 </div>
-                <div class="h-64 rounded-3xl overflow-hidden grayscale opacity-30 border border-gray-700">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d12000!2d-62.99!3d-40.81!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses!2sar!4v1" width="100%" height="100%" style="border:0;" loading="lazy"></iframe>
+                <div class="h-64 rounded-3xl overflow-hidden grayscale opacity-30">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12000!2d-62.99!3d-40.81!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDDCsDQ4JzM2LjAiUyA2MsKwNTknMjQuMCJX!5e0!3m2!1ses!2sar!4v16200000000000" width="100%" height="100%" style="border:0;" loading="lazy"></iframe>
                 </div>
             </div>
         </div>
     </footer>
 
-    <div id="cart" style="display:none;" class="fixed inset-0 bg-black/90 backdrop-blur-md z-[100] flex justify-end">
+    <div class="fixed bottom-6 left-6 z-[100]">
+        <a href="https://wa.me/5492920248292" target="_blank" class="bg-green-500 text-white p-4 rounded-full shadow-2xl flex items-center justify-center active:scale-90 transition-transform"><i class="fab fa-whatsapp text-3xl"></i></a>
+    </div>
+
+    <div id="cart" style="display:none;" class="fixed inset-0 bg-black/90 backdrop-blur-md z-[200] flex justify-end">
         <div class="bg-[#1a1a1a] w-full max-w-md h-full flex flex-col shadow-2xl">
             <div class="p-6 border-b border-gray-800 flex justify-between items-center bg-gray-900 text-gray-200">
                 <h2 class="text-xl font-black uppercase italic">Mi Pedido</h2>
@@ -138,30 +121,31 @@
             <div class="p-6 bg-[#1a1a1a] border-t border-gray-800 space-y-4">
                 <input type="text" id="user-name" placeholder="Tu Nombre / Local" class="w-full p-4 rounded-xl bg-gray-900 text-gray-200 font-bold border border-gray-800 outline-none">
                 <div class="flex justify-between items-center">
-                    <span class="text-gray-500 font-black uppercase text-xs tracking-widest">Total:</span>
+                    <span class="text-gray-500 font-black uppercase text-xs">Total:</span>
                     <span class="text-[#ff6b00] text-3xl font-black italic">$<span id="total">0</span></span>
                 </div>
-                <button onclick="enviar()" class="w-full bg-green-500 text-white py-5 rounded-2xl font-black text-lg active:scale-95 transition-all">ENVIAR WHATSAPP</button>
+                <button onclick="enviarPedido()" class="w-full bg-green-500 text-white py-5 rounded-2xl font-black text-lg active:scale-95 transition-all">FINALIZAR POR WHATSAPP</button>
             </div>
         </div>
     </div>
 
     <script>
         const TSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQEemzCvTezcjzZhIUIRIayZ7U81xgssl9G1Vr6Odx7dHGHOARY0iJ-VOL43E17qLVkiIRb0LTurcZU/pub?output=tsv';
-        let data = [], cart = {}, activeCat = 'TODOS', soloNovedades = false, soloFavs = false;
+        let data = [], cart = {}, activeCat = 'TODOS', soloFavs = false;
         let favoritos = JSON.parse(localStorage.getItem('uru_favs')) || [];
 
+        if (localStorage.getItem('uru_theme') === 'light') toggleTheme();
         function toggleTheme() {
-            const body = document.body;
-            const icon = document.getElementById('theme-icon');
-            if (body.classList.contains('dark-mode')) {
-                body.classList.replace('dark-mode', 'light-mode');
-                icon.classList.replace('fa-moon', 'fa-sun');
-            } else {
-                body.classList.replace('light-mode', 'dark-mode');
-                icon.classList.replace('fa-sun', 'fa-moon');
-            }
+            document.body.classList.toggle('light-mode');
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            document.getElementById('theme-icon').className = isDark ? 'fas fa-moon' : 'fas fa-sun';
+            localStorage.setItem('uru_theme', isDark ? 'dark' : 'light');
         }
+
+        window.onscroll = () => {
+            document.getElementById('go-up').style.display = window.scrollY > 500 ? 'block' : 'none';
+        };
 
         async function load() {
             try {
@@ -172,9 +156,71 @@
                     const c = l.split('\t');
                     return { id: i, nom: (c[0]||'').trim(), pre: parseInt((c[1]||'').replace(/\D/g,'')) || 0, cat: (c[2]||'VARIOS').trim().toUpperCase(), img: (c[3]||'').trim() };
                 }).filter(p => p.nom !== "");
-                document.getElementById('novedades-count').innerText = data.filter(p => p.pre % 10 === 1).length;
                 renderCats(); render(); updateStatus();
+                setInterval(updateStatus, 60000); // Actualiza el status cada minuto
             } catch (e) { console.error(e); }
+        }
+
+        function updateStatus() {
+            const now = new Date();
+            const h = now.getHours();
+            const m = now.getMinutes();
+            const txt = document.getElementById('status-text');
+            const bar = document.getElementById('status-bar');
+            
+            // Si es antes de las 12:30
+            if (h < 12 || (h === 12 && m <= 30)) {
+                bar.style.backgroundColor = "#16a34a";
+                txt.innerHTML = "🟢 Tomando pedidos para hoy";
+                // Alerta urgencia si faltan menos de 30 min (12:00 a 12:30)
+                if (h === 12 && m >= 0) bar.classList.add('urgent');
+                else bar.classList.remove('urgent');
+            } else {
+                bar.style.backgroundColor = "#ea580c";
+                bar.classList.remove('urgent');
+                txt.innerHTML = "🕒 Pedidos para mañana";
+            }
+        }
+
+        function selectCat(cat) {
+            activeCat = cat;
+            soloFavs = false;
+            renderCats();
+            render();
+            // Scroll suave hacia los productos
+            document.getElementById('catalog-anchor').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function renderCats() {
+            const cats = ['TODOS', ...new Set(data.map(p => p.cat))];
+            document.getElementById('category-filters').innerHTML = cats.map(c => `
+                <button onclick="selectCat('${c}')" 
+                class="shrink-0 px-6 py-3 rounded-full bg-gray-800 text-[10px] font-black uppercase text-gray-400 transition-all ${activeCat === c ? 'cat-active' : ''}">${c}</button>
+            `).join('');
+        }
+
+        function render() {
+            const q = document.getElementById('search').value.toLowerCase();
+            let filtered = data.filter(p => (activeCat === 'TODOS' || p.cat === activeCat) && p.nom.toLowerCase().includes(q));
+            if(soloFavs) filtered = filtered.filter(p => favoritos.includes(p.id));
+
+            document.getElementById('catalogo').innerHTML = filtered.map(p => {
+                const qty = cart[p.id] || 0;
+                const esFav = favoritos.includes(p.id);
+                return `
+                    <div class="card-prod p-4 rounded-[2rem] border border-gray-200 dark:border-gray-700 flex flex-col relative bg-white dark:bg-[#262626]">
+                        <button onclick="toggleFav(${p.id})" class="absolute top-4 left-4 z-10 ${esFav ? 'text-red-500' : 'text-gray-400 opacity-30'}">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <div class="h-32 mb-4 flex items-center justify-center p-2"><img src="${p.img}" class="max-h-full object-contain" onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'"></div>
+                        <h3 class="text-[10px] font-bold uppercase h-8 overflow-hidden">${p.nom}</h3>
+                        <p class="text-[#ff6b00] font-black text-lg mt-1">$${p.pre.toLocaleString()}</p>
+                        <div class="mt-4 bg-black/5 dark:bg-black/20 p-1 rounded-2xl flex items-center gap-1">
+                            <button onclick="add(${p.id},1)" class="w-full bg-[#ff6b00] py-3.5 rounded-xl font-black text-[10px] uppercase text-white active:scale-95 transition-transform">${qty > 0 ? 'En Carrito ('+qty+')' : 'Agregar'}</button>
+                            ${qty > 0 ? `<button onclick="add(${p.id},-1)" class="bg-gray-700 text-white w-10 h-10 rounded-xl active:scale-90 transition-transform">-</button>` : ''}
+                        </div>
+                    </div>`;
+            }).join('');
         }
 
         function toggleFav(id) {
@@ -191,75 +237,9 @@
             render();
         }
 
-        function updateStatus() {
-            const h = new Date().getHours();
-            const m = new Date().getMinutes();
-            const bar = document.getElementById('status-bar');
-            const txt = document.getElementById('status-text');
-            if (h < 12 || (h === 12 && m < 30)) {
-                bar.style.backgroundColor = "#16a34a";
-                txt.innerHTML = "🟢 Tomando pedidos para hoy";
-            } else {
-                bar.style.backgroundColor = "#ea580c";
-                txt.innerHTML = "🕒 Pedidos para entrega mañana";
-            }
-        }
-
-        function toggleNovedades() {
-            soloNovedades = !soloNovedades;
-            document.getElementById('btn-novedades').classList.toggle('bg-[#ff6b00]', soloNovedades);
-            document.getElementById('btn-novedades').classList.toggle('text-white', soloNovedades);
-            render();
-        }
-
-        function renderCats() {
-            const cats = ['TODOS', ...new Set(data.map(p => p.cat))];
-            document.getElementById('category-filters').innerHTML = cats.map(c => `
-                <button onclick="activeCat='${c}'; soloFavs=false; renderCats(); render();" 
-                class="shrink-0 px-6 py-3 rounded-full bg-gray-800 text-[10px] font-black uppercase text-gray-400 ${activeCat === c ? 'cat-active' : ''}">${c}</button>
-            `).join('');
-        }
-
-        function render() {
-            const q = document.getElementById('search').value.toLowerCase();
-            let filtered = data.filter(p => (activeCat === 'TODOS' || p.cat === activeCat) && p.nom.toLowerCase().includes(q));
-            if(soloNovedades) filtered = filtered.filter(p => p.pre % 10 === 1);
-            if(soloFavs) filtered = filtered.filter(p => favoritos.includes(p.id));
-
-            document.getElementById('catalogo').innerHTML = filtered.map(p => {
-                const qty = cart[p.id] || 0;
-                const esNuevo = p.pre % 10 === 1;
-                const esFav = favoritos.includes(p.id);
-                return `
-                    <div class="card-prod p-4 rounded-[2rem] border flex flex-col relative transition-all ${esNuevo ? 'new-arrival' : ''}">
-                        <button onclick="toggleFav(${p.id})" class="absolute top-4 left-4 z-10 ${esFav ? 'text-red-500' : 'text-gray-400 opacity-50'}">
-                            <i class="fas fa-heart"></i>
-                        </button>
-                        <div class="h-32 mb-4 flex items-center justify-center p-2 overflow-hidden">
-                            <img src="${p.img}" class="img-zoom max-h-full object-contain" onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'">
-                        </div>
-                        <h3 class="text-[10px] font-bold uppercase h-8 overflow-hidden">${p.nom}</h3>
-                        <p class="text-[#ff6b00] font-black text-lg mt-1">$${p.pre.toLocaleString()}</p>
-                        <div class="mt-4 bg-black/10 dark:bg-black/40 p-1 rounded-2xl flex items-center gap-1">
-                            ${qty > 0 ? `
-                                <button onclick="add(${p.id},-1)" class="w-9 h-9 bg-gray-500 rounded-xl font-black text-white">-</button>
-                                <span class="flex-1 text-center font-black text-xs">${qty}</span>
-                                <button onclick="add(${p.id},1)" class="w-9 h-9 bg-[#ff6b00] rounded-xl font-black text-white">+</button>
-                            ` : `
-                                <button onclick="add(${p.id},1)" class="w-full bg-[#ff6b00] py-3.5 rounded-xl font-black text-[10px] uppercase text-white">Agregar</button>
-                            `}
-                        </div>
-                    </div>`;
-            }).join('');
-        }
-
         window.add = (id, n) => { 
             cart[id] = Math.max(0, (cart[id] || 0) + n); 
             if (cart[id] === 0) delete cart[id]; 
-            if (n > 0) {
-                document.getElementById('btn-cart').classList.add('cart-bump');
-                setTimeout(() => document.getElementById('btn-cart').classList.remove('cart-bump'), 400);
-            }
             update(); 
         };
         
@@ -267,26 +247,24 @@
             let t = 0, c = 0, html = '';
             Object.entries(cart).forEach(([id, q]) => {
                 const p = data[id]; t += p.pre * q; c += q;
-                html += `<div class="flex items-center gap-4 bg-gray-800 p-3 rounded-2xl border border-gray-700 text-white"><img src="${p.img}" class="w-10 h-10 object-contain"><div class="flex-1 leading-tight"><h4 class="font-bold text-[9px] uppercase">${p.nom}</h4><p class="text-[#ff6b00] font-black">$${(p.pre * q).toLocaleString()}</p></div><button onclick="add(${id},-${q})"><i class="fas fa-trash-alt"></i></button></div>`;
+                html += `<div class="flex items-center gap-4 bg-gray-800 p-3 rounded-2xl text-white border border-gray-700"><img src="${p.img}" class="w-10 h-10 object-contain"><div class="flex-1 leading-tight"><h4 class="font-bold text-[9px] uppercase">${p.nom}</h4><p class="text-[#ff6b00] font-black">$${(p.pre * q).toLocaleString()}</p></div><button onclick="add(${id},-${q})"><i class="fas fa-trash-alt"></i></button></div>`;
             });
-            document.getElementById('cart-items').innerHTML = html || '<p class="text-center py-10 opacity-30 text-white uppercase font-black text-xs">Carrito Vacío</p>';
+            document.getElementById('cart-items').innerHTML = html || '<p class="text-center py-10 opacity-30 text-white font-bold text-xs uppercase">Carrito Vacío</p>';
             document.getElementById('total').innerText = t.toLocaleString();
             document.getElementById('count').innerText = c;
             render();
         }
 
-        function compartir() {
-            if (navigator.share) navigator.share({ title: 'DISTRI EL URU', url: window.location.href });
-            else alert("Copia el link de la barra de direcciones.");
-        }
-
-        function enviar() {
+        function enviarPedido() {
             const n = document.getElementById('user-name').value;
-            if (!n || Object.keys(cart).length === 0) return alert("Faltan datos.");
-            let m = "*PEDIDO - DISTRI EL URU*%0A👤 " + n + "%0A%0A";
-            Object.entries(cart).forEach(([id, q]) => m += "✅ *" + q + "* x " + data[id].nom + "%0A");
-            m += "%0A*TOTAL: $" + document.getElementById('total').innerText + "*";
-            window.open("https://wa.me/5492920248292?text=" + m);
+            if (!n || Object.keys(cart).length === 0) return alert("Por favor, ingresá tu nombre o el del local.");
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#ff6b00', '#ffffff'] });
+            setTimeout(() => {
+                let m = "*PEDIDO - EL URU*%0A👤 " + n + "%0A%0A";
+                Object.entries(cart).forEach(([id, q]) => m += "✅ *" + q + "* x " + data[id].nom + "%0A");
+                m += "%0A*TOTAL: $" + document.getElementById('total').innerText + "*";
+                window.open("https://wa.me/5492920248292?text=" + m);
+            }, 800);
         }
         load();
     </script>
