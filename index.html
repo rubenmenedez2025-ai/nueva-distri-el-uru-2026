@@ -11,10 +11,12 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #1a1a1a; color: #e0e0e0; -webkit-tap-highlight-color: transparent; }
         
-        /* Animación para productos nuevos */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
         .new-arrival { 
             border: 2px solid #ff6b00 !important; 
-            box-shadow: 0 0 15px rgba(255, 107, 0, 0.3);
+            box-shadow: 0 0 15px rgba(255, 107, 0, 0.2);
             position: relative;
         }
         .new-badge {
@@ -29,40 +31,34 @@
             font-weight: 900;
             text-transform: uppercase;
             z-index: 10;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
 
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .animate-marquee { display: flex; width: max-content; animation: marquee 25s linear infinite; }
-        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         .cat-active { background-color: #ff6b00 !important; color: white !important; transform: scale(1.05); }
-        .qty-input { background: transparent; border: none; text-align: center; font-weight: 900; color: white; width: 100%; outline: none; }
-        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         .bg-insta { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); }
+        
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        .animate-marquee { display: flex; width: max-content; animation: marquee 25s linear infinite; }
     </style>
 </head>
 <body>
 
-    <div class="bg-gray-900 text-gray-300 py-2 overflow-hidden border-b border-gray-800">
-        <div class="animate-marquee gap-10 font-black text-[9px] uppercase tracking-widest">
-            <span>🚀 ENVÍOS EN EL DÍA (PEDÍ ANTES DE LAS 12:30HS)</span>
-            <span>🔥 PRECIOS MAYORISTAS ACTUALIZADOS</span>
-            <span>✨ DISTRI EL URU - VIEDMA Y PATAGONES</span>
-            <span>🚀 ENVÍOS EN EL DÍA (PEDÍ ANTES DE LAS 12:30HS)</span>
-        </div>
+    <div id="status-bar" class="bg-black text-white py-1.5 px-4 text-center border-b border-gray-800">
+        <p id="status-text" class="text-[10px] font-black uppercase tracking-tighter"></p>
     </div>
 
     <nav class="bg-[#2c2c2c]/95 backdrop-blur-md sticky top-0 z-50 p-3 shadow-lg border-b border-gray-700">
-        <div class="max-w-7xl mx-auto flex justify-between items-center gap-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-12 h-12 rounded-full border-2 border-[#ff6b00] bg-gray-800 object-contain">
+                <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-12 h-12 rounded-full border-2 border-[#ff6b00] bg-gray-800">
                 <div>
                     <h1 class="text-lg font-black italic text-[#ff6b00] leading-none uppercase">Distri El Uru</h1>
-                    <p class="text-[8px] font-bold text-gray-500 uppercase tracking-tighter">Viedma & Patagones</p>
+                    <p class="text-[8px] font-bold text-gray-500 uppercase">Viedma & Patagones</p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <a href="https://www.instagram.com/distri_el_uru/" target="_blank" class="bg-insta text-white px-3 py-2 rounded-xl text-[9px] font-black uppercase">Instagram</a>
+                <a href="https://www.instagram.com/distri_el_uru/" target="_blank" class="bg-insta text-white p-2.5 rounded-xl text-lg shadow-lg">
+                    <i class="fab fa-instagram"></i>
+                </a>
                 <button onclick="document.getElementById('cart').style.display='flex'" class="bg-[#ff6b00] text-white px-5 py-3 rounded-2xl font-black shadow-lg flex items-center gap-2 text-xs">
                     <i class="fas fa-shopping-bag"></i> 
                     <span id="count" class="bg-orange-700 px-2 py-0.5 rounded-md">0</span>
@@ -71,38 +67,42 @@
         </div>
     </nav>
 
-    <div class="p-4 max-w-5xl mx-auto">
-        <input type="text" id="search" onkeyup="render()" placeholder="Busca productos..." 
-            class="w-full p-4 pl-12 rounded-2xl bg-gray-800 text-gray-200 font-bold outline-none focus:ring-2 focus:ring-[#ff6b00]">
+    <div class="p-4 max-w-5xl mx-auto space-y-4">
+        <div class="relative">
+            <input type="text" id="search" onkeyup="render()" placeholder="Busca productos..." 
+                class="w-full p-4 pl-12 rounded-2xl bg-gray-800 text-gray-200 font-bold border-none outline-none focus:ring-2 focus:ring-[#ff6b00]">
+            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+        </div>
+        
+        <button onclick="toggleNovedades()" id="btn-novedades" class="w-full py-3 rounded-xl bg-gray-800 border border-[#ff6b00] text-[#ff6b00] font-black text-[10px] uppercase flex items-center justify-center gap-2 transition-all">
+            <i class="fas fa-fire"></i> Ver solo Ingresos de hoy
+        </button>
     </div>
 
     <div class="px-4 max-w-5xl mx-auto flex gap-2 overflow-x-auto pb-6 no-scrollbar" id="category-filters"></div>
 
     <main id="catalogo" class="p-4 max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-24"></main>
 
-    <a href="https://www.instagram.com/distri_el_uru/" target="_blank" class="fixed bottom-24 left-6 z-[100] bg-insta text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-all">
-        <i class="fab fa-instagram text-3xl"></i>
-    </a>
-    <a href="https://wa.me/5492920248292" target="_blank" class="fixed bottom-6 left-6 z-[100] bg-green-500 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-all">
+    <a href="https://wa.me/5492920248292" target="_blank" class="fixed bottom-6 left-6 z-[100] bg-green-500 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-all flex items-center justify-center">
         <i class="fab fa-whatsapp text-3xl"></i>
     </a>
 
     <div id="cart" style="display:none;" class="fixed inset-0 bg-black/90 backdrop-blur-md z-[100] flex justify-end">
-        <div class="bg-[#1a1a1a] w-full max-w-md h-full flex flex-col shadow-2xl border-l border-gray-800">
-            <div class="p-6 border-b border-gray-800 flex justify-between items-center bg-gray-900">
-                <h2 class="text-xl font-black uppercase italic text-gray-200">Mi Pedido</h2>
+        <div class="bg-[#1a1a1a] w-full max-w-md h-full flex flex-col">
+            <div class="p-6 border-b border-gray-800 flex justify-between items-center bg-gray-900 text-gray-200">
+                <h2 class="text-xl font-black uppercase italic">Mi Carrito</h2>
                 <button onclick="document.getElementById('cart').style.display='none'" class="text-4xl text-gray-400">×</button>
             </div>
             <div id="cart-items" class="flex-1 overflow-y-auto p-4 space-y-3 bg-[#1e1e1e]"></div>
             <div class="p-6 bg-[#1a1a1a] border-t border-gray-800 space-y-4">
                 <input type="text" id="user-name" placeholder="Tu Nombre o Local" class="w-full p-4 rounded-xl bg-gray-900 text-gray-200 font-bold border border-gray-800 outline-none">
                 <input type="text" id="user-address" placeholder="Dirección de Entrega" class="w-full p-4 rounded-xl bg-gray-900 text-gray-200 font-bold border border-gray-800 outline-none">
-                <div class="flex justify-between items-center py-2 border-y border-gray-800/50">
-                    <span class="text-gray-500 font-black uppercase text-xs">Total:</span>
+                <div class="flex justify-between items-center py-2">
+                    <span class="text-gray-500 font-black uppercase text-xs">Total Estimado:</span>
                     <span class="text-[#ff6b00] text-3xl font-black italic">$<span id="total">0</span></span>
                 </div>
-                <button onclick="enviar()" class="w-full bg-green-500 text-white py-5 rounded-2xl font-black text-lg shadow-xl active:scale-95 flex items-center justify-center gap-3">
-                    <i class="fab fa-whatsapp"></i> ENVIAR PEDIDO
+                <button onclick="enviar()" class="w-full bg-green-500 text-white py-5 rounded-2xl font-black text-lg shadow-xl active:scale-95 transition-all">
+                    CONFIRMAR POR WHATSAPP
                 </button>
             </div>
         </div>
@@ -110,7 +110,7 @@
 
     <script>
         const TSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQEemzCvTezcjzZhIUIRIayZ7U81xgssl9G1Vr6Odx7dHGHOARY0iJ-VOL43E17qLVkiIRb0LTurcZU/pub?output=tsv';
-        let data = [], cart = {}, activeCat = 'TODOS';
+        let data = [], cart = {}, activeCat = 'TODOS', soloNovedades = false;
 
         async function load() {
             try {
@@ -121,38 +121,74 @@
                     const c = l.split('\t');
                     return { id: i, nom: (c[0]||'').trim(), pre: parseInt((c[1]||'').replace(/\D/g,'')) || 0, cat: (c[2]||'VARIOS').trim().toUpperCase(), img: (c[3]||'').trim() };
                 }).filter(p => p.nom !== "");
-                renderCats(); render();
+                renderCats(); render(); updateStatus();
             } catch (e) { console.error(e); }
+        }
+
+        function updateStatus() {
+            const now = new Date();
+            const hour = now.getHours();
+            const min = now.getMinutes();
+            const bar = document.getElementById('status-bar');
+            const txt = document.getElementById('status-text');
+            
+            if (hour < 12 || (hour === 12 && min < 30)) {
+                bar.className = "bg-green-600 text-white py-1.5 px-4 text-center";
+                txt.innerHTML = "🟢 Tomando pedidos para entrega HOY (Cierre 12:30hs)";
+            } else {
+                bar.className = "bg-orange-600 text-white py-1.5 px-4 text-center";
+                txt.innerHTML = "🕒 Tomando pedidos para entrega MAÑANA";
+            }
+        }
+
+        function toggleNovedades() {
+            soloNovedades = !soloNovedades;
+            const btn = document.getElementById('btn-novedades');
+            if(soloNovedades) {
+                btn.classList.add('bg-[#ff6b00]', 'text-white');
+                activeCat = 'TODOS';
+            } else {
+                btn.classList.remove('bg-[#ff6b00]', 'text-white');
+            }
+            renderCats(); render();
         }
 
         function renderCats() {
             const cats = ['TODOS', ...new Set(data.map(p => p.cat))];
-            document.getElementById('category-filters').innerHTML = cats.map(c => `<button onclick="filter('${c}')" class="shrink-0 px-6 py-3 rounded-full bg-gray-800 text-[10px] font-black uppercase transition-all ${activeCat === c ? 'cat-active' : ''}">${c}</button>`).join('');
+            document.getElementById('category-filters').innerHTML = cats.map(c => `
+                <button onclick="activeCat='${c}'; soloNovedades=false; document.getElementById('btn-novedades').classList.remove('bg-[#ff6b00]', 'text-white'); renderCats(); render();" 
+                class="shrink-0 px-6 py-3 rounded-full bg-gray-800 text-[10px] font-black uppercase transition-all ${activeCat === c && !soloNovedades ? 'cat-active' : ''}">${c}</button>
+            `).join('');
         }
-
-        window.filter = (c) => { activeCat = c; renderCats(); render(); }
 
         function render() {
             const query = document.getElementById('search').value.toLowerCase();
-            const filtered = data.filter(p => (activeCat === 'TODOS' || p.cat === activeCat) && p.nom.toLowerCase().includes(query));
+            let filtered = data.filter(p => (activeCat === 'TODOS' || p.cat === activeCat) && p.nom.toLowerCase().includes(query));
+            
+            if(soloNovedades) {
+                filtered = data.filter(p => (p.pre % 10 === 1) && p.nom.toLowerCase().includes(query));
+            }
+
             document.getElementById('catalogo').innerHTML = filtered.map(p => {
                 const q = cart[p.id] || 0;
-                // LOGICA DE INGRESO: Si el precio termina en 1 (ej: 1501), es nuevo.
                 const esNuevo = p.pre % 10 === 1;
-
-                return `<div class="bg-gray-800 p-4 rounded-[2rem] border border-gray-700 flex flex-col ${esNuevo ? 'new-arrival' : ''} ${p.pre === 0 ? 'opacity-50 grayscale' : ''}">
-                    ${esNuevo ? `<span class="new-badge">¡Ingreso!</span>` : ''}
-                    <div class="h-32 mb-4 flex items-center justify-center"><img src="${p.img}" class="max-h-full object-contain" onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'"></div>
-                    <span class="text-[7px] font-black text-gray-500 uppercase">${p.cat}</span>
-                    <h3 class="text-[10px] font-bold text-gray-200 uppercase leading-tight h-8 overflow-hidden">${p.nom}</h3>
-                    <p class="text-[#ff6b00] font-black text-lg italic mt-1">$${p.pre.toLocaleString()}</p>
-                    <div class="mt-4 bg-gray-900 p-1.5 rounded-2xl flex items-center gap-1">
-                        ${q > 0 ? `<button onclick="add(${p.id},-1)" class="w-9 h-9 bg-gray-700 rounded-xl font-black text-gray-400">-</button>
-                        <input type="number" step="0.5" value="${q}" onchange="manualAdd(${p.id}, this.value)" class="qty-input flex-1">
-                        <button onclick="add(${p.id},1)" class="w-9 h-9 bg-[#ff6b00] rounded-xl font-black">+</button>` : 
-                        `<button onclick="add(${p.id},1)" class="w-full bg-[#ff6b00] py-3.5 rounded-xl font-black text-[10px] uppercase">Agregar</button>`}
-                    </div>
-                </div>`;
+                return `
+                    <div class="bg-gray-800 p-4 rounded-[2rem] border border-gray-700 flex flex-col ${esNuevo ? 'new-arrival' : ''}">
+                        ${esNuevo ? `<span class="new-badge">¡Ingreso!</span>` : ''}
+                        <div class="h-32 mb-4 flex items-center justify-center"><img src="${p.img}" class="max-h-full object-contain" onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'"></div>
+                        <span class="text-[7px] font-black text-gray-500 uppercase">${p.cat}</span>
+                        <h3 class="text-[10px] font-bold text-gray-200 uppercase leading-tight h-8 overflow-hidden">${p.nom}</h3>
+                        <p class="text-[#ff6b00] font-black text-lg italic mt-1">$${p.pre.toLocaleString()}</p>
+                        <div class="mt-4 bg-gray-900 p-1.5 rounded-2xl flex items-center gap-1">
+                            ${q > 0 ? `
+                                <button onclick="add(${p.id},-1)" class="w-9 h-9 bg-gray-700 rounded-xl font-black text-gray-400">-</button>
+                                <input type="number" step="0.5" value="${q}" onchange="manualAdd(${p.id}, this.value)" class="qty-input flex-1">
+                                <button onclick="add(${p.id},1)" class="w-9 h-9 bg-[#ff6b00] rounded-xl font-black text-white">+</button>
+                            ` : `
+                                <button onclick="add(${p.id},1)" class="w-full bg-[#ff6b00] py-3.5 rounded-xl font-black text-[10px] uppercase text-white">Agregar</button>
+                            `}
+                        </div>
+                    </div>`;
             }).join('');
         }
 
@@ -163,9 +199,9 @@
             let t = 0, c = 0, html = '';
             Object.entries(cart).forEach(([id, q]) => {
                 const p = data[id]; t += p.pre * q; c += q;
-                html += `<div class="flex items-center gap-4 bg-gray-800 p-3 rounded-2xl border border-gray-700"><img src="${p.img}" class="w-10 h-10 object-contain"><div class="flex-1 leading-tight"><h4 class="font-bold text-[9px] uppercase">${p.nom}</h4><p class="text-[#ff6b00] font-black">$${(p.pre * q).toLocaleString()}</p></div><button onclick="add(${id},-${q})"><i class="fas fa-trash text-gray-600"></i></button></div>`;
+                html += `<div class="flex items-center gap-4 bg-gray-800 p-3 rounded-2xl"><img src="${p.img}" class="w-10 h-10 object-contain"><div class="flex-1 leading-tight"><h4 class="font-bold text-[9px] uppercase">${p.nom}</h4><p class="text-[#ff6b00] font-black">$${(p.pre * q).toLocaleString()}</p></div><button onclick="add(${id},-${q})"><i class="fas fa-trash text-gray-600"></i></button></div>`;
             });
-            document.getElementById('cart-items').innerHTML = html || '<p class="text-center py-10 opacity-30 uppercase font-black">Carrito vacío</p>';
+            document.getElementById('cart-items').innerHTML = html || '<p class="text-center py-10 opacity-30 uppercase font-black italic text-xs">Tu carrito está vacío</p>';
             document.getElementById('total').innerText = t.toLocaleString();
             document.getElementById('count').innerText = Number(c.toFixed(2));
             render();
@@ -174,13 +210,14 @@
         function enviar() {
             const n = document.getElementById('user-name').value;
             const d = document.getElementById('user-address').value;
-            if (!n || !d || Object.keys(cart).length === 0) return alert("Completa tus datos");
+            if (!n || !d || Object.keys(cart).length === 0) return alert("Ingresa nombre y dirección.");
             let m = "*PEDIDO - DISTRI EL URU*%0A👤 " + n + "%0A📍 " + d + "%0A%0A";
             Object.entries(cart).forEach(([id, q]) => m += "✅ *" + q + "* x " + data[id].nom + "%0A");
-            m += "%0A*TOTAL: $" + document.getElementById('total').innerText + "*";
+            m += "%0A*TOTAL ESTIMADO: $" + document.getElementById('total').innerText + "*";
             window.open("https://wa.me/5492920248292?text=" + m);
         }
         load();
+        setInterval(updateStatus, 60000);
     </script>
 </body>
 </html>
