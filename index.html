@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <title>DISTRI EL URU | Catálogo Mayorista Premium</title>
+    <title>DISTRI EL URU | Catálogo Celeste Premium</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
@@ -13,107 +13,111 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
         
-        /* --- FONDO AZUL DEGRADADO --- */
+        /* --- FONDO CELESTE A AZUL --- */
         body.dark-mode { 
-            background: radial-gradient(circle at top, #001f3f 0%, #000b18 100%); 
+            background: linear-gradient(180deg, #0077b6 0%, #023e8a 50%, #03045e 100%); 
             color: #f3f4f6; 
         }
         body.light-mode { 
-            background: linear-gradient(135deg, #e0f2fe 0%, #f3f4f6 100%); 
-            color: #111827; 
+            background: linear-gradient(135deg, #caf0f8 0%, #90e0ef 100%); 
+            color: #03045e; 
         }
         body { font-family: 'Inter', sans-serif; transition: background 0.5s ease; scroll-behavior: smooth; min-height: 100vh; }
 
-        /* --- BADGES --- */
-        .offer-badge {
-            position: absolute; top: 15px; right: -35px; background: #ef4444; color: white;
-            padding: 5px 40px; transform: rotate(45deg); font-size: 10px; font-weight: 900;
-            z-index: 20; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.4); letter-spacing: 1px;
+        /* --- BOTONES CELESTES --- */
+        .btn-celeste {
+            background: linear-gradient(90deg, #00b4d8 0%, #0077b6 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 180, 216, 0.3);
         }
+        .btn-celeste:hover { filter: brightness(1.1); transform: scale(1.02); }
+
+        /* --- BADGES --- */
         .sold-out-badge {
-            position: absolute; top: 15px; left: 15px; background: #374151; color: white;
+            position: absolute; top: 15px; left: 15px; background: #1e293b; color: #94a3b8;
             padding: 4px 12px; border-radius: 999px; font-size: 10px; font-weight: 900; z-index: 20;
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
         /* --- CARRUSEL INTERACTIVO --- */
         .brand-wrapper { overflow-x: auto; display: flex; cursor: grab; padding: 25px 0; scrollbar-width: none; }
         .brand-wrapper::-webkit-scrollbar { display: none; }
-        .brand-wrapper:active { cursor: grabbing; }
-
         @keyframes marquee-brands { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         .animate-brands { display: flex; width: max-content; animation: marquee-brands 30s linear infinite; }
         .brand-wrapper:hover .animate-brands { animation-play-state: paused; }
-
-        .brand-logo {
-            height: 50px; width: auto; max-width: 130px; filter: brightness(1.2);
-            transition: all 0.3s ease; margin: 0 45px; object-fit: contain; flex-shrink: 0;
-        }
+        .brand-logo { height: 50px; width: auto; max-width: 130px; filter: brightness(0) invert(1); opacity: 0.8; margin: 0 45px; flex-shrink: 0; }
 
         /* --- PRODUCTOS --- */
-        .card-prod { transition: all 0.3s ease; border: 1px solid transparent; overflow: hidden; position: relative; }
-        .dark-mode .card-prod { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); }
-        .light-mode .card-prod { background: white; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .card-prod:hover { transform: translateY(-10px); border-color: #ff6b00; }
+        .card-prod { transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.1); overflow: hidden; position: relative; }
+        .dark-mode .card-prod { background: rgba(255, 255, 255, 0.07); backdrop-filter: blur(15px); }
+        .card-prod:hover { transform: translateY(-10px); border-color: #90e0ef; }
         
-        .img-container { height: 180px; display: flex; align-items: center; justify-content: center; padding: 1.5rem; background: white; }
+        .img-container { height: 180px; display: flex; align-items: center; justify-content: center; padding: 1.5rem; background: white; cursor: zoom-in; }
         .img-container img { max-height: 100%; max-width: 100%; object-fit: contain; }
 
-        /* --- BOTÓN VOLVER ARRIBA --- */
+        /* --- MODAL ZOOM --- */
+        #zoom-modal { transition: opacity 0.3s ease; }
+        #zoom-img { transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+        /* --- VOLVER ARRIBA --- */
         #go-top {
             position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
-            background: #ff6b00; color: white; border-radius: 50%;
+            background: #00b4d8; color: white; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             font-size: 24px; cursor: pointer; z-index: 1000;
             opacity: 0; visibility: hidden; transform: translateY(20px);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 30px rgba(255, 107, 0, 0.5);
+            transition: all 0.4s; box-shadow: 0 10px 30px rgba(0, 180, 216, 0.5);
         }
         #go-top.visible { opacity: 1; visibility: visible; transform: translateY(0); }
 
-        .cat-pill { white-space: nowrap; transition: 0.3s; border: 1px solid rgba(255,107,0,0.1); }
-        .cat-active { background: #ff6b00 !important; color: white !important; box-shadow: 0 5px 15px rgba(255,107,0,0.3); }
+        .cat-pill { white-space: nowrap; transition: 0.3s; border: 1px solid rgba(144,224,239,0.3); }
+        .cat-active { background: #00b4d8 !important; color: white !important; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        #sidebar { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
 </head>
 
 <body class="dark-mode">
+
+    <div id="zoom-modal" onclick="closeZoom()" class="fixed inset-0 z-[200] bg-black/90 backdrop-blur-xl hidden flex items-center justify-center p-4">
+        <button class="absolute top-10 right-10 text-white text-5xl">&times;</button>
+        <img id="zoom-img" src="" class="max-w-full max-h-[85vh] rounded-2xl shadow-2xl scale-95">
+    </div>
 
     <div id="go-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
         <i class="fas fa-arrow-up"></i>
     </div>
 
     <header class="relative z-50">
-        <div class="bg-black py-2.5 overflow-hidden border-b border-gray-800">
+        <div class="bg-[#03045e] py-2.5 overflow-hidden border-b border-white/10">
             <div class="flex animate-[marquee_20s_linear_infinite] gap-10 font-black text-[10px] uppercase text-white tracking-[0.3em] w-max">
                 <style>@keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }</style>
-                <span>🔥 DISTRIBUIDORA EL URU - VIEDMA & PATAGONES</span>
-                <span>🚀 REPARTO DIARIO: PEDIDOS HASTA 12:30HS</span>
-                <span>⭐ PRECIOS MAYORISTAS ACTUALIZADOS</span>
-                <span>🔥 DISTRIBUIDORA EL URU - VIEDMA & PATAGONES</span>
+                <span>🌀 DISTRIBUIDORA EL URU - VIEDMA & PATAGONES</span>
+                <span>🚚 REPARTO DIARIO: PEDIDOS HASTA 12:30HS</span>
+                <span>💎 CALIDAD Y PRECIO MAYORISTA</span>
+                <span>🌀 DISTRIBUIDORA EL URU - VIEDMA & PATAGONES</span>
             </div>
         </div>
         <div id="status-bar" class="py-2.5 text-center font-black text-[11px] tracking-widest text-white transition-all duration-500">
-            <span id="status-text">SINCRONIZANDO STOCK...</span>
+            <span id="status-text">CARGANDO...</span>
         </div>
     </header>
 
-    <nav class="sticky top-0 z-40 p-4 border-b border-gray-800/50 bg-inherit backdrop-blur-md shadow-2xl">
+    <nav class="sticky top-0 z-40 p-4 border-b border-white/10 bg-inherit backdrop-blur-md shadow-xl">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-4">
-                <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-14 h-14 rounded-full border-2 border-[#ff6b00] object-cover">
+                <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-14 h-14 rounded-full border-2 border-[#00b4d8] object-cover">
                 <div>
-                    <h1 class="text-2xl font-black italic text-[#ff6b00] leading-none uppercase">El Uru</h1>
-                    <p class="text-[9px] font-black uppercase tracking-widest opacity-50">Distribución Mayorista</p>
+                    <h1 class="text-2xl font-black italic text-white leading-none uppercase tracking-tighter">El Uru</h1>
+                    <p class="text-[9px] font-black uppercase tracking-widest text-[#90e0ef]">Viedma & Patagones</p>
                 </div>
             </div>
             <div class="flex items-center gap-3">
-                <button onclick="toggleTheme()" class="w-12 h-12 rounded-2xl bg-gray-800 flex items-center justify-center text-gray-400">
+                <button onclick="toggleTheme()" class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-white/50">
                     <i id="theme-icon" class="fas fa-moon"></i>
                 </button>
-                <button onclick="openCart()" class="bg-[#ff6b00] text-white px-6 py-4 rounded-2xl font-black flex items-center gap-3 shadow-lg active:scale-95 transition-all">
+                <button onclick="openCart()" class="btn-celeste px-6 py-4 rounded-2xl font-black flex items-center gap-3 active:scale-95 transition-all">
                     <i class="fas fa-shopping-basket"></i>
-                    <span id="cart-count" class="bg-white text-[#ff6b00] px-2 py-0.5 rounded-lg text-xs">0</span>
+                    <span id="cart-count" class="bg-white text-[#0077b6] px-2 py-0.5 rounded-lg text-xs">0</span>
                 </button>
             </div>
         </div>
@@ -122,17 +126,17 @@
     <section class="p-6 max-w-6xl mx-auto space-y-6">
         <div class="flex flex-col md:flex-row gap-4">
             <div class="relative flex-1">
-                <input type="text" id="search" onkeyup="render()" placeholder="Busca tu producto..." class="w-full p-5 pl-14 rounded-3xl bg-gray-800 text-white font-bold outline-none border-2 border-transparent focus:border-[#ff6b00] transition-all">
-                <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                <input type="text" id="search" onkeyup="render()" placeholder="¿Qué estás buscando hoy?" class="w-full p-5 pl-14 rounded-3xl bg-white/10 text-white font-bold outline-none border-2 border-transparent focus:border-[#00b4d8] transition-all">
+                <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 text-white/30"></i>
             </div>
-            <button onclick="toggleFavs()" id="btn-favs" class="px-8 h-[64px] rounded-3xl bg-gray-800 text-gray-400 font-black border border-gray-700 flex items-center justify-center gap-3">
-                <i class="fas fa-heart"></i> FAVORITOS
+            <button onclick="toggleFavs()" id="btn-favs" class="px-8 h-[64px] rounded-3xl bg-white/10 text-white font-black border border-white/10 flex items-center justify-center gap-3">
+                <i class="fas fa-heart"></i>
             </button>
         </div>
         <div id="cats" class="flex gap-3 overflow-x-auto pb-2 no-scrollbar"></div>
     </section>
 
-    <div class="brand-wrapper border-y border-gray-800/30 bg-black/20 mb-12">
+    <div class="brand-wrapper bg-black/20 mb-12 border-y border-white/5">
         <div class="animate-brands flex items-center">
             <img src="https://www.nicepng.com/png/detail/181-1814882_coca-cola-company-logo-png-vector-transparent-logo.png" class="brand-logo">
             <img src="https://logosenvector.com/logo/img/cerveza-quilmes-37897.png" class="brand-logo">
@@ -142,8 +146,6 @@
             <img src="https://www.nicepng.com/png/detail/181-1814882_coca-cola-company-logo-png-vector-transparent-logo.png" class="brand-logo">
             <img src="https://logosenvector.com/logo/img/cerveza-quilmes-37897.png" class="brand-logo">
             <img src="https://http2.mlstatic.com/D_NQ_NP_941474-MLU79050320441_092024-O.webp" class="brand-logo">
-            <img src="https://seeklogo.com/images/U/uvita-logo-98F93700CB-seeklogo.com.png" class="brand-logo">
-            <img src="https://i.pinimg.com/736x/d0/34/c6/d034c65bda6ef517a889de21ad01def0.jpg" class="brand-logo">
         </div>
     </div>
 
@@ -151,55 +153,51 @@
         <div id="grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"></div>
     </main>
 
-    <footer class="bg-black text-gray-500 py-20 px-8 border-t-8 border-[#ff6b00]">
+    <footer class="bg-[#03045e] text-white/50 py-20 px-8 border-t-8 border-[#00b4d8]">
         <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-16">
             <div class="space-y-6">
-                <h3 class="text-white font-black text-3xl italic">EL URU</h3>
-                <p class="text-sm">Distribuidora referente en Carmen de Patagones y Viedma. Somos especialistas en abastecimiento minorista con los mejores precios del mercado.</p>
+                <h3 class="text-white font-black text-3xl italic uppercase">El Uru</h3>
+                <p class="text-sm">Distribuidora referente en Carmen de Patagones y Viedma. Especialistas en abastecimiento mayorista.</p>
                 <div class="flex gap-4">
-                    <a href="https://www.instagram.com/distri_el_uru/" target="_blank" class="w-14 h-14 bg-gray-900 rounded-2xl flex items-center justify-center hover:text-[#ff6b00] transition-all text-xl"><i class="fab fa-instagram"></i></a>
-                    <a href="https://wa.me/5492920248292" target="_blank" class="w-14 h-14 bg-gray-900 rounded-2xl flex items-center justify-center hover:text-green-500 transition-all text-xl"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://www.instagram.com/distri_el_uru/" target="_blank" class="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center hover:text-[#00b4d8] transition-all text-xl"><i class="fab fa-instagram"></i></a>
+                    <a href="https://wa.me/5492920248292" target="_blank" class="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center hover:text-green-400 transition-all text-xl"><i class="fab fa-whatsapp"></i></a>
                 </div>
             </div>
             <div class="space-y-6">
-                <h4 class="text-white font-black uppercase tracking-widest border-l-4 border-[#ff6b00] pl-4">Logística y Envíos</h4>
-                <ul class="space-y-4 text-sm font-bold">
+                <h4 class="text-white font-black uppercase tracking-widest border-l-4 border-[#00b4d8] pl-4">Logística</h4>
+                <ul class="space-y-4 text-sm font-bold text-white/80">
                     <li>📍 Carmen de Patagones / Viedma</li>
-                    <li>⏰ Cierre de pedidos: 12:30hs</li>
-                    <li>🚚 Repartos de Lunes a Sábados</li>
-                    <li>✅ Entrega en puerta</li>
+                    <li>⏰ Pedidos hasta: 12:30hs</li>
+                    <li>🚚 Repartos: Lunes a Sábados</li>
+                    <li>✅ Entrega inmediata</li>
                 </ul>
             </div>
             <div class="space-y-6">
-                <h4 class="text-white font-black uppercase tracking-widest border-l-4 border-[#ff6b00] pl-4">Localización</h4>
-                <div class="h-44 rounded-[2.5rem] overflow-hidden border-2 border-gray-800">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d3004.582496587445!2d-62.986617!3d-40.811394!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses!2sar!4v1710000000000" width="100%" height="100%" style="border:0;" loading="lazy"></iframe>
+                <h4 class="text-white font-black uppercase tracking-widest border-l-4 border-[#00b4d8] pl-4">Localización</h4>
+                <div class="h-44 rounded-[2.5rem] overflow-hidden border-2 border-white/10">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d1512.6074251416954!2d-62.986872516601!3d-40.801205391307!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses-419!2sar!4v1715876356491!5m2!1ses-419!2sar" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                 </div>
             </div>
         </div>
     </footer>
 
     <div id="modal" class="fixed inset-0 z-[100] bg-black/80 hidden backdrop-blur-md">
-        <div id="sidebar" class="fixed top-0 right-0 h-full w-full max-w-md bg-gray-900 flex flex-col translate-x-full">
-            <div class="p-8 border-b border-gray-800 flex justify-between items-center bg-black/40">
+        <div id="sidebar" class="fixed top-0 right-0 h-full w-full max-w-md bg-[#023e8a] flex flex-col translate-x-full">
+            <div class="p-8 border-b border-white/10 flex justify-between items-center bg-black/20">
                 <div>
-                    <h2 class="text-2xl font-black text-[#ff6b00] italic">MI PEDIDO</h2>
-                    <p class="text-[10px] font-black uppercase opacity-40">Mínimo: $25.000</p>
+                    <h2 class="text-2xl font-black text-[#90e0ef] italic uppercase">Mi Pedido</h2>
+                    <p class="text-[10px] font-black text-white/40 uppercase">Mínimo: $25.000</p>
                 </div>
-                <button onclick="closeCart()" class="text-5xl text-gray-500">×</button>
+                <button onclick="closeCart()" class="text-4xl text-white/50">×</button>
             </div>
             <div id="cart-list" class="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar"></div>
-            <div class="p-8 border-t border-gray-800 space-y-5">
-                <input type="text" id="u-n" oninput="save()" placeholder="Nombre del Comercio" class="w-full p-4 rounded-2xl bg-gray-800 text-white font-bold border border-gray-700">
-                <input type="text" id="u-a" oninput="save()" placeholder="Dirección de Envío" class="w-full p-4 rounded-2xl bg-gray-800 text-white font-bold border border-gray-700">
-                <div class="flex justify-between items-end">
-                    <button onclick="empty()" class="text-[10px] font-black text-red-500 uppercase">Vaciar</button>
-                    <div class="text-right">
-                        <p class="text-[10px] font-black opacity-40 uppercase">Total Pedido</p>
-                        <p class="text-5xl font-black text-[#ff6b00] italic tracking-tighter">$<span id="total">0</span></p>
-                    </div>
+            <div class="p-8 border-t border-white/10 space-y-4">
+                <input type="text" id="u-n" oninput="save()" placeholder="Nombre del Comercio" class="w-full p-4 rounded-2xl bg-white/10 text-white font-bold border border-white/10 outline-none">
+                <input type="text" id="u-a" oninput="save()" placeholder="Dirección" class="w-full p-4 rounded-2xl bg-white/10 text-white font-bold border border-white/10 outline-none">
+                <div class="text-right">
+                    <p class="text-5xl font-black text-white italic tracking-tighter">$<span id="total">0</span></p>
                 </div>
-                <button id="send" onclick="send()" class="w-full py-6 rounded-3xl font-black text-lg bg-gray-800 text-gray-600 cursor-not-allowed">ENVIAR A WHATSAPP</button>
+                <button id="send" onclick="send()" class="w-full py-6 rounded-3xl font-black text-lg bg-white/10 text-white/30 cursor-not-allowed uppercase tracking-widest transition-all">Enviar Pedido</button>
             </div>
         </div>
     </div>
@@ -211,13 +209,28 @@
         let cat = 'TODOS', onlyFavs = false;
 
         window.onscroll = () => { document.getElementById('go-top').classList.toggle('visible', window.scrollY > 500); };
-
         window.onload = () => {
             document.getElementById('u-n').value = localStorage.getItem('un') || '';
             document.getElementById('u-a').value = localStorage.getItem('ua') || '';
             fetchData();
             updateStatus();
         };
+
+        // --- FUNCIÓN ZOOM ---
+        function openZoom(imgSrc) {
+            const modal = document.getElementById('zoom-modal');
+            const img = document.getElementById('zoom-img');
+            img.src = imgSrc;
+            modal.classList.remove('hidden');
+            setTimeout(() => img.classList.remove('scale-95'), 10);
+        }
+
+        function closeZoom() {
+            const modal = document.getElementById('zoom-modal');
+            const img = document.getElementById('zoom-img');
+            img.classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 200);
+        }
 
         async function fetchData() {
             try {
@@ -235,13 +248,13 @@
                 }).filter(x => x.name);
                 renderCats();
                 render();
-            } catch (e) { document.getElementById('status-text').innerText = "ERROR DE CARGA"; }
+            } catch (e) { document.getElementById('status-text').innerText = "ERROR DE CONEXIÓN"; }
         }
 
         function renderCats() {
             const list = ['TODOS', ...new Set(data.map(s => s.cat))];
             document.getElementById('cats').innerHTML = list.map(c => `
-                <button onclick="setCat('${c}')" class="cat-pill px-8 py-4 rounded-2xl font-black text-xs uppercase ${cat === c ? 'cat-active' : 'bg-gray-800 text-gray-500'}">
+                <button onclick="setCat('${c}')" class="cat-pill px-8 py-4 rounded-2xl font-black text-[10px] uppercase ${cat === c ? 'cat-active' : 'bg-white/10 text-white/50'}">
                     ${c}
                 </button>
             `).join('');
@@ -256,31 +269,29 @@
 
             grid.innerHTML = filt.map(p => {
                 const q = cart[p.id] || 0, isF = favs.includes(p.id);
-                const isOffer = p.price > 0 && p.price.toString().endsWith('99');
                 const isSoldOut = p.price === 0;
 
                 return `
-                    <div class="card-prod p-5 rounded-[2.5rem] flex flex-col ${q > 0 ? 'border-[#ff6b00]' : ''} ${isSoldOut ? 'grayscale opacity-70' : ''}">
-                        ${isOffer ? '<div class="offer-badge">OFERTA</div>' : ''}
+                    <div class="card-prod p-5 rounded-[2.5rem] flex flex-col ${q > 0 ? 'border-[#90e0ef]' : ''} ${isSoldOut ? 'grayscale-70 opacity-60' : ''}">
                         ${isSoldOut ? '<div class="sold-out-badge">AGOTADO</div>' : ''}
-                        <button onclick="toggleF(${p.id})" class="absolute top-5 left-5 z-10 ${isF ? 'text-red-500' : 'text-gray-600 opacity-30'}">
+                        <button onclick="toggleF(${p.id})" class="absolute top-5 left-5 z-10 ${isF ? 'text-red-400' : 'text-white/20'}">
                             <i class="fas fa-heart text-xl"></i>
                         </button>
-                        <div class="img-container rounded-3xl">
+                        <div class="img-container rounded-3xl" onclick="openZoom('${p.img}')">
                             <img src="${p.img}" onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'">
                         </div>
                         <div class="flex-1 mt-4">
-                            <p class="text-[9px] font-black text-[#ff6b00] uppercase mb-1">${p.cat}</p>
-                            <h3 class="font-bold text-xs uppercase h-10 overflow-hidden leading-tight">${p.name}</h3>
-                            <p class="text-2xl font-black text-[#ff6b00] italic mt-2">${isSoldOut ? '---' : '$'+p.price.toLocaleString()}</p>
+                            <p class="text-[9px] font-black text-[#90e0ef] uppercase mb-1">${p.cat}</p>
+                            <h3 class="font-bold text-xs uppercase h-10 overflow-hidden leading-tight text-white">${p.name}</h3>
+                            <p class="text-2xl font-black text-white italic mt-2">${isSoldOut ? '---' : '$'+p.price.toLocaleString()}</p>
                         </div>
                         <div class="mt-5 flex gap-2">
                             ${isSoldOut ? 
-                                `<button disabled class="flex-1 bg-gray-700 text-gray-400 py-4 rounded-2xl font-black text-[10px]">SIN STOCK</button>` :
-                                `<button onclick="modCart(${p.id}, 1)" class="flex-1 bg-[#ff6b00] text-white py-4 rounded-2xl font-black text-[10px] uppercase">
-                                    ${q > 0 ? 'LISTO ('+q+')' : 'COMPRAR'}
+                                `<button disabled class="flex-1 bg-white/5 text-white/20 py-4 rounded-2xl font-black text-[10px]">SIN STOCK</button>` :
+                                `<button onclick="modCart(${p.id}, 1)" class="flex-1 btn-celeste py-4 rounded-2xl font-black text-[10px] uppercase">
+                                    ${q > 0 ? 'EN CARRITO ('+q+')' : 'AGREGAR'}
                                 </button>
-                                ${q > 0 ? `<button onclick="modCart(${p.id}, -1)" class="w-12 h-12 bg-gray-700 text-white rounded-2xl flex items-center justify-center font-black">-</button>` : ''}`
+                                ${q > 0 ? `<button onclick="modCart(${p.id}, -1)" class="w-12 h-12 bg-white/10 text-white rounded-2xl flex items-center justify-center font-black">-</button>` : ''}`
                             }
                         </div>
                     </div>
@@ -299,17 +310,17 @@
             let t = 0, c = 0, h = '';
             Object.entries(cart).forEach(([id, q]) => {
                 const p = data[id]; t += p.price * q; c += q;
-                h += `<div class="flex items-center gap-4 bg-gray-800 p-4 rounded-3xl"><img src="${p.img}" class="w-10 h-10 object-contain bg-white rounded-lg p-1"><div class="flex-1"><h4 class="text-[10px] font-black uppercase text-white">${p.name}</h4><p class="text-[#ff6b00] font-black">$${(p.price*q).toLocaleString()}</p></div><span class="text-white font-black">x${q}</span></div>`;
+                h += `<div class="flex items-center gap-4 bg-white/5 p-4 rounded-3xl"><img src="${p.img}" class="w-10 h-10 object-contain bg-white rounded-lg p-1"><div class="flex-1"><h4 class="text-[10px] font-black uppercase text-white">${p.name}</h4><p class="text-[#90e0ef] font-black text-xs">$${(p.price*q).toLocaleString()}</p></div><span class="text-white font-black">x${q}</span></div>`;
             });
-            document.getElementById('cart-list').innerHTML = h || '<p class="text-center py-20 opacity-20 font-black uppercase">Tu carrito está vacío</p>';
+            document.getElementById('cart-list').innerHTML = h || '<p class="text-center py-20 opacity-20 font-black uppercase text-white">Carrito Vacío</p>';
             document.getElementById('total').innerText = t.toLocaleString();
             document.getElementById('cart-count').innerText = c;
             const btn = document.getElementById('send');
             if (t >= MIN) {
-                btn.className = "w-full py-6 rounded-3xl font-black text-lg bg-green-500 text-white shadow-xl cursor-pointer";
+                btn.className = "w-full py-6 rounded-3xl font-black text-lg btn-celeste shadow-xl cursor-pointer";
                 btn.disabled = false;
             } else {
-                btn.className = "w-full py-6 rounded-3xl font-black text-lg bg-gray-800 text-gray-600 cursor-not-allowed";
+                btn.className = "w-full py-6 rounded-3xl font-black text-lg bg-white/10 text-white/30 cursor-not-allowed";
                 btn.disabled = true;
             }
         }
@@ -318,11 +329,11 @@
             const h = new Date().getHours(), m = new Date().getMinutes();
             const bar = document.getElementById('status-bar'), txt = document.getElementById('status-text');
             if (h < 12 || (h === 12 && m <= 30)) {
-                bar.className = "py-2.5 text-center bg-green-600 text-white font-black tracking-widest";
-                txt.innerText = "🟢 ABIERTO: PEDIDOS PARA HOY";
+                bar.className = "py-2.5 text-center bg-sky-500 text-white font-black tracking-widest";
+                txt.innerText = "🔵 ABIERTO: TOMANDO PEDIDOS";
             } else {
-                bar.className = "py-2.5 text-center bg-orange-600 text-white font-black tracking-widest";
-                txt.innerText = "🕒 PRÓXIMO REPARTO: MAÑANA";
+                bar.className = "py-2.5 text-center bg-indigo-700 text-white font-black tracking-widest";
+                txt.innerText = "🌙 CERRADO: PRÓXIMO REPARTO MAÑANA";
             }
         }
 
@@ -333,19 +344,18 @@
             render();
         }
 
-        function toggleFavs() { onlyFavs = !onlyFavs; document.getElementById('btn-favs').classList.toggle('bg-red-500'); document.getElementById('btn-favs').classList.toggle('text-white'); render(); }
+        function toggleFavs() { onlyFavs = !onlyFavs; document.getElementById('btn-favs').classList.toggle('bg-[#00b4d8]'); render(); }
         function toggleTheme() { document.body.classList.toggle('dark-mode'); document.body.classList.toggle('light-mode'); }
         function openCart() { document.getElementById('modal').classList.remove('hidden'); setTimeout(() => document.getElementById('sidebar').style.transform = 'translateX(0)', 10); }
         function closeCart() { document.getElementById('sidebar').style.transform = 'translateX(100%)'; setTimeout(() => document.getElementById('modal').classList.add('hidden'), 400); }
         function save() { localStorage.setItem('un', document.getElementById('u-n').value); localStorage.setItem('ua', document.getElementById('u-a').value); }
-        function empty() { if(confirm("¿Vaciar todo el carrito?")){ cart = {}; updateUI(); render(); } }
-
+        
         function send() {
             const n = document.getElementById('u-n').value, a = document.getElementById('u-a').value;
-            if (!n || !a) return alert("Por favor, completa nombre y dirección.");
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-            let msg = `*PEDIDO EL URU*%0A👤 *Cliente:* ${n}%0A📍 *Dirección:* ${a}%0A%0A`;
-            Object.entries(cart).forEach(([id, q]) => msg += `✅ *${q}* x ${data[id].name}%0A`);
+            if (!n || !a) return alert("Completa tus datos de envío");
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#90e0ef', '#00b4d8', '#ffffff'] });
+            let msg = `*NUEVO PEDIDO EL URU*%0A👤 *Comercio:* ${n}%0A📍 *Dirección:* ${a}%0A%0A`;
+            Object.entries(cart).forEach(([id, q]) => msg += `🔹 *${q}* x ${data[id].name}%0A`);
             msg += `%0A💰 *TOTAL: $${document.getElementById('total').innerText}*`;
             window.open(`https://wa.me/5492920248292?text=${msg}`);
         }
