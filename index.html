@@ -18,7 +18,7 @@
         body.light-mode { background-color: #f3f4f6; color: #111827; }
         body { font-family: 'Inter', sans-serif; transition: background 0.5s ease; scroll-behavior: smooth; }
 
-        /* --- BADGE DE OFERTA (PRECIOS TERMINADOS EN 99) --- */
+        /* --- BADGE DE OFERTA --- */
         .offer-badge {
             position: absolute;
             top: 15px;
@@ -46,17 +46,35 @@
         }
         #go-top.visible { opacity: 1; visibility: visible; transform: translateY(0); }
 
-        /* --- ANIMACIONES --- */
+        /* --- ANIMACIONES CARRUSEL --- */
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         .animate-marquee { display: flex; width: max-content; animation: marquee 20s linear infinite; }
         
         @keyframes marquee-brands { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         .animate-brands { display: flex; width: max-content; animation: marquee-brands 30s linear infinite; }
 
-        /* --- MARCAS EN COLOR --- */
+        /* --- MARCAS MEJORADO PROFESIONAL --- */
+        .brand-container {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
         .brand-logo {
-            height: 55px; filter: grayscale(0); transition: transform 0.3s ease;
-            margin: 0 45px; object-fit: contain;
+            height: 50px; 
+            width: auto;
+            max-width: 130px;
+            filter: grayscale(0.2) brightness(0.9);
+            transition: all 0.3s ease;
+            margin: 0 40px;
+            object-fit: contain;
+            flex-shrink: 0; /* Evita que se deformen */
+        }
+
+        .brand-logo:hover {
+            filter: grayscale(0) brightness(1.1);
+            transform: scale(1.1);
         }
 
         /* --- PRODUCTOS --- */
@@ -130,19 +148,22 @@
         <div id="cats" class="flex gap-3 overflow-x-auto pb-2 no-scrollbar"></div>
     </section>
 
-    <div class="py-10 bg-white/5 border-y border-gray-800/30 overflow-hidden mb-12">
+    <div class="brand-container py-10 overflow-hidden mb-12">
         <div class="animate-brands flex items-center">
             <img src="https://www.nicepng.com/png/detail/181-1814882_coca-cola-company-logo-png-vector-transparent-logo.png" class="brand-logo">
-            <img src="https://logosenvector.com/logo/img/cerveza-quilmes-37897.png">
-            <img src="https://e7.pngegg.com/pngimages/144/255/png-clipart-logo-product-design-brand-old-fashioned-logo-ansor-label-text-thumbnail.png">
-            <img src="https://i.pinimg.com/736x/d0/34/c6/d034c65bda6ef517a889de21ad01def0.jpg">
-            <img src="https://i.pinimg.com/originals/d5/a8/85/d5a885c8f7b179215bc9c8a289a25a4d.jpg">
-            <img src="https://mir-s3-cdn-cf.behance.net/project_modules/1400/5f6931166287249.679134b285d7b.jpg">
-            <img src="https://http2.mlstatic.com/D_NQ_NP_941474-MLU79050320441_092024-O.webp">
-            <img src="https://pbs.twimg.com/profile_images/565219626624118784/SqJ7v6TC_400x400.jpeg">
-            <img src="https://i.pinimg.com/736x/dd/fe/d5/ddfed5c5a7d29eb6bd2cedc5bec50c87.jpg">
-            <img src="https://images.vivino.com/labels/9SL0_TWFRAW4eOmCRBOZiw.jpg">
-            <img src="https://seeklogo.com/images/U/uvita-logo-98F93700CB-seeklogo.com.png">
+            <img src="https://logosenvector.com/logo/img/cerveza-quilmes-37897.png" class="brand-logo">
+            <img src="https://e7.pngegg.com/pngimages/144/255/png-clipart-logo-product-design-brand-old-fashioned-logo-ansor-label-text-thumbnail.png" class="brand-logo">
+            <img src="https://i.pinimg.com/736x/d0/34/c6/d034c65bda6ef517a889de21ad01def0.jpg" class="brand-logo">
+            <img src="https://i.pinimg.com/originals/d5/a8/85/d5a885c8f7b179215bc9c8a289a25a4d.jpg" class="brand-logo">
+            <img src="https://http2.mlstatic.com/D_NQ_NP_941474-MLU79050320441_092024-O.webp" class="brand-logo">
+            <img src="https://seeklogo.com/images/U/uvita-logo-98F93700CB-seeklogo.com.png" class="brand-logo">
+            <img src="https://www.nicepng.com/png/detail/181-1814882_coca-cola-company-logo-png-vector-transparent-logo.png" class="brand-logo">
+            <img src="https://logosenvector.com/logo/img/cerveza-quilmes-37897.png" class="brand-logo">
+            <img src="https://e7.pngegg.com/pngimages/144/255/png-clipart-logo-product-design-brand-old-fashioned-logo-ansor-label-text-thumbnail.png" class="brand-logo">
+            <img src="https://i.pinimg.com/736x/d0/34/c6/d034c65bda6ef517a889de21ad01def0.jpg" class="brand-logo">
+            <img src="https://i.pinimg.com/originals/d5/a8/85/d5a885c8f7b179215bc9c8a289a25a4d.jpg" class="brand-logo">
+            <img src="https://http2.mlstatic.com/D_NQ_NP_941474-MLU79050320441_092024-O.webp" class="brand-logo">
+            <img src="https://seeklogo.com/images/U/uvita-logo-98F93700CB-seeklogo.com.png" class="brand-logo">
         </div>
     </div>
 
@@ -172,7 +193,7 @@
             <div class="space-y-6">
                 <h4 class="text-white font-black uppercase tracking-widest border-l-4 border-[#ff6b00] pl-4">Localización</h4>
                 <div class="h-44 rounded-[2.5rem] overflow-hidden border-2 border-gray-800">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12000!2d-63.0!3d-40.8!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDDCsDQ4JzAwLjAiUyA2M8KwMDAnMDAuMCJX!5e0!3m2!1ses!2sar!4v1620000000000!5m2!1ses!2sar" width="100%" height="100%" style="border:0;" loading="lazy"></iframe>
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d1512.42!2d-62.98!3d-40.81!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses!2sar!4v1645000000000!5m2!1ses!2sar" width="100%" height="100%" style="border:0;" loading="lazy"></iframe>
                 </div>
             </div>
         </div>
@@ -185,7 +206,7 @@
                     <h2 class="text-2xl font-black text-[#ff6b00] italic">MI PEDIDO</h2>
                     <p class="text-[10px] font-black uppercase opacity-40">Mínimo: $25.000</p>
                 </div>
-                <button onclick="closeCart()" class="text-5xl text-gray-500">×</button>
+                <button onclick="closeCart()" class="text-5xl text-gray-500">&times;</button>
             </div>
             <div id="cart-list" class="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar"></div>
             <div class="p-8 border-t border-gray-800 space-y-5">
@@ -271,7 +292,6 @@
 
             grid.innerHTML = filt.map(p => {
                 const q = cart[p.id] || 0, isF = favs.includes(p.id);
-                // LOGICA DE OFERTA (termina en 99)
                 const isOffer = p.price.toString().endsWith('99');
                 
                 return `
