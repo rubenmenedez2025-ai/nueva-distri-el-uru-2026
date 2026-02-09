@@ -14,6 +14,10 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+        /* Marquesina Superior */
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        .animate-marquee { display: flex; width: max-content; animation: marquee 25s linear infinite; }
+
         .new-arrival { 
             border: 2px solid #ff6b00 !important; 
             box-shadow: 0 0 15px rgba(255, 107, 0, 0.2);
@@ -35,43 +39,47 @@
 
         .cat-active { background-color: #ff6b00 !important; color: white !important; transform: scale(1.05); }
         .bg-insta { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); }
-        
-        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        .animate-marquee { display: flex; width: max-content; animation: marquee 25s linear infinite; }
     </style>
 </head>
 <body>
 
-    <div id="status-bar" class="bg-black text-white py-1.5 px-4 text-center border-b border-gray-800">
+    <div class="bg-gray-900 text-gray-300 py-2 overflow-hidden border-b border-gray-800">
+        <div class="animate-marquee gap-10 font-black text-[9px] uppercase tracking-[0.2em]">
+            <span>🚀 ENVÍOS EN EL DÍA (PEDÍ ANTES DE LAS 12:30HS)</span>
+            <span>🔥 PRECIOS MAYORISTAS ACTUALIZADOS</span>
+            <span>✨ DISTRI EL URU - VIEDMA Y PATAGONES</span>
+            <span>🚀 ENVÍOS EN EL DÍA (PEDÍ ANTES DE LAS 12:30HS)</span>
+        </div>
+    </div>
+
+    <div id="status-bar" class="py-1.5 px-4 text-center">
         <p id="status-text" class="text-[10px] font-black uppercase tracking-tighter"></p>
     </div>
 
     <nav class="bg-[#2c2c2c]/95 backdrop-blur-md sticky top-0 z-50 p-3 shadow-lg border-b border-gray-700">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
+        <div class="max-w-7xl mx-auto flex justify-between items-center gap-4">
             <div class="flex items-center gap-3">
-                <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-12 h-12 rounded-full border-2 border-[#ff6b00] bg-gray-800">
+                <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-[#ff6b00] bg-gray-800 object-contain">
                 <div>
-                    <h1 class="text-lg font-black italic text-[#ff6b00] leading-none uppercase">Distri El Uru</h1>
-                    <p class="text-[8px] font-bold text-gray-500 uppercase">Viedma & Patagones</p>
+                    <h1 class="text-lg md:text-xl font-black italic text-[#ff6b00] leading-none uppercase">Distri El Uru</h1>
+                    <p class="text-[8px] font-bold text-gray-500 uppercase tracking-tighter italic">Viedma & Patagones</p>
                 </div>
             </div>
-            <div class="flex items-center gap-2">
-                <a href="https://www.instagram.com/distri_el_uru/" target="_blank" class="bg-insta text-white p-2.5 rounded-xl text-lg shadow-lg">
-                    <i class="fab fa-instagram"></i>
-                </a>
+            <div class="flex items-center gap-2 md:gap-4">
+                <a href="https://www.instagram.com/distri_el_uru/" target="_blank" class="bg-insta text-white px-3 py-2 rounded-xl text-[9px] font-black uppercase shadow-lg">Instagram</a>
                 <button onclick="document.getElementById('cart').style.display='flex'" class="bg-[#ff6b00] text-white px-5 py-3 rounded-2xl font-black shadow-lg flex items-center gap-2 text-xs">
-                    <i class="fas fa-shopping-bag"></i> 
-                    <span id="count" class="bg-orange-700 px-2 py-0.5 rounded-md">0</span>
+                    <i class="fas fa-shopping-bag text-lg"></i> 
+                    <span id="count" class="bg-orange-700 px-2 py-0.5 rounded-md text-[10px]">0</span>
                 </button>
             </div>
         </div>
     </nav>
 
-    <div class="p-4 max-w-5xl mx-auto space-y-4">
+    <div class="p-4 md:p-6 max-w-5xl mx-auto space-y-4">
         <div class="relative">
             <input type="text" id="search" onkeyup="render()" placeholder="Busca productos..." 
-                class="w-full p-4 pl-12 rounded-2xl bg-gray-800 text-gray-200 font-bold border-none outline-none focus:ring-2 focus:ring-[#ff6b00]">
-            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
+                class="w-full p-4 pl-12 rounded-[1.5rem] bg-gray-800 text-gray-200 font-bold border-none outline-none focus:ring-2 focus:ring-[#ff6b00]">
+            <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-500"></i>
         </div>
         
         <button onclick="toggleNovedades()" id="btn-novedades" class="w-full py-3 rounded-xl bg-gray-800 border border-[#ff6b00] text-[#ff6b00] font-black text-[10px] uppercase flex items-center justify-center gap-2 transition-all">
@@ -81,9 +89,38 @@
 
     <div class="px-4 max-w-5xl mx-auto flex gap-2 overflow-x-auto pb-6 no-scrollbar" id="category-filters"></div>
 
-    <main id="catalogo" class="p-4 max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-24"></main>
+    <main id="catalogo" class="p-4 max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 pb-24"></main>
 
-    <a href="https://wa.me/5492920248292" target="_blank" class="fixed bottom-6 left-6 z-[100] bg-green-500 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-all flex items-center justify-center">
+    <footer class="bg-gray-900 text-gray-300 mt-12 border-t-4 border-[#ff6b00]">
+        <div class="max-w-6xl mx-auto px-6 py-12">
+            <div class="grid md:grid-cols-3 gap-12">
+                <div class="text-center md:text-left">
+                    <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-20 h-20 rounded-full mx-auto md:mx-0 mb-6 border-2 border-gray-700">
+                    <h2 class="text-2xl font-black italic uppercase text-[#ff6b00]">Distri El Uru</h2>
+                    <div class="mt-6 flex justify-center md:justify-start gap-4">
+                        <a href="https://www.instagram.com/distri_el_uru/" target="_blank" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-[#ff6b00] transition-colors"><i class="fab fa-instagram"></i></a>
+                        <a href="https://wa.me/5492920248292" target="_blank" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-green-600 transition-colors"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div class="bg-gray-800 p-5 rounded-3xl border border-gray-700">
+                        <h3 class="text-[10px] font-black uppercase text-gray-500 mb-2">Horarios de Entrega</h3>
+                        <p class="font-bold text-gray-200 uppercase">Lunes a Sábados</p>
+                        <p class="text-xs text-gray-400 italic">Viedma y Patagones</p>
+                    </div>
+                    <div class="bg-gray-800 p-5 rounded-3xl border border-gray-700">
+                        <h3 class="text-[10px] font-black uppercase text-green-500 mb-2">Pedidos</h3>
+                        <p class="text-[11px] text-gray-400">Cerramos pedidos diarios a las <span class="text-white font-bold">12:30 HS</span> para entrega en el día.</p>
+                    </div>
+                </div>
+                <div class="h-64 rounded-3xl overflow-hidden grayscale opacity-30 border border-gray-700">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d12034.3456789!2d-62.99!3d-40.81!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses-419!2sar!4v1700000000000" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/5492920248292" target="_blank" class="fixed bottom-6 left-6 z-[100] bg-green-500 text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-all">
         <i class="fab fa-whatsapp text-3xl"></i>
     </a>
 
@@ -98,7 +135,7 @@
                 <input type="text" id="user-name" placeholder="Tu Nombre o Local" class="w-full p-4 rounded-xl bg-gray-900 text-gray-200 font-bold border border-gray-800 outline-none">
                 <input type="text" id="user-address" placeholder="Dirección de Entrega" class="w-full p-4 rounded-xl bg-gray-900 text-gray-200 font-bold border border-gray-800 outline-none">
                 <div class="flex justify-between items-center py-2">
-                    <span class="text-gray-500 font-black uppercase text-xs">Total Estimado:</span>
+                    <span class="text-gray-500 font-black uppercase text-xs">Total:</span>
                     <span class="text-[#ff6b00] text-3xl font-black italic">$<span id="total">0</span></span>
                 </div>
                 <button onclick="enviar()" class="w-full bg-green-500 text-white py-5 rounded-2xl font-black text-lg shadow-xl active:scale-95 transition-all">
@@ -133,10 +170,10 @@
             const txt = document.getElementById('status-text');
             
             if (hour < 12 || (hour === 12 && min < 30)) {
-                bar.className = "bg-green-600 text-white py-1.5 px-4 text-center";
+                bar.style.backgroundColor = "#16a34a"; // Verde
                 txt.innerHTML = "🟢 Tomando pedidos para entrega HOY (Cierre 12:30hs)";
             } else {
-                bar.className = "bg-orange-600 text-white py-1.5 px-4 text-center";
+                bar.style.backgroundColor = "#ea580c"; // Naranja
                 txt.innerHTML = "🕒 Tomando pedidos para entrega MAÑANA";
             }
         }
@@ -164,10 +201,7 @@
         function render() {
             const query = document.getElementById('search').value.toLowerCase();
             let filtered = data.filter(p => (activeCat === 'TODOS' || p.cat === activeCat) && p.nom.toLowerCase().includes(query));
-            
-            if(soloNovedades) {
-                filtered = data.filter(p => (p.pre % 10 === 1) && p.nom.toLowerCase().includes(query));
-            }
+            if(soloNovedades) filtered = data.filter(p => (p.pre % 10 === 1) && p.nom.toLowerCase().includes(query));
 
             document.getElementById('catalogo').innerHTML = filtered.map(p => {
                 const q = cart[p.id] || 0;
@@ -181,7 +215,7 @@
                         <p class="text-[#ff6b00] font-black text-lg italic mt-1">$${p.pre.toLocaleString()}</p>
                         <div class="mt-4 bg-gray-900 p-1.5 rounded-2xl flex items-center gap-1">
                             ${q > 0 ? `
-                                <button onclick="add(${p.id},-1)" class="w-9 h-9 bg-gray-700 rounded-xl font-black text-gray-400">-</button>
+                                <button onclick="add(${p.id},-1)" class="w-9 h-9 bg-gray-700 rounded-xl font-black">-</button>
                                 <input type="number" step="0.5" value="${q}" onchange="manualAdd(${p.id}, this.value)" class="qty-input flex-1">
                                 <button onclick="add(${p.id},1)" class="w-9 h-9 bg-[#ff6b00] rounded-xl font-black text-white">+</button>
                             ` : `
@@ -201,7 +235,7 @@
                 const p = data[id]; t += p.pre * q; c += q;
                 html += `<div class="flex items-center gap-4 bg-gray-800 p-3 rounded-2xl"><img src="${p.img}" class="w-10 h-10 object-contain"><div class="flex-1 leading-tight"><h4 class="font-bold text-[9px] uppercase">${p.nom}</h4><p class="text-[#ff6b00] font-black">$${(p.pre * q).toLocaleString()}</p></div><button onclick="add(${id},-${q})"><i class="fas fa-trash text-gray-600"></i></button></div>`;
             });
-            document.getElementById('cart-items').innerHTML = html || '<p class="text-center py-10 opacity-30 uppercase font-black italic text-xs">Tu carrito está vacío</p>';
+            document.getElementById('cart-items').innerHTML = html || '<p class="text-center py-10 opacity-30 uppercase font-black text-xs">Carrito vacío</p>';
             document.getElementById('total').innerText = t.toLocaleString();
             document.getElementById('count').innerText = Number(c.toFixed(2));
             render();
@@ -210,10 +244,10 @@
         function enviar() {
             const n = document.getElementById('user-name').value;
             const d = document.getElementById('user-address').value;
-            if (!n || !d || Object.keys(cart).length === 0) return alert("Ingresa nombre y dirección.");
+            if (!n || !d || Object.keys(cart).length === 0) return alert("Completa tus datos.");
             let m = "*PEDIDO - DISTRI EL URU*%0A👤 " + n + "%0A📍 " + d + "%0A%0A";
             Object.entries(cart).forEach(([id, q]) => m += "✅ *" + q + "* x " + data[id].nom + "%0A");
-            m += "%0A*TOTAL ESTIMADO: $" + document.getElementById('total').innerText + "*";
+            m += "%0A*TOTAL: $" + document.getElementById('total').innerText + "*";
             window.open("https://wa.me/5492920248292?text=" + m);
         }
         load();
