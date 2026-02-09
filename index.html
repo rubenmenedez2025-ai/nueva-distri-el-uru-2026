@@ -9,37 +9,35 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #1a1a1a; color: #e0e0e0; -webkit-tap-highlight-color: transparent; }
+        
+        /* Variables de Tema */
+        body.dark-mode { background-color: #1a1a1a; color: #e0e0e0; }
+        body.light-mode { background-color: #f3f4f6; color: #1f2937; }
+
+        body { font-family: 'Inter', sans-serif; transition: background 0.3s ease; -webkit-tap-highlight-color: transparent; }
         
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* MARQUESINA ORIGINAL */
+        /* MARQUESINA ORIGINAL (Siempre oscura) */
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         .animate-marquee { display: flex; width: max-content; animation: marquee 25s linear infinite; }
+
+        /* TARJETAS SEGUN TEMA */
+        .dark-mode .card-prod { background-color: #262626; border-color: #404040; }
+        .light-mode .card-prod { background-color: #ffffff; border-color: #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
 
         .img-zoom { transition: transform 0.3s ease; }
         .card-prod:hover .img-zoom { transform: scale(1.1); }
 
-        /* NOVEDADES RESALTADAS */
-        .new-arrival { border: 2px solid #ff6b00 !important; box-shadow: 0 0 20px rgba(255, 107, 0, 0.2); }
-        .new-badge {
-            position: absolute; top: -10px; right: 10px; background: #ff6b00; color: white;
-            padding: 3px 12px; border-radius: 8px; font-size: 10px; font-weight: 900;
-            text-transform: uppercase; z-index: 10;
-        }
-
-        .cat-active { background-color: #ff6b00 !important; color: white !important; transform: scale(1.05); }
-        .fav-active { color: #ff4444 !important; }
-
-        /* Animación carrito al agregar */
-        @keyframes cartBounce { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+        .new-arrival { border: 2px solid #ff6b00 !important; }
+        .cat-active { background-color: #ff6b00 !important; color: white !important; }
+        
+        @keyframes cartBounce { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
         .cart-bump { animation: cartBounce 0.4s ease; }
     </style>
 </head>
-<body>
-
-    <div class="bg-gray-900 text-gray-300 py-2 overflow-hidden border-b border-gray-800">
+<body class="dark-mode"> <div class="bg-gray-900 text-gray-300 py-2 overflow-hidden border-b border-gray-800">
         <div class="animate-marquee gap-10 font-black text-[9px] uppercase tracking-[0.2em]">
             <span>🚀 ENVÍOS EN EL DÍA (PEDÍ ANTES DE LAS 12:30HS)</span>
             <span>🔥 PRECIOS MAYORISTAS ACTUALIZADOS</span>
@@ -48,21 +46,26 @@
         </div>
     </div>
 
-    <div id="status-bar" class="py-2 px-4 text-center border-b border-gray-800">
+    <div id="status-bar" class="py-2 px-4 text-center border-b border-gray-800 text-white">
         <p id="status-text" class="text-[10px] font-black uppercase tracking-widest"></p>
     </div>
 
-    <nav class="bg-[#2c2c2c]/95 backdrop-blur-md sticky top-0 z-50 p-3 shadow-lg border-b border-gray-700">
+    <nav class="bg-[#2c2c2c] sticky top-0 z-50 p-3 shadow-lg border-b border-gray-700">
         <div class="max-w-7xl mx-auto flex justify-between items-center gap-4">
             <div class="flex items-center gap-3">
-                <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-12 h-12 md:w-16 md:h-16 rounded-full border-2 border-[#ff6b00] bg-gray-800 object-contain shadow-lg">
+                <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-12 h-12 rounded-full border-2 border-[#ff6b00] bg-gray-800 object-contain shadow-lg">
                 <div>
-                    <h1 class="text-lg md:text-xl font-black italic text-[#ff6b00] leading-none uppercase">Distri El Uru</h1>
-                    <p class="text-[8px] font-bold text-gray-500 uppercase tracking-tighter">Viedma & Patagones</p>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-lg md:text-xl font-black italic text-[#ff6b00] leading-none uppercase">El Uru</h1>
+                        <button onclick="toggleTheme()" class="text-gray-400 hover:text-[#ff6b00] transition-colors">
+                            <i id="theme-icon" class="fas fa-moon"></i>
+                        </button>
+                    </div>
+                    <p class="text-[8px] font-bold text-gray-500 uppercase">Viedma & Patagones</p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <button id="btn-cart" onclick="document.getElementById('cart').style.display='flex'" class="bg-[#ff6b00] text-white px-5 py-3 rounded-2xl font-black shadow-lg flex items-center gap-2 text-xs transition-transform">
+                <button id="btn-cart" onclick="document.getElementById('cart').style.display='flex'" class="bg-[#ff6b00] text-white px-5 py-3 rounded-2xl font-black shadow-lg flex items-center gap-2 text-xs">
                     <i class="fas fa-shopping-bag text-lg"></i> 
                     <span id="count" class="bg-orange-700 px-2 py-0.5 rounded-md text-[10px]">0</span>
                 </button>
@@ -74,11 +77,11 @@
         <div class="relative flex gap-2">
             <div class="relative flex-1">
                 <input type="text" id="search" onkeyup="render()" placeholder="Busca productos..." 
-                    class="w-full p-5 pl-12 rounded-[1.5rem] bg-gray-800 text-gray-200 font-bold border-none outline-none focus:ring-2 focus:ring-[#ff6b00]">
+                    class="w-full p-5 pl-12 rounded-[1.5rem] bg-gray-800 dark:bg-gray-800 text-gray-200 font-bold border-none outline-none focus:ring-2 focus:ring-[#ff6b00]">
                 <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-500"></i>
             </div>
             <button onclick="verFavoritos()" id="btn-favs" class="bg-gray-800 px-5 rounded-[1.5rem] text-gray-400 border border-gray-700">
-                <i class="fas fa-heart text-xl"></i>
+                <i id="fav-icon" class="fas fa-heart text-xl"></i>
             </button>
         </div>
         
@@ -109,17 +112,17 @@
                 </div>
                 <div class="space-y-4">
                     <div class="bg-gray-800 p-5 rounded-3xl border border-gray-700">
-                        <h3 class="text-[10px] font-black uppercase text-gray-500 mb-2">Horarios de Entrega</h3>
-                        <p class="font-bold text-gray-200 uppercase">Lunes a Sábados</p>
-                        <p class="text-xs text-gray-400 italic">Viedma y Patagones</p>
+                        <h3 class="text-[10px] font-black uppercase text-gray-500 mb-2 text-center">Horarios de Entrega</h3>
+                        <p class="font-bold text-gray-200 uppercase text-center">Lunes a Sábados</p>
+                        <p class="text-xs text-gray-400 italic text-center">Viedma y Patagones</p>
                     </div>
                     <div class="bg-gray-800 p-5 rounded-3xl border border-gray-700">
-                        <h3 class="text-[10px] font-black uppercase text-green-500 mb-2">Pedidos</h3>
-                        <p class="text-[11px] text-gray-400">Cerramos pedidos diarios a las <span class="text-white font-bold">12:30 HS</span> para entrega en el día.</p>
+                        <h3 class="text-[10px] font-black uppercase text-green-500 mb-2 text-center">Pedidos</h3>
+                        <p class="text-[11px] text-gray-400 text-center">Cierre de pedidos: <span class="text-white font-bold">12:30 HS</span></p>
                     </div>
                 </div>
                 <div class="h-64 rounded-3xl overflow-hidden grayscale opacity-30 border border-gray-700">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3004.5!2d-62.9!3d-40.8!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDDCsDQ4JzAwLjAiUyA2MsKwNTQnMDAuMCJX!5e0!3m2!1ses!2sar!4v1620000000000!5m2!1ses!2sar" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d12000!2d-62.99!3d-40.81!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses!2sar!4v1" width="100%" height="100%" style="border:0;" loading="lazy"></iframe>
                 </div>
             </div>
         </div>
@@ -132,16 +135,10 @@
                 <button onclick="document.getElementById('cart').style.display='none'" class="text-4xl text-gray-400">×</button>
             </div>
             <div id="cart-items" class="flex-1 overflow-y-auto p-4 space-y-3 bg-[#1e1e1e]"></div>
-            
-            <div id="sugerencia" class="px-6 py-2 bg-orange-950/20 text-[#ff6b00] text-[10px] font-bold text-center border-t border-orange-500/10">
-                ✨ ¿Falta algo más? ¡Revisá los Favoritos!
-            </div>
-
             <div class="p-6 bg-[#1a1a1a] border-t border-gray-800 space-y-4">
-                <input type="text" id="user-name" placeholder="Nombre / Local" class="w-full p-4 rounded-xl bg-gray-900 text-gray-200 font-bold border border-gray-800 outline-none">
-                <input type="text" id="user-address" placeholder="Dirección" class="w-full p-4 rounded-xl bg-gray-900 text-gray-200 font-bold border border-gray-800 outline-none">
+                <input type="text" id="user-name" placeholder="Tu Nombre / Local" class="w-full p-4 rounded-xl bg-gray-900 text-gray-200 font-bold border border-gray-800 outline-none">
                 <div class="flex justify-between items-center">
-                    <span class="text-gray-500 font-black uppercase text-xs">Total:</span>
+                    <span class="text-gray-500 font-black uppercase text-xs tracking-widest">Total:</span>
                     <span class="text-[#ff6b00] text-3xl font-black italic">$<span id="total">0</span></span>
                 </div>
                 <button onclick="enviar()" class="w-full bg-green-500 text-white py-5 rounded-2xl font-black text-lg active:scale-95 transition-all">ENVIAR WHATSAPP</button>
@@ -153,6 +150,18 @@
         const TSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQEemzCvTezcjzZhIUIRIayZ7U81xgssl9G1Vr6Odx7dHGHOARY0iJ-VOL43E17qLVkiIRb0LTurcZU/pub?output=tsv';
         let data = [], cart = {}, activeCat = 'TODOS', soloNovedades = false, soloFavs = false;
         let favoritos = JSON.parse(localStorage.getItem('uru_favs')) || [];
+
+        function toggleTheme() {
+            const body = document.body;
+            const icon = document.getElementById('theme-icon');
+            if (body.classList.contains('dark-mode')) {
+                body.classList.replace('dark-mode', 'light-mode');
+                icon.classList.replace('fa-moon', 'fa-sun');
+            } else {
+                body.classList.replace('light-mode', 'dark-mode');
+                icon.classList.replace('fa-sun', 'fa-moon');
+            }
+        }
 
         async function load() {
             try {
@@ -177,7 +186,7 @@
 
         function verFavoritos() {
             soloFavs = !soloFavs;
-            document.getElementById('btn-favs').classList.toggle('bg-[#ff6b00]', soloFavs);
+            document.getElementById('btn-favs').classList.toggle('bg-red-500', soloFavs);
             document.getElementById('btn-favs').classList.toggle('text-white', soloFavs);
             render();
         }
@@ -189,10 +198,10 @@
             const txt = document.getElementById('status-text');
             if (h < 12 || (h === 12 && m < 30)) {
                 bar.style.backgroundColor = "#16a34a";
-                txt.innerHTML = "🟢 Pedidos para hoy (Hasta 12:30hs)";
+                txt.innerHTML = "🟢 Tomando pedidos para hoy";
             } else {
                 bar.style.backgroundColor = "#ea580c";
-                txt.innerHTML = "🕒 Pedidos para mañana";
+                txt.innerHTML = "🕒 Pedidos para entrega mañana";
             }
         }
 
@@ -207,7 +216,7 @@
             const cats = ['TODOS', ...new Set(data.map(p => p.cat))];
             document.getElementById('category-filters').innerHTML = cats.map(c => `
                 <button onclick="activeCat='${c}'; soloFavs=false; renderCats(); render();" 
-                class="shrink-0 px-6 py-3 rounded-full bg-gray-800 text-[10px] font-black uppercase ${activeCat === c ? 'cat-active' : ''}">${c}</button>
+                class="shrink-0 px-6 py-3 rounded-full bg-gray-800 text-[10px] font-black uppercase text-gray-400 ${activeCat === c ? 'cat-active' : ''}">${c}</button>
             `).join('');
         }
 
@@ -222,23 +231,22 @@
                 const esNuevo = p.pre % 10 === 1;
                 const esFav = favoritos.includes(p.id);
                 return `
-                    <div class="card-prod bg-gray-800 p-4 rounded-[2rem] border border-gray-700 flex flex-col relative ${esNuevo ? 'new-arrival' : ''}">
-                        ${esNuevo ? `<span class="new-badge">¡Nuevo!</span>` : ''}
-                        <button onclick="toggleFav(${p.id})" class="absolute top-4 left-4 z-10 ${esFav ? 'fav-active' : 'text-gray-600'}">
+                    <div class="card-prod p-4 rounded-[2rem] border flex flex-col relative transition-all ${esNuevo ? 'new-arrival' : ''}">
+                        <button onclick="toggleFav(${p.id})" class="absolute top-4 left-4 z-10 ${esFav ? 'text-red-500' : 'text-gray-400 opacity-50'}">
                             <i class="fas fa-heart"></i>
                         </button>
                         <div class="h-32 mb-4 flex items-center justify-center p-2 overflow-hidden">
                             <img src="${p.img}" class="img-zoom max-h-full object-contain" onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'">
                         </div>
-                        <h3 class="text-[10px] font-bold text-white uppercase h-8 overflow-hidden">${p.nom}</h3>
+                        <h3 class="text-[10px] font-bold uppercase h-8 overflow-hidden">${p.nom}</h3>
                         <p class="text-[#ff6b00] font-black text-lg mt-1">$${p.pre.toLocaleString()}</p>
-                        <div class="mt-4 bg-gray-900 p-1 rounded-2xl flex items-center gap-1">
+                        <div class="mt-4 bg-black/10 dark:bg-black/40 p-1 rounded-2xl flex items-center gap-1">
                             ${qty > 0 ? `
-                                <button onclick="add(${p.id},-1)" class="w-9 h-9 bg-gray-700 rounded-xl font-black">-</button>
-                                <span class="flex-1 text-center font-black text-white text-xs">${qty}</span>
-                                <button onclick="add(${p.id},1)" class="w-9 h-9 bg-[#ff6b00] rounded-xl font-black">+</button>
+                                <button onclick="add(${p.id},-1)" class="w-9 h-9 bg-gray-500 rounded-xl font-black text-white">-</button>
+                                <span class="flex-1 text-center font-black text-xs">${qty}</span>
+                                <button onclick="add(${p.id},1)" class="w-9 h-9 bg-[#ff6b00] rounded-xl font-black text-white">+</button>
                             ` : `
-                                <button onclick="add(${p.id},1)" class="w-full bg-[#ff6b00] py-3.5 rounded-xl font-black text-[10px] uppercase">Agregar</button>
+                                <button onclick="add(${p.id},1)" class="w-full bg-[#ff6b00] py-3.5 rounded-xl font-black text-[10px] uppercase text-white">Agregar</button>
                             `}
                         </div>
                     </div>`;
@@ -259,9 +267,9 @@
             let t = 0, c = 0, html = '';
             Object.entries(cart).forEach(([id, q]) => {
                 const p = data[id]; t += p.pre * q; c += q;
-                html += `<div class="flex items-center gap-4 bg-gray-800 p-3 rounded-2xl border border-gray-700"><img src="${p.img}" class="w-10 h-10 object-contain"><div class="flex-1"><h4 class="font-bold text-[9px] uppercase">${p.nom}</h4><p class="text-[#ff6b00] font-black">$${(p.pre * q).toLocaleString()}</p></div><button onclick="add(${id},-${q})"><i class="fas fa-trash-alt text-gray-600"></i></button></div>`;
+                html += `<div class="flex items-center gap-4 bg-gray-800 p-3 rounded-2xl border border-gray-700 text-white"><img src="${p.img}" class="w-10 h-10 object-contain"><div class="flex-1 leading-tight"><h4 class="font-bold text-[9px] uppercase">${p.nom}</h4><p class="text-[#ff6b00] font-black">$${(p.pre * q).toLocaleString()}</p></div><button onclick="add(${id},-${q})"><i class="fas fa-trash-alt"></i></button></div>`;
             });
-            document.getElementById('cart-items').innerHTML = html || '<p class="text-center py-10 opacity-30 text-xs">Vacio</p>';
+            document.getElementById('cart-items').innerHTML = html || '<p class="text-center py-10 opacity-30 text-white uppercase font-black text-xs">Carrito Vacío</p>';
             document.getElementById('total').innerText = t.toLocaleString();
             document.getElementById('count').innerText = c;
             render();
@@ -269,14 +277,13 @@
 
         function compartir() {
             if (navigator.share) navigator.share({ title: 'DISTRI EL URU', url: window.location.href });
-            else alert("Copia el link de arriba");
+            else alert("Copia el link de la barra de direcciones.");
         }
 
         function enviar() {
             const n = document.getElementById('user-name').value;
-            const d = document.getElementById('user-address').value;
-            if (!n || !d || Object.keys(cart).length === 0) return alert("Faltan datos.");
-            let m = "*PEDIDO - DISTRI EL URU*%0A👤 " + n + "%0A📍 " + d + "%0A%0A";
+            if (!n || Object.keys(cart).length === 0) return alert("Faltan datos.");
+            let m = "*PEDIDO - DISTRI EL URU*%0A👤 " + n + "%0A%0A";
             Object.entries(cart).forEach(([id, q]) => m += "✅ *" + q + "* x " + data[id].nom + "%0A");
             m += "%0A*TOTAL: $" + document.getElementById('total').innerText + "*";
             window.open("https://wa.me/5492920248292?text=" + m);
