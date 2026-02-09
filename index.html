@@ -27,6 +27,7 @@
         @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
         .card-prod { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-prod:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
         .card-prod:hover img { transform: scale(1.1); }
         .img-zoom { transition: transform 0.4s ease; }
         
@@ -55,6 +56,13 @@
             animation: bounce 2s infinite;
         }
         @keyframes bounce { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-3px); } }
+
+        .btn-added { background-color: #22c55e !important; transform: scale(1.05); }
+
+        /* Estilos del Mínimo de Compra */
+        #min-purchase-bar { height: 6px; background: #333; border-radius: 10px; overflow: hidden; margin: 10px 0; }
+        #min-purchase-fill { height: 100%; background: #ff6b00; width: 0%; transition: width 0.5s ease; }
+        .btn-disabled { background-color: #4b5563 !important; opacity: 0.5; cursor: not-allowed; pointer-events: none; }
     </style>
 </head>
 <body class="dark-mode">
@@ -100,10 +108,10 @@
                 <input type="text" id="search" onkeyup="render()" placeholder="Busca productos..." class="w-full p-5 pl-12 rounded-[1.5rem] bg-gray-800 text-gray-200 font-bold border-none outline-none focus:ring-2 focus:ring-[#ff6b00]">
                 <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-500"></i>
             </div>
-            <button onclick="verFavoritos()" id="btn-favs" class="bg-gray-800 px-5 rounded-[1.5rem] text-gray-400 border border-gray-700 active:scale-90 transition-transform">
+            <button onclick="verFavoritos()" id="btn-favs" title="Favoritos" class="bg-gray-800 px-5 rounded-[1.5rem] text-gray-400 border border-gray-700 active:scale-90 transition-transform">
                 <i class="fas fa-heart text-xl"></i>
             </button>
-            <button onclick="compartirCatalogo()" class="bg-gray-800 px-5 rounded-[1.5rem] text-[#ff6b00] border border-gray-700 active:scale-90 transition-transform">
+            <button onclick="compartirCatalogo()" title="Compartir Catálogo" class="bg-gray-800 px-5 rounded-[1.5rem] text-[#ff6b00] border border-gray-700 active:scale-90 transition-transform">
                 <i class="fas fa-share-alt text-xl"></i>
             </button>
         </div>
@@ -113,13 +121,12 @@
 
     <div id="catalog-anchor"></div>
     <main id="catalogo" class="p-4 max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 pb-24">
-        <div class="skeleton h-64"></div><div class="skeleton h-64"></div>
+        <div class="skeleton h-72"></div><div class="skeleton h-72"></div>
     </main>
 
     <footer class="bg-gray-900 text-gray-300 mt-12 border-t-4 border-[#ff6b00]">
         <div class="max-w-6xl mx-auto px-6 py-16">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-12 items-start">
-                
                 <div class="space-y-6 text-center md:text-left">
                     <div class="flex items-center justify-center md:justify-start gap-4">
                         <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-20 h-20 rounded-full border-4 border-gray-800 shadow-2xl">
@@ -152,10 +159,6 @@
                                 <span class="text-gray-400">ENTREGAS:</span>
                                 <span class="text-white">EN EL DÍA</span>
                             </li>
-                            <li class="flex justify-between items-center">
-                                <span class="text-gray-400">ZONA:</span>
-                                <span class="text-white text-[10px]">VIEDMA Y PATAGONES</span>
-                            </li>
                         </ul>
                     </div>
                 </div>
@@ -165,18 +168,8 @@
                         <i class="fas fa-map-marker-alt"></i> Ubicación Estratégica
                     </h3>
                     <div class="h-56 rounded-[2.5rem] overflow-hidden grayscale hover:grayscale-0 transition-all duration-700 border-2 border-gray-800 shadow-2xl">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12048.66567545931!2d-62.9961612!3d-40.8126965!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95f16f9f30e62035%3A0x67a3a827727c00e6!2sViedma%2C%20R%C3%ADo%20Negro!5e0!3m2!1ses-419!2sar!4v1700000000000!5m2!1ses-419!2sar" width="100%" height="100%" style="border:0;" loading="lazy"></iframe>
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12061.341103606622!2d-62.9972323!3d-40.8113945!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95ed353386762c4b%3A0xe54d6f8303d2e9d2!2sViedma%2C%20R%C3%ADo%20Negro!5e0!3m2!1ses-419!2sar!4v1700000000000!5m2!1ses-419!2sar" width="100%" height="100%" style="border:0;" loading="lazy"></iframe>
                     </div>
-                </div>
-
-            </div>
-            
-            <div class="mt-16 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4">
-                <p class="text-[10px] font-black text-gray-600 uppercase tracking-[0.3em]">© 2024 DISTRI EL URU | Viedma - Patagones</p>
-                <div class="flex gap-6 opacity-30">
-                    <i class="fab fa-cc-visa text-2xl"></i>
-                    <i class="fab fa-cc-mastercard text-2xl"></i>
-                    <i class="fas fa-money-bill-wave text-2xl"></i>
                 </div>
             </div>
         </div>
@@ -187,7 +180,7 @@
             <div class="p-6 border-b border-gray-800 flex justify-between items-center bg-gray-900 text-gray-200">
                 <div>
                     <h2 class="text-xl font-black uppercase italic text-[#ff6b00]">Mi Pedido</h2>
-                    <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Revisá antes de enviar</p>
+                    <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Mínimo de compra: $25.000</p>
                 </div>
                 <div class="flex gap-4 items-center">
                     <button onclick="vaciarCarrito()" class="text-[10px] font-black text-red-500 uppercase hover:underline underline-offset-4">Vaciar</button>
@@ -198,16 +191,21 @@
             <div id="cart-items" class="flex-1 overflow-y-auto p-4 space-y-3 bg-[#1e1e1e]"></div>
             
             <div class="p-6 bg-[#1a1a1a] border-t border-gray-800 space-y-3 shadow-[0_-20px_40px_rgba(0,0,0,0.5)]">
-                <input type="text" id="user-name" oninput="saveUserData()" placeholder="Tu Nombre / Nombre del Local" class="w-full p-4 rounded-2xl bg-gray-900 text-gray-200 font-bold border border-gray-800 outline-none focus:border-[#ff6b00] transition-colors">
-                <input type="text" id="user-address" oninput="saveUserData()" placeholder="Dirección de Envío" class="w-full p-4 rounded-2xl bg-gray-900 text-gray-200 font-bold border border-gray-800 outline-none focus:border-[#ff6b00] transition-colors">
+                <div id="min-warning" class="bg-gray-800 p-3 rounded-xl border border-gray-700">
+                    <p id="min-text" class="text-[10px] font-black uppercase text-center mb-1 text-gray-400"></p>
+                    <div id="min-purchase-bar"><div id="min-purchase-fill"></div></div>
+                </div>
+
+                <input type="text" id="user-name" oninput="saveUserData()" placeholder="Tu Nombre / Nombre del Local" class="w-full p-4 rounded-2xl bg-gray-900 text-gray-200 font-bold border border-gray-800 outline-none focus:border-[#ff6b00] transition-colors text-sm">
+                <input type="text" id="user-address" oninput="saveUserData()" placeholder="Dirección de Envío" class="w-full p-4 rounded-2xl bg-gray-900 text-gray-200 font-bold border border-gray-800 outline-none focus:border-[#ff6b00] transition-colors text-sm">
                 
                 <div class="flex justify-between items-center py-2 px-1">
                     <span class="text-gray-500 font-black uppercase text-xs">Total del Pedido:</span>
                     <span class="text-[#ff6b00] text-3xl font-black italic">$<span id="total">0</span></span>
                 </div>
                 
-                <button onclick="enviarPedido()" class="w-full bg-green-500 text-white py-5 rounded-2xl font-black text-lg active:scale-95 transition-all shadow-xl flex items-center justify-center gap-3">
-                    <i class="fab fa-whatsapp text-2xl"></i> FINALIZAR POR WHATSAPP
+                <button id="btn-whatsapp" onclick="enviarPedido()" class="btn-disabled w-full bg-green-500 text-white py-5 rounded-2xl font-black text-lg active:scale-95 transition-all shadow-xl flex items-center justify-center gap-3">
+                    <i class="fab fa-whatsapp text-2xl"></i> FINALIZAR PEDIDO
                 </button>
             </div>
         </div>
@@ -219,13 +217,14 @@
 
     <script>
         const TSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQEemzCvTezcjzZhIUIRIayZ7U81xgssl9G1Vr6Odx7dHGHOARY0iJ-VOL43E17qLVkiIRb0LTurcZU/pub?output=tsv';
+        const MIN_COMPRA = 25000;
         let data = [], cart = {}, activeCat = 'TODOS', soloFavs = false;
         let favoritos = JSON.parse(localStorage.getItem('uru_favs')) || [];
 
-        // Recuperar datos del usuario guardados
         window.onload = () => {
             document.getElementById('user-name').value = localStorage.getItem('uru_name') || '';
             document.getElementById('user-address').value = localStorage.getItem('uru_address') || '';
+            update(); // Para inicializar barra de progreso
         };
 
         function saveUserData() {
@@ -281,7 +280,7 @@
         function renderCats() {
             const cats = ['TODOS', ...new Set(data.map(p => p.cat))];
             document.getElementById('category-filters').innerHTML = cats.map(c => `
-                <button onclick="activeCat='${c}'; renderCats(); render(); document.getElementById('catalog-anchor').scrollIntoView({behavior:'smooth'});" 
+                <button onclick="activeCat='${c}'; renderCats(); render();" 
                 class="shrink-0 px-6 py-3 rounded-full bg-gray-800 text-[10px] font-black uppercase text-gray-400 transition-all ${activeCat === c ? 'cat-active' : ''}">${c}</button>
             `).join('');
         }
@@ -304,25 +303,55 @@
                         <h3 class="text-[10px] font-bold uppercase h-8 overflow-hidden">${p.nom}</h3>
                         <p class="text-[#ff6b00] font-black text-lg mt-1">$${p.pre.toLocaleString()}</p>
                         <div class="mt-4 bg-black/5 dark:bg-black/20 p-1 rounded-2xl flex items-center gap-1">
-                            <button onclick="add(${p.id},1)" class="w-full bg-[#ff6b00] py-3.5 rounded-xl font-black text-[10px] uppercase text-white active:scale-95 transition-all">${qty > 0 ? 'Agregado ('+qty+')' : 'Agregar'}</button>
+                            <button id="btn-p-${p.id}" onclick="add(${p.id},1)" class="w-full bg-[#ff6b00] py-3.5 rounded-xl font-black text-[10px] uppercase text-white active:scale-95 transition-all">${qty > 0 ? 'Agregado ('+qty+')' : 'Agregar'}</button>
                             ${qty > 0 ? `<button onclick="add(${p.id},-1)" class="bg-gray-700 text-white w-10 h-10 rounded-xl active:scale-90 transition-transform">-</button>` : ''}
                         </div>
                     </div>`;
             }).join('');
         }
 
-        window.add = (id, n) => { cart[id] = Math.max(0, (cart[id] || 0) + n); if (cart[id] === 0) delete cart[id]; update(); };
+        window.add = (id, n) => { 
+            cart[id] = Math.max(0, (cart[id] || 0) + n); 
+            if (cart[id] === 0) delete cart[id]; 
+            const btn = document.getElementById('btn-p-'+id);
+            if(btn && n > 0) { btn.classList.add('btn-added'); setTimeout(() => btn.classList.remove('btn-added'), 300); }
+            update(); 
+        };
+
         function vaciarCarrito() { if(confirm("¿Estás seguro que querés vaciar todo el pedido?")) { cart = {}; update(); } }
         
         function update() {
             let t = 0, c = 0, html = '';
             Object.entries(cart).forEach(([id, q]) => {
                 const p = data[id]; t += p.pre * q; c += q;
-                html += `<div class="flex items-center gap-4 bg-gray-800 p-3 rounded-2xl text-white border border-gray-700"><img src="${p.img}" class="w-10 h-10 object-contain"><div class="flex-1 leading-tight"><h4 class="font-bold text-[9px] uppercase">${p.nom}</h4><p class="text-[#ff6b00] font-black">$${(p.pre * q).toLocaleString()}</p></div><button onclick="add(${id},-${q})"><i class="fas fa-trash-alt text-gray-600"></i></button></div>`;
+                html += `
+                <div class="flex items-center gap-4 bg-gray-800 p-3 rounded-2xl text-white border border-gray-700">
+                    <img src="${p.img}" class="w-10 h-10 object-contain">
+                    <div class="flex-1 leading-tight"><h4 class="font-bold text-[9px] uppercase">${p.nom}</h4><p class="text-[#ff6b00] font-black">$${(p.pre * q).toLocaleString()}</p></div>
+                    <div class="flex items-center gap-2"><span class="text-[10px] font-bold">x${q}</span><button onclick="add(${id},-${q})" class="w-8 h-8 flex items-center justify-center bg-red-500/20 text-red-500 rounded-lg"><i class="fas fa-trash-alt text-xs"></i></button></div>
+                </div>`;
             });
+            
             document.getElementById('cart-items').innerHTML = html || '<p class="text-center py-10 opacity-30 text-white text-xs font-bold uppercase">Tu carrito está vacío</p>';
             document.getElementById('total').innerText = t.toLocaleString();
             document.getElementById('count').innerText = c;
+
+            // Lógica de Mínimo de Compra
+            const perc = Math.min(100, (t / MIN_COMPRA) * 100);
+            document.getElementById('min-purchase-fill').style.width = perc + '%';
+            const btnW = document.getElementById('btn-whatsapp');
+            const minTxt = document.getElementById('min-text');
+
+            if (t < MIN_COMPRA) {
+                btnW.classList.add('btn-disabled');
+                minTxt.innerHTML = `Faltan <span class="text-white">$${(MIN_COMPRA - t).toLocaleString()}</span> para el mínimo`;
+                minTxt.classList.remove('text-green-500');
+            } else {
+                btnW.classList.remove('btn-disabled');
+                minTxt.innerHTML = `<i class="fas fa-check-circle"></i> ¡Mínimo alcanzado!`;
+                minTxt.classList.add('text-green-500');
+            }
+
             render();
         }
 
