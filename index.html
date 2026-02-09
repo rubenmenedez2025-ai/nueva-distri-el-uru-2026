@@ -14,14 +14,13 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #1a1a1a; -webkit-tap-highlight-color: transparent; color: #e0e0e0; }
         
-        /* Scrollbar invisible pero funcional */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; overflow-x: auto; scroll-behavior: smooth; }
 
-        /* Animación suave para el carrusel de marcas */
+        /* Animación infinita mejorada */
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        .animate-marquee { display: flex; width: max-content; animation: marquee 30s linear infinite; }
-        .animate-marquee:hover { animation-play-state: paused; } /* Se detiene al pasar el mouse para que puedan ver mejor */
+        .marquee-content { display: flex; width: max-content; animation: marquee 30s linear infinite; }
+        .marquee-container:hover .marquee-content { animation-play-state: paused; } /* Se pausa al tocar/pasar mouse */
         
         .pulse-green { animation: pulse 2s infinite; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); } 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); } }
@@ -61,24 +60,17 @@
             <div class="hidden lg:flex items-center gap-8 border-x px-8 border-gray-700 h-12">
                 <div class="flex items-center gap-3">
                     <div class="w-3 h-3 bg-green-500 rounded-full pulse-green"></div>
-                    <div class="leading-none">
-                        <p class="text-[10px] font-black text-gray-300 uppercase">Atención Online</p>
-                        <p class="text-[9px] text-green-400 font-bold uppercase mt-1 italic">Vendedores listos</p>
-                    </div>
+                    <div class="leading-none text-[10px] font-black uppercase text-gray-300">Atención Online</div>
                 </div>
                 <div class="flex items-center gap-3">
-                    <i class="fas fa-shield-check text-[#ff6b00] text-xl"></i>
-                    <div class="leading-none">
-                        <p class="text-[10px] font-black text-gray-300 uppercase">Compra Segura</p>
-                        <p class="text-[9px] text-gray-400 font-bold uppercase mt-1 italic">Venta Garantizada</p>
-                    </div>
+                    <i class="fas fa-truck text-[#ff6b00]"></i>
+                    <div class="leading-none text-[10px] font-black uppercase text-gray-300">Envíos en el día</div>
                 </div>
             </div>
 
-            <div class="flex items-center gap-2 md:gap-4">
-                <button id="btn-repetir" onclick="repetirPedido()" style="display:none;" class="hidden md:flex items-center gap-2 bg-gray-700 hover:bg-gray-600 p-2.5 rounded-xl border border-gray-600 transition-all text-gray-300">
+            <div class="flex items-center gap-2">
+                <button id="btn-repetir" onclick="repetirPedido()" style="display:none;" class="bg-gray-700 p-2.5 rounded-xl border border-gray-600 text-gray-300 hidden md:block">
                     <i class="fas fa-redo text-xs"></i>
-                    <span class="text-[9px] font-black uppercase">Repetir Pedido</span>
                 </button>
                 <button onclick="document.getElementById('cart').style.display='flex'" class="bg-[#ff6b00] text-white px-5 py-3 rounded-2xl font-black shadow-lg flex items-center gap-2 text-xs active:scale-90 transition-transform">
                     <i class="fas fa-shopping-bag text-lg"></i> 
@@ -89,88 +81,65 @@
     </nav>
 
     <div id="shipping-promo" class="bg-gray-800 border-b border-gray-700 p-2 text-center" style="display:none;">
-        <p class="text-[10px] font-black text-gray-300 uppercase mb-1" id="shipping-text">¡Sumá $15.000 para Envío Prioritario!</p>
+        <p class="text-[10px] font-black text-gray-300 uppercase mb-1" id="shipping-text">¡Sumá para Envío Prioritario!</p>
         <div class="max-w-xs mx-auto bg-gray-700 h-1.5 rounded-full overflow-hidden">
             <div id="shipping-bar" class="progress-bar bg-[#ff6b00] h-full" style="width: 0%"></div>
         </div>
     </div>
 
     <div class="p-4 md:p-6 max-w-5xl mx-auto">
-        <div class="relative group">
-            <input type="text" id="search" onkeyup="render()" placeholder="Busca productos, marcas o categorías..." 
-                class="w-full p-4 pl-12 rounded-[1.5rem] border-none shadow-xl focus:ring-2 focus:ring-[#ff6b00] outline-none bg-gray-800 text-gray-200 font-bold">
-            <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-500"></i>
-        </div>
+        <input type="text" id="search" onkeyup="render()" placeholder="Busca tu producto..." 
+            class="w-full p-4 pl-6 rounded-[1.5rem] bg-gray-800 border-none shadow-xl text-gray-200 font-bold focus:ring-2 focus:ring-[#ff6b00] outline-none">
     </div>
 
-    <div class="mb-4 bg-[#2c2c2c] py-4 border-y border-gray-700 overflow-hidden group cursor-grab active:cursor-grabbing">
-        <div class="no-scrollbar flex overflow-x-auto select-none">
-            <div id="marcas-track" class="flex items-center gap-12 px-8">
+    <div class="mb-4 bg-[#2c2c2c] py-4 border-y border-gray-700 marquee-container overflow-hidden">
+        <div class="no-scrollbar overflow-x-auto">
+            <div id="marcas-track" class="marquee-content items-center gap-12 px-8">
                 </div>
         </div>
     </div>
 
-    <div class="px-4 max-w-5xl mx-auto">
-        <div id="category-filters" class="flex gap-2 overflow-x-auto pb-6 no-scrollbar"></div>
-    </div>
+    <div class="px-4 max-w-5xl mx-auto flex gap-2 overflow-x-auto pb-6 no-scrollbar" id="category-filters"></div>
 
     <main id="catalogo" class="p-4 max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 pb-12"></main>
 
     <footer class="bg-gray-900 text-gray-300 mt-12 py-12 px-6 border-t-4 border-[#ff6b00]">
-        <div class="max-w-6xl mx-auto">
-            <div class="grid md:grid-cols-3 gap-10 text-center md:text-left">
-                <div>
-                    <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-20 h-20 mx-auto md:mx-0 rounded-full bg-gray-800 border-2 border-gray-700 mb-4">
-                    <h2 class="text-2xl font-black italic uppercase text-[#ff6b00]">Distri El Uru</h2>
-                    <p class="text-gray-500 text-[10px] font-black uppercase tracking-widest mt-1">Viedma & Carmen de Patagones</p>
-                </div>
-                <div class="space-y-4">
-                    <div class="bg-gray-800 p-4 rounded-3xl border border-gray-700">
-                        <p class="text-[10px] font-black text-gray-500 uppercase mb-1">Horario de Atención</p>
-                        <p class="text-lg font-bold">Lunes a Sábados</p>
-                    </div>
-                    <div class="bg-gray-800 p-4 rounded-3xl border-2 border-green-900/30">
-                        <p class="text-[10px] font-black text-green-500 uppercase mb-1">Cierre de Pedidos</p>
-                        <p class="text-lg font-bold italic uppercase">12:30 HS</p>
-                    </div>
-                </div>
-                <div class="h-48 bg-gray-800 rounded-3xl overflow-hidden grayscale opacity-40 border border-gray-700">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12000!2d-63!3d-40!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDDCsDAwJzAwLjAiUyA2M8KwMDAnMDAuMCJX!5e0!3m2!1ses!2sar!4v1700000000000" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-                </div>
+        <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-10">
+            <div class="text-center md:text-left">
+                <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-16 h-16 mx-auto md:mx-0 rounded-full mb-4 border border-gray-700">
+                <h2 class="text-xl font-black uppercase text-[#ff6b00]">Distri El Uru</h2>
+                <p class="text-[10px] text-gray-500 uppercase font-bold">Viedma & Patagones</p>
             </div>
-            <div class="mt-12 text-center pt-8 border-t border-gray-800">
-                <p class="text-[8px] opacity-30 uppercase tracking-[0.4em]">© 2026 Distri El Uru - Viedma, Río Negro</p>
+            <div class="bg-gray-800 p-5 rounded-3xl border border-gray-700 text-center">
+                <p class="text-[10px] font-black text-gray-500 uppercase">Horarios</p>
+                <p class="font-bold">Lunes a Sábados</p>
+                <p class="text-green-500 font-black text-sm uppercase mt-2">Cierre: 12:30hs</p>
+            </div>
+            <div class="h-40 bg-gray-800 rounded-3xl overflow-hidden grayscale border border-gray-700">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12044.83857321683!2d-63.0044573!3d-40.8126831!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x959792078659d57d%3A0xc3f600f72382f7e7!2sViedma%2C%20R%C3%ADo%20Negro!5e0!3m2!1ses-419!2sar!4v1700000000000!5m2!1ses-419!2sar" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
             </div>
         </div>
     </footer>
 
-    <a href="https://wa.me/5492920248292" target="_blank" class="fixed bottom-6 left-6 z-[100] bg-green-500 text-white p-4 rounded-full shadow-2xl hover:scale-110 active:scale-90 transition-all pulse-green">
+    <a href="https://wa.me/5492920248292" class="fixed bottom-6 left-6 z-[100] bg-green-500 text-white p-4 rounded-full shadow-2xl pulse-green">
         <i class="fab fa-whatsapp text-3xl"></i>
     </a>
 
     <div id="cart" style="display:none;" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex justify-end">
-        <div class="bg-[#1a1a1a] w-full max-w-md h-full flex flex-col shadow-2xl animate-fade-in">
-            <div class="p-6 border-b flex justify-between items-center bg-gray-900 text-gray-200">
-                <h2 class="text-xl font-black uppercase italic">Mi Pedido</h2>
-                <button onclick="document.getElementById('cart').style.display='none'" class="text-4xl text-gray-400">×</button>
+        <div class="bg-[#1a1a1a] w-full max-w-md h-full flex flex-col">
+            <div class="p-6 bg-gray-900 flex justify-between items-center">
+                <h2 class="font-black uppercase italic">Tu Pedido</h2>
+                <button onclick="document.getElementById('cart').style.display='none'" class="text-3xl">&times;</button>
             </div>
-            <div id="cart-items" class="flex-1 overflow-y-auto p-4 space-y-3 bg-[#2c2c2c]"></div>
-            
-            <div id="suggestion-box" class="p-4 bg-gray-800 border-t border-gray-700" style="display:none;">
-                <p class="text-[9px] font-black text-gray-400 uppercase mb-2">💡 ¿Te falta algo para completar?</p>
-                <div id="suggestion-item"></div>
-            </div>
-
-            <div class="p-6 bg-[#1a1a1a] border-t border-gray-700 space-y-3">
-                <input type="text" id="user-name" placeholder="Nombre / Local" class="w-full p-4 rounded-xl border-2 border-gray-700 bg-gray-800 text-gray-200 font-bold outline-none focus:border-[#ff6b00]">
-                <input type="text" id="user-address" placeholder="Dirección de entrega" class="w-full p-4 rounded-xl border-2 border-gray-700 bg-gray-800 text-gray-200 font-bold outline-none focus:border-[#ff6b00]">
-                <div class="flex justify-between items-center font-black pt-4">
-                    <span class="text-gray-500 text-xs uppercase">Total:</span>
-                    <span class="text-[#ff6b00] text-3xl font-black italic">$<span id="total">0</span></span>
+            <div id="cart-items" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
+            <div class="p-6 border-t border-gray-700 space-y-3">
+                <input type="text" id="user-name" placeholder="Nombre" class="w-full p-3 rounded-xl bg-gray-800 border-none">
+                <input type="text" id="user-address" placeholder="Dirección" class="w-full p-3 rounded-xl bg-gray-800 border-none">
+                <div class="flex justify-between font-black text-xl">
+                    <span>Total:</span>
+                    <span class="text-[#ff6b00]">$<span id="total">0</span></span>
                 </div>
-                <button onclick="enviar()" class="w-full bg-green-500 text-white py-5 rounded-[1.5rem] font-black text-lg shadow-xl flex items-center justify-center gap-3 active:scale-95 transition-all">
-                    <i class="fab fa-whatsapp text-2xl"></i> CONFIRMAR PEDIDO
-                </button>
+                <button onclick="enviar()" class="w-full bg-green-500 py-4 rounded-2xl font-black uppercase shadow-lg">Enviar WhatsApp</button>
             </div>
         </div>
     </div>
@@ -190,8 +159,8 @@
 
         async function load() {
             const track = document.getElementById('marcas-track');
-            // Repetimos marcas para efecto infinito al scrollear
-            track.innerHTML = marcas.map(m => `<img src="${m}" class="h-10 md:h-12 object-contain min-w-[120px] grayscale hover:grayscale-0 transition-all pointer-events-none">`).join('');
+            // Repetimos para el efecto infinito
+            track.innerHTML = marcas.concat(marcas).map(m => `<img src="${m}" class="h-10 md:h-12 object-contain min-w-[120px] px-2">`).join('');
             
             try {
                 const res = await fetch(TSV + '&t=' + Date.now());
@@ -199,25 +168,21 @@
                 const lines = text.split(/\r?\n/).slice(1);
                 data = lines.map((l, i) => {
                     const c = l.split('\t');
-                    const pre = (c[1]||'').replace(/\D/g,'');
                     return { 
-                        id: i, nom: (c[0]||'').trim(), pre: pre ? parseInt(pre) : 0, 
-                        cat: (c[2]||'VARIOS').trim().toUpperCase(), img: (c[3]||'').trim(),
-                        tags: (c[4]||'').trim().toUpperCase().split(',').map(t => t.trim()).filter(t => t)
+                        id: i, nom: (c[0]||'').trim(), pre: parseInt((c[1]||'').replace(/\D/g,'')) || 0, 
+                        cat: (c[2]||'VARIOS').trim().toUpperCase(), img: (c[3]||'').trim()
                     };
                 }).filter(p => p.nom !== "");
                 
-                if(localStorage.getItem('last_cart')) document.getElementById('btn-repetir').style.display = 'flex';
+                if(localStorage.getItem('last_cart')) document.getElementById('btn-repetir').style.display = 'block';
                 renderCats(); render();
             } catch (e) { console.error(e); }
         }
 
-        window.repetirPedido = () => { cart = JSON.parse(localStorage.getItem('last_cart')); update(); document.getElementById('cart').style.display='flex'; };
-
         function renderCats() {
             const cats = ['TODOS', ...new Set(data.map(p => p.cat))];
             document.getElementById('category-filters').innerHTML = cats.map(c => `
-                <button onclick="filter('${c}')" class="shrink-0 px-6 py-3 rounded-full bg-gray-800 text-gray-400 font-black text-[10px] shadow-sm border border-gray-700 uppercase transition-all ${activeCat === c ? 'cat-active' : ''}">${c}</button>
+                <button onclick="filter('${c}')" class="shrink-0 px-6 py-3 rounded-full bg-gray-800 text-[10px] font-black uppercase transition-all ${activeCat === c ? 'cat-active' : ''}">${c}</button>
             `).join('');
         }
 
@@ -225,59 +190,45 @@
 
         function render() {
             const query = document.getElementById('search').value.toLowerCase();
-            const filtered = data.filter(p => (activeCat === 'TODOS' || p.cat === activeCat) && (p.nom.toLowerCase().includes(query)));
+            const filtered = data.filter(p => (activeCat === 'TODOS' || p.cat === activeCat) && p.nom.toLowerCase().includes(query));
             document.getElementById('catalogo').innerHTML = filtered.map(p => {
                 const q = cart[p.id] || 0;
-                const agotado = p.pre === 0;
-                let tagsHtml = p.tags.includes('OFERTA') ? `<span class="bg-red-600 text-white font-black px-2 py-1 rounded-md text-[7px] absolute top-3 left-3 z-10">OFERTA</span>` : '';
-
                 return `
-                <div class="bg-gray-800 p-4 rounded-[2rem] shadow-sm border border-gray-700 flex flex-col relative animate-fade-in ${agotado ? 'sold-out' : ''}">
-                    ${tagsHtml}
-                    <div class="h-32 mb-4 flex items-center justify-center bg-gray-900 rounded-[1.5rem] p-4">
-                        <img src="${p.img}" class="max-h-full max-w-full object-contain" onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'">
-                    </div>
-                    <div class="flex-1">
-                        <span class="text-[8px] font-black text-gray-500 uppercase tracking-widest">${p.cat}</span>
-                        <h3 class="text-[10px] font-bold text-gray-200 uppercase leading-tight h-8 overflow-hidden mt-1">${p.nom}</h3>
-                        <p class="text-[#ff6b00] font-black text-lg mt-1 italic">${agotado ? '---' : '$'+p.pre.toLocaleString('es-AR')}</p>
-                    </div>
-                    <div class="mt-4">
-                        ${!agotado ? `
-                            <div class="flex items-center gap-1 bg-gray-900 p-1.5 rounded-2xl">
-                                ${q > 0 ? `
-                                    <button onclick="add(${p.id},-1)" class="w-9 h-9 bg-gray-700 rounded-xl font-black text-gray-400 shadow-sm text-xl">-</button>
-                                    <div class="flex-1 text-center"><input type="number" step="0.5" value="${q}" onchange="manualAdd(${p.id}, this.value)" class="qty-input"></div>
-                                    <button onclick="add(${p.id},1)" class="w-9 h-9 bg-[#ff6b00] text-white rounded-xl font-black shadow-lg text-xl">+</button>
-                                ` : `
-                                    <button onclick="add(${p.id},1)" class="w-full bg-[#ff6b00] text-white py-3.5 rounded-xl font-black text-[10px] uppercase shadow-lg">Agregar</button>
-                                `}
-                            </div>
-                        ` : '<div class="h-12"></div>'}
+                <div class="bg-gray-800 p-4 rounded-[2rem] border border-gray-700 relative animate-fade-in ${p.pre === 0 ? 'sold-out' : ''}">
+                    <div class="h-32 mb-4 flex items-center justify-center"><img src="${p.img}" class="max-h-full object-contain" onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'"></div>
+                    <span class="text-[7px] font-black text-gray-500 uppercase">${p.cat}</span>
+                    <h3 class="text-[10px] font-bold text-gray-200 uppercase leading-tight h-8 overflow-hidden">${p.nom}</h3>
+                    <p class="text-[#ff6b00] font-black text-lg italic mt-1">$${p.pre.toLocaleString()}</p>
+                    <div class="mt-4 bg-gray-900 p-1.5 rounded-2xl flex items-center gap-1">
+                        ${q > 0 ? `
+                            <button onclick="add(${p.id},-1)" class="w-9 h-9 bg-gray-700 rounded-xl font-black">-</button>
+                            <input type="number" step="0.5" value="${q}" onchange="manualAdd(${p.id}, this.value)" class="qty-input flex-1">
+                            <button onclick="add(${p.id},1)" class="w-9 h-9 bg-[#ff6b00] rounded-xl font-black">+</button>
+                        ` : `
+                            <button onclick="add(${p.id},1)" class="w-full bg-[#ff6b00] py-3.5 rounded-xl font-black text-[10px] uppercase">Agregar</button>
+                        `}
                     </div>
                 </div>`;
             }).join('');
         }
 
         window.add = (id, n) => { cart[id] = Math.max(0, (cart[id] || 0) + n); if (cart[id] === 0) delete cart[id]; update(); };
-        window.manualAdd = (id, val) => { let n = parseFloat(val.replace(',', '.')); if (isNaN(n) || n <= 0) delete cart[id]; else cart[id] = n; update(); };
+        window.manualAdd = (id, val) => { let n = parseFloat(val); if (n > 0) cart[id] = n; else delete cart[id]; update(); };
         
         function update() {
             let t = 0, c = 0, html = '';
             Object.entries(cart).forEach(([id, q]) => {
-                const p = data[id]; const sub = p.pre * q; t += sub; c += q;
-                html += `<div class="flex items-center gap-4 bg-gray-800 p-4 rounded-2xl border border-gray-700 shadow-sm"><img src="${p.img}" class="w-12 h-12 object-contain"><div class="flex-1 leading-tight"><h4 class="font-bold text-[9px] uppercase text-gray-200">${p.nom}</h4><p class="text-[#ff6b00] font-black text-sm">$${sub.toLocaleString('es-AR')}</p></div><button onclick="add(${id},-${q})" class="text-gray-500 hover:text-red-500"><i class="fas fa-trash-alt"></i></button></div>`;
+                const p = data[id]; t += p.pre * q; c += q;
+                html += `<div class="flex items-center gap-4 bg-gray-800 p-3 rounded-2xl border border-gray-700"><img src="${p.img}" class="w-10 h-10 object-contain"><div class="flex-1"><h4 class="font-bold text-[9px] uppercase">${p.nom}</h4><p class="text-[#ff6b00] font-black">$${(p.pre * q).toLocaleString()}</p></div><button onclick="add(${id},-${q})"><i class="fas fa-trash text-gray-600"></i></button></div>`;
             });
             
             if(t > 0) {
                 document.getElementById('shipping-promo').style.display = 'block';
-                const perc = Math.min((t / MONTO_PROMO) * 100, 100);
-                document.getElementById('shipping-bar').style.width = perc + '%';
-                document.getElementById('shipping-text').innerHTML = t >= MONTO_PROMO ? "✅ ¡Llegaste al Envío Prioritario!" : `¡Sumá $${(MONTO_PROMO - t).toLocaleString()} más para Envío Prioritario!`;
+                document.getElementById('shipping-bar').style.width = Math.min((t / MONTO_PROMO) * 100, 100) + '%';
             } else document.getElementById('shipping-promo').style.display = 'none';
 
-            document.getElementById('cart-items').innerHTML = html || '<p class="text-center py-20 text-gray-600 font-black uppercase text-xs">El pedido está vacío</p>';
-            document.getElementById('total').innerText = t.toLocaleString('es-AR');
+            document.getElementById('cart-items').innerHTML = html || '<p class="text-center py-10 opacity-30 uppercase font-black">Vacío</p>';
+            document.getElementById('total').innerText = t.toLocaleString();
             document.getElementById('count').innerText = Number(c.toFixed(2));
             render();
         }
@@ -285,9 +236,9 @@
         function enviar() {
             const n = document.getElementById('user-name').value;
             const d = document.getElementById('user-address').value;
-            if (Object.keys(cart).length === 0 || !n || !d) return alert("Completa tus datos.");
+            if (!n || !d || Object.keys(cart).length === 0) return alert("Completa tus datos");
             localStorage.setItem('last_cart', JSON.stringify(cart));
-            let m = "*PEDIDO - DISTRI EL URU*%0A👤 *Cliente:* " + n + "%0A📍 *Dirección:* " + d + "%0A%0A";
+            let m = "*PEDIDO - DISTRI EL URU*%0A👤 " + n + "%0A📍 " + d + "%0A%0A";
             Object.entries(cart).forEach(([id, q]) => m += "✅ *" + q + "* x " + data[id].nom + "%0A");
             m += "%0A*TOTAL: $" + document.getElementById('total').innerText + "*";
             window.open("https://wa.me/5492920248292?text=" + m);
