@@ -18,35 +18,23 @@
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         .animate-marquee { display: flex; width: max-content; animation: marquee 25s linear infinite; }
 
-        /* EFECTO ZOOM EN IMAGEN */
         .img-zoom { transition: transform 0.3s ease; }
         .card-prod:hover .img-zoom { transform: scale(1.1); }
 
         /* NOVEDADES RESALTADAS */
-        .new-arrival { 
-            border: 2px solid #ff6b00 !important; 
-            box-shadow: 0 0 20px rgba(255, 107, 0, 0.2);
-            position: relative;
-        }
+        .new-arrival { border: 2px solid #ff6b00 !important; box-shadow: 0 0 20px rgba(255, 107, 0, 0.2); }
         .new-badge {
-            position: absolute;
-            top: -10px;
-            right: 10px;
-            background: #ff6b00;
-            color: white;
-            padding: 3px 12px;
-            border-radius: 8px;
-            font-size: 10px;
-            font-weight: 900;
-            text-transform: uppercase;
-            z-index: 10;
+            position: absolute; top: -10px; right: 10px; background: #ff6b00; color: white;
+            padding: 3px 12px; border-radius: 8px; font-size: 10px; font-weight: 900;
+            text-transform: uppercase; z-index: 10;
         }
 
         .cat-active { background-color: #ff6b00 !important; color: white !important; transform: scale(1.05); }
-        
-        /* Animación Micrófono */
-        .mic-active { color: #ff4444 !important; animation: pulse 1s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+        .fav-active { color: #ff4444 !important; }
+
+        /* Animación carrito al agregar */
+        @keyframes cartBounce { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+        .cart-bump { animation: cartBounce 0.4s ease; }
     </style>
 </head>
 <body>
@@ -74,10 +62,7 @@
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <button onclick="compartir()" class="bg-gray-800 text-white p-3 rounded-2xl border border-gray-700 active:scale-90 transition-all" title="Compartir catálogo">
-                    <i class="fas fa-share-nodes"></i>
-                </button>
-                <button onclick="document.getElementById('cart').style.display='flex'" class="bg-[#ff6b00] text-white px-5 py-3 rounded-2xl font-black shadow-lg flex items-center gap-2 text-xs active:scale-95">
+                <button id="btn-cart" onclick="document.getElementById('cart').style.display='flex'" class="bg-[#ff6b00] text-white px-5 py-3 rounded-2xl font-black shadow-lg flex items-center gap-2 text-xs transition-transform">
                     <i class="fas fa-shopping-bag text-lg"></i> 
                     <span id="count" class="bg-orange-700 px-2 py-0.5 rounded-md text-[10px]">0</span>
                 </button>
@@ -86,19 +71,25 @@
     </nav>
 
     <div class="p-4 md:p-6 max-w-5xl mx-auto space-y-4">
-        <div class="relative group">
-            <input type="text" id="search" onkeyup="render()" placeholder="Busca productos o marcas..." 
-                class="w-full p-5 pl-12 rounded-[1.5rem] bg-gray-800 text-gray-200 font-bold border-none outline-none focus:ring-2 focus:ring-[#ff6b00] transition-all">
-            <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-500"></i>
-            <button onclick="startVoiceSearch()" class="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400" id="mic-btn">
-                <i class="fas fa-microphone text-xl"></i>
+        <div class="relative flex gap-2">
+            <div class="relative flex-1">
+                <input type="text" id="search" onkeyup="render()" placeholder="Busca productos..." 
+                    class="w-full p-5 pl-12 rounded-[1.5rem] bg-gray-800 text-gray-200 font-bold border-none outline-none focus:ring-2 focus:ring-[#ff6b00]">
+                <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-500"></i>
+            </div>
+            <button onclick="verFavoritos()" id="btn-favs" class="bg-gray-800 px-5 rounded-[1.5rem] text-gray-400 border border-gray-700">
+                <i class="fas fa-heart text-xl"></i>
             </button>
         </div>
         
-        <button onclick="toggleNovedades()" id="btn-novedades" class="w-full py-4 rounded-2xl bg-gray-800 border-2 border-[#ff6b00] text-[#ff6b00] font-black text-[11px] uppercase flex items-center justify-center gap-3 transition-all active:scale-95">
-            <i class="fas fa-fire-alt"></i> 
-            Ver Ingresos de hoy <span id="novedades-count" class="bg-[#ff6b00] text-white px-2 py-0.5 rounded-lg text-[9px]">0</span>
-        </button>
+        <div class="grid grid-cols-2 gap-2">
+            <button onclick="toggleNovedades()" id="btn-novedades" class="py-4 rounded-2xl bg-gray-800 border border-[#ff6b00] text-[#ff6b00] font-black text-[10px] uppercase flex items-center justify-center gap-2">
+                <i class="fas fa-fire-alt"></i> Novedades (<span id="novedades-count">0</span>)
+            </button>
+            <button onclick="compartir()" class="py-4 rounded-2xl bg-gray-800 border border-gray-700 text-gray-400 font-black text-[10px] uppercase flex items-center justify-center gap-2">
+                <i class="fas fa-share-alt"></i> Compartir
+            </button>
+        </div>
     </div>
 
     <div class="px-4 max-w-5xl mx-auto flex gap-2 overflow-x-auto pb-6 no-scrollbar" id="category-filters"></div>
@@ -134,44 +125,34 @@
         </div>
     </footer>
 
-    <a href="https://wa.me/5492920248292" target="_blank" class="fixed bottom-6 left-6 z-[100] bg-green-500 text-white p-4 rounded-full shadow-2xl hover:scale-110 active:scale-90 transition-all">
-        <i class="fab fa-whatsapp text-3xl"></i>
-    </a>
-
     <div id="cart" style="display:none;" class="fixed inset-0 bg-black/90 backdrop-blur-md z-[100] flex justify-end">
-        <div class="bg-[#1a1a1a] w-full max-w-md h-full flex flex-col shadow-2xl border-l border-gray-800">
+        <div class="bg-[#1a1a1a] w-full max-w-md h-full flex flex-col shadow-2xl">
             <div class="p-6 border-b border-gray-800 flex justify-between items-center bg-gray-900 text-gray-200">
-                <div class="flex items-center gap-2">
-                    <h2 class="text-xl font-black uppercase italic">Mi Pedido</h2>
-                    <button onclick="limpiarCarrito()" class="text-[10px] bg-red-900/30 text-red-500 px-2 py-1 rounded-md border border-red-500/20 ml-2">VACIAR</button>
-                </div>
+                <h2 class="text-xl font-black uppercase italic">Mi Pedido</h2>
                 <button onclick="document.getElementById('cart').style.display='none'" class="text-4xl text-gray-400">×</button>
             </div>
             <div id="cart-items" class="flex-1 overflow-y-auto p-4 space-y-3 bg-[#1e1e1e]"></div>
+            
+            <div id="sugerencia" class="px-6 py-2 bg-orange-950/20 text-[#ff6b00] text-[10px] font-bold text-center border-t border-orange-500/10">
+                ✨ ¿Falta algo más? ¡Revisá los Favoritos!
+            </div>
+
             <div class="p-6 bg-[#1a1a1a] border-t border-gray-800 space-y-4">
-                <input type="text" id="user-name" placeholder="Tu Nombre o Local" class="w-full p-4 rounded-xl bg-gray-900 text-gray-200 font-bold border border-gray-800 outline-none focus:border-[#ff6b00]">
-                <input type="text" id="user-address" placeholder="Dirección de Entrega" class="w-full p-4 rounded-xl bg-gray-900 text-gray-200 font-bold border border-gray-800 outline-none focus:border-[#ff6b00]">
-                
-                <div class="flex justify-between items-center py-2">
-                    <span class="text-gray-500 font-black uppercase text-[10px]">Total Estimado:</span>
+                <input type="text" id="user-name" placeholder="Nombre / Local" class="w-full p-4 rounded-xl bg-gray-900 text-gray-200 font-bold border border-gray-800 outline-none">
+                <input type="text" id="user-address" placeholder="Dirección" class="w-full p-4 rounded-xl bg-gray-900 text-gray-200 font-bold border border-gray-800 outline-none">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-500 font-black uppercase text-xs">Total:</span>
                     <span class="text-[#ff6b00] text-3xl font-black italic">$<span id="total">0</span></span>
                 </div>
-
-                <div class="grid grid-cols-5 gap-2">
-                    <button onclick="copiarAlPortapapeles()" class="col-span-1 bg-gray-800 text-gray-400 rounded-2xl flex items-center justify-center active:bg-[#ff6b00] active:text-white transition-colors" title="Copiar pedido">
-                        <i class="fas fa-copy"></i>
-                    </button>
-                    <button onclick="enviar()" class="col-span-4 bg-green-500 text-white py-5 rounded-2xl font-black text-lg shadow-xl active:scale-95 transition-all">
-                        PEDIR POR WHATSAPP
-                    </button>
-                </div>
+                <button onclick="enviar()" class="w-full bg-green-500 text-white py-5 rounded-2xl font-black text-lg active:scale-95 transition-all">ENVIAR WHATSAPP</button>
             </div>
         </div>
     </div>
 
     <script>
         const TSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQEemzCvTezcjzZhIUIRIayZ7U81xgssl9G1Vr6Odx7dHGHOARY0iJ-VOL43E17qLVkiIRb0LTurcZU/pub?output=tsv';
-        let data = [], cart = {}, activeCat = 'TODOS', soloNovedades = false;
+        let data = [], cart = {}, activeCat = 'TODOS', soloNovedades = false, soloFavs = false;
+        let favoritos = JSON.parse(localStorage.getItem('uru_favs')) || [];
 
         async function load() {
             try {
@@ -182,140 +163,125 @@
                     const c = l.split('\t');
                     return { id: i, nom: (c[0]||'').trim(), pre: parseInt((c[1]||'').replace(/\D/g,'')) || 0, cat: (c[2]||'VARIOS').trim().toUpperCase(), img: (c[3]||'').trim() };
                 }).filter(p => p.nom !== "");
-                
                 document.getElementById('novedades-count').innerText = data.filter(p => p.pre % 10 === 1).length;
                 renderCats(); render(); updateStatus();
             } catch (e) { console.error(e); }
         }
 
+        function toggleFav(id) {
+            if (favoritos.includes(id)) favoritos = favoritos.filter(f => f !== id);
+            else favoritos.push(id);
+            localStorage.setItem('uru_favs', JSON.stringify(favoritos));
+            render();
+        }
+
+        function verFavoritos() {
+            soloFavs = !soloFavs;
+            document.getElementById('btn-favs').classList.toggle('bg-[#ff6b00]', soloFavs);
+            document.getElementById('btn-favs').classList.toggle('text-white', soloFavs);
+            render();
+        }
+
         function updateStatus() {
-            const now = new Date();
-            const hour = now.getHours();
-            const min = now.getMinutes();
+            const h = new Date().getHours();
+            const m = new Date().getMinutes();
             const bar = document.getElementById('status-bar');
             const txt = document.getElementById('status-text');
-            if (hour < 12 || (hour === 12 && min < 30)) {
+            if (h < 12 || (h === 12 && m < 30)) {
                 bar.style.backgroundColor = "#16a34a";
-                txt.innerHTML = "🟢 Tomando pedidos para hoy (Cierre 12:30hs)";
+                txt.innerHTML = "🟢 Pedidos para hoy (Hasta 12:30hs)";
             } else {
                 bar.style.backgroundColor = "#ea580c";
-                txt.innerHTML = "🕒 Pedidos para entrega mañana";
+                txt.innerHTML = "🕒 Pedidos para mañana";
             }
-        }
-
-        function limpiarCarrito() {
-            if(confirm("¿Quieres vaciar todo el pedido?")) {
-                cart = {};
-                update();
-                document.getElementById('cart').style.display='none';
-            }
-        }
-
-        function copiarAlPortapapeles() {
-            if (Object.keys(cart).length === 0) return alert("El carrito está vacío.");
-            let m = "PEDIDO - DISTRI EL URU\n";
-            Object.entries(cart).forEach(([id, q]) => m += "- " + q + " x " + data[id].nom + "\n");
-            m += "\nTOTAL: $" + document.getElementById('total').innerText;
-            navigator.clipboard.writeText(m).then(() => alert("¡Pedido copiado al portapapeles!"));
-        }
-
-        function startVoiceSearch() {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) return alert("Tu navegador no soporta búsqueda por voz.");
-            const recognition = new SpeechRecognition();
-            const micBtn = document.getElementById('mic-btn');
-            recognition.onstart = () => micBtn.classList.add('mic-active');
-            recognition.onresult = (e) => {
-                document.getElementById('search').value = e.results[0][0].transcript;
-                render();
-                micBtn.classList.remove('mic-active');
-            };
-            recognition.onerror = () => micBtn.classList.remove('mic-active');
-            recognition.start();
-        }
-
-        function compartir() {
-            if (navigator.share) {
-                navigator.share({ title: 'DISTRI EL URU', url: window.location.href });
-            } else { alert("Copia el link de arriba."); }
         }
 
         function toggleNovedades() {
             soloNovedades = !soloNovedades;
-            const btn = document.getElementById('btn-novedades');
-            if(soloNovedades) {
-                btn.classList.add('bg-[#ff6b00]', 'text-white');
-                activeCat = 'TODOS';
-            } else {
-                btn.classList.remove('bg-[#ff6b00]', 'text-white');
-            }
-            renderCats(); render();
+            document.getElementById('btn-novedades').classList.toggle('bg-[#ff6b00]', soloNovedades);
+            document.getElementById('btn-novedades').classList.toggle('text-white', soloNovedades);
+            render();
         }
 
         function renderCats() {
             const cats = ['TODOS', ...new Set(data.map(p => p.cat))];
             document.getElementById('category-filters').innerHTML = cats.map(c => `
-                <button onclick="activeCat='${c}'; soloNovedades=false; document.getElementById('btn-novedades').classList.remove('bg-[#ff6b00]', 'text-white'); renderCats(); render();" 
-                class="shrink-0 px-6 py-3 rounded-full bg-gray-800 text-[10px] font-black uppercase transition-all ${activeCat === c && !soloNovedades ? 'cat-active' : ''}">${c}</button>
+                <button onclick="activeCat='${c}'; soloFavs=false; renderCats(); render();" 
+                class="shrink-0 px-6 py-3 rounded-full bg-gray-800 text-[10px] font-black uppercase ${activeCat === c ? 'cat-active' : ''}">${c}</button>
             `).join('');
         }
 
         function render() {
-            const query = document.getElementById('search').value.toLowerCase();
-            let filtered = data.filter(p => (activeCat === 'TODOS' || p.cat === activeCat) && p.nom.toLowerCase().includes(query));
-            if(soloNovedades) filtered = data.filter(p => (p.pre % 10 === 1) && p.nom.toLowerCase().includes(query));
+            const q = document.getElementById('search').value.toLowerCase();
+            let filtered = data.filter(p => (activeCat === 'TODOS' || p.cat === activeCat) && p.nom.toLowerCase().includes(q));
+            if(soloNovedades) filtered = filtered.filter(p => p.pre % 10 === 1);
+            if(soloFavs) filtered = filtered.filter(p => favoritos.includes(p.id));
 
             document.getElementById('catalogo').innerHTML = filtered.map(p => {
-                const q = cart[p.id] || 0;
+                const qty = cart[p.id] || 0;
                 const esNuevo = p.pre % 10 === 1;
+                const esFav = favoritos.includes(p.id);
                 return `
-                    <div class="card-prod bg-gray-800 p-4 rounded-[2rem] border border-gray-700 flex flex-col ${esNuevo ? 'new-arrival' : ''}">
-                        ${esNuevo ? `<span class="new-badge">¡Ingreso!</span>` : ''}
+                    <div class="card-prod bg-gray-800 p-4 rounded-[2rem] border border-gray-700 flex flex-col relative ${esNuevo ? 'new-arrival' : ''}">
+                        ${esNuevo ? `<span class="new-badge">¡Nuevo!</span>` : ''}
+                        <button onclick="toggleFav(${p.id})" class="absolute top-4 left-4 z-10 ${esFav ? 'fav-active' : 'text-gray-600'}">
+                            <i class="fas fa-heart"></i>
+                        </button>
                         <div class="h-32 mb-4 flex items-center justify-center p-2 overflow-hidden">
                             <img src="${p.img}" class="img-zoom max-h-full object-contain" onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'">
                         </div>
-                        <span class="text-[7px] font-black text-gray-500 uppercase">${p.cat}</span>
-                        <h3 class="text-[10px] font-bold text-gray-200 uppercase leading-tight h-8 overflow-hidden">${p.nom}</h3>
-                        <p class="text-[#ff6b00] font-black text-lg italic mt-1">$${p.pre.toLocaleString()}</p>
-                        <div class="mt-4 bg-gray-900 p-1.5 rounded-2xl flex items-center gap-1">
-                            ${q > 0 ? `
-                                <button onclick="add(${p.id},-1)" class="w-9 h-9 bg-gray-700 rounded-xl font-black text-white">-</button>
-                                <input type="number" value="${q}" onchange="manualAdd(${p.id}, this.value)" class="bg-transparent text-center font-black text-white w-full outline-none text-xs">
-                                <button onclick="add(${p.id},1)" class="w-9 h-9 bg-[#ff6b00] rounded-xl font-black text-white">+</button>
+                        <h3 class="text-[10px] font-bold text-white uppercase h-8 overflow-hidden">${p.nom}</h3>
+                        <p class="text-[#ff6b00] font-black text-lg mt-1">$${p.pre.toLocaleString()}</p>
+                        <div class="mt-4 bg-gray-900 p-1 rounded-2xl flex items-center gap-1">
+                            ${qty > 0 ? `
+                                <button onclick="add(${p.id},-1)" class="w-9 h-9 bg-gray-700 rounded-xl font-black">-</button>
+                                <span class="flex-1 text-center font-black text-white text-xs">${qty}</span>
+                                <button onclick="add(${p.id},1)" class="w-9 h-9 bg-[#ff6b00] rounded-xl font-black">+</button>
                             ` : `
-                                <button onclick="add(${p.id},1)" class="w-full bg-[#ff6b00] py-3.5 rounded-xl font-black text-[10px] uppercase text-white active:scale-95 transition-all">Agregar</button>
+                                <button onclick="add(${p.id},1)" class="w-full bg-[#ff6b00] py-3.5 rounded-xl font-black text-[10px] uppercase">Agregar</button>
                             `}
                         </div>
                     </div>`;
             }).join('');
         }
 
-        window.add = (id, n) => { cart[id] = Math.max(0, (cart[id] || 0) + n); if (cart[id] === 0) delete cart[id]; update(); };
-        window.manualAdd = (id, val) => { let n = parseFloat(val); if (n > 0) cart[id] = n; else delete cart[id]; update(); };
+        window.add = (id, n) => { 
+            cart[id] = Math.max(0, (cart[id] || 0) + n); 
+            if (cart[id] === 0) delete cart[id]; 
+            if (n > 0) {
+                document.getElementById('btn-cart').classList.add('cart-bump');
+                setTimeout(() => document.getElementById('btn-cart').classList.remove('cart-bump'), 400);
+            }
+            update(); 
+        };
         
         function update() {
             let t = 0, c = 0, html = '';
             Object.entries(cart).forEach(([id, q]) => {
                 const p = data[id]; t += p.pre * q; c += q;
-                html += `<div class="flex items-center gap-4 bg-gray-800 p-3 rounded-2xl border border-gray-700"><img src="${p.img}" class="w-10 h-10 object-contain"><div class="flex-1 leading-tight"><h4 class="font-bold text-[9px] uppercase">${p.nom}</h4><p class="text-[#ff6b00] font-black italic">$${(p.pre * q).toLocaleString()}</p></div><button onclick="add(${id},-${q})"><i class="fas fa-trash-alt text-gray-600"></i></button></div>`;
+                html += `<div class="flex items-center gap-4 bg-gray-800 p-3 rounded-2xl border border-gray-700"><img src="${p.img}" class="w-10 h-10 object-contain"><div class="flex-1"><h4 class="font-bold text-[9px] uppercase">${p.nom}</h4><p class="text-[#ff6b00] font-black">$${(p.pre * q).toLocaleString()}</p></div><button onclick="add(${id},-${q})"><i class="fas fa-trash-alt text-gray-600"></i></button></div>`;
             });
-            document.getElementById('cart-items').innerHTML = html || '<p class="text-center py-10 opacity-30 font-black uppercase text-xs">Vacío</p>';
+            document.getElementById('cart-items').innerHTML = html || '<p class="text-center py-10 opacity-30 text-xs">Vacio</p>';
             document.getElementById('total').innerText = t.toLocaleString();
-            document.getElementById('count').innerText = Number(c.toFixed(2));
+            document.getElementById('count').innerText = c;
             render();
+        }
+
+        function compartir() {
+            if (navigator.share) navigator.share({ title: 'DISTRI EL URU', url: window.location.href });
+            else alert("Copia el link de arriba");
         }
 
         function enviar() {
             const n = document.getElementById('user-name').value;
             const d = document.getElementById('user-address').value;
-            if (!n || !d || Object.keys(cart).length === 0) return alert("Completa tus datos.");
+            if (!n || !d || Object.keys(cart).length === 0) return alert("Faltan datos.");
             let m = "*PEDIDO - DISTRI EL URU*%0A👤 " + n + "%0A📍 " + d + "%0A%0A";
             Object.entries(cart).forEach(([id, q]) => m += "✅ *" + q + "* x " + data[id].nom + "%0A");
             m += "%0A*TOTAL: $" + document.getElementById('total').innerText + "*";
             window.open("https://wa.me/5492920248292?text=" + m);
         }
         load();
-        setInterval(updateStatus, 60000);
     </script>
 </body>
 </html>
