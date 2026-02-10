@@ -33,7 +33,7 @@
             box-shadow: 0 15px 35px rgba(255, 107, 0, 0.2); 
         }
         
-        /* Badge Oferta (PUNTO 1) */
+        /* Badge Oferta */
         .badge-oferta {
             position: absolute;
             top: 15px;
@@ -51,13 +51,30 @@
             animation: pulse-red 2s infinite;
         }
 
+        /* Badge Agotado (NUEVO) */
+        .badge-agotado {
+            position: absolute;
+            top: 15px;
+            right: -10px;
+            background: #333;
+            color: #888;
+            font-weight: 900;
+            font-size: 10px;
+            padding: 5px 15px;
+            transform: rotate(15deg);
+            z-index: 20;
+            border-radius: 5px;
+            letter-spacing: 1px;
+            border: 1px solid #555;
+        }
+
         @keyframes pulse-red {
             0% { transform: rotate(15deg) scale(1); }
             50% { transform: rotate(15deg) scale(1.1); }
             100% { transform: rotate(15deg) scale(1); }
         }
 
-        /* Efecto Burst en Carrito (PUNTO 2) */
+        /* Efecto Burst en Carrito */
         @keyframes cart-bump {
             0% { transform: scale(1); }
             50% { transform: scale(1.5); color: #fff; }
@@ -267,6 +284,9 @@
                 <button id="btn-whatsapp" onclick="enviarPedido()" class="w-full bg-orange-600 text-white py-6 rounded-3xl font-black text-xl active:scale-95 transition-all shadow-xl">
                     ENVIAR POR WHATSAPP
                 </button>
+                <button onclick="vaciarCarrito()" class="w-full text-red-500 text-xs font-black uppercase tracking-widest hover:text-red-400 transition-colors py-2">
+                    <i class="fas fa-trash-alt mr-2"></i> Vaciar todo el carrito
+                </button>
             </div>
         </div>
     </div>
@@ -318,27 +338,39 @@
 
             document.getElementById('catalogo').innerHTML = filtered.map(p => {
                 const qty = cart[p.id] || 0;
-                // LÓGICA DE OFERTA TERMINADA EN 99 (Punto 1)
-                const esOferta = p.pre.toString().endsWith('99');
+                // LOGICA DE PRECIO Y AGOTADO
+                const agotado = p.pre === 0;
+                const esOferta = !agotado && p.pre.toString().endsWith('99');
+                
+                // Si está agotado, aplicamos filtro de grises y opacidad
+                const claseAgotado = agotado ? 'grayscale opacity-60' : '';
+
                 return `
-                    <div class="card-prod p-5 rounded-[2.5rem] flex flex-col relative ${qty > 0 ? 'ring-2 ring-orange-500' : ''}">
-                        ${esOferta ? '<div class="badge-oferta">OFERTA 🔥</div>' : ''}
-                        <button onclick="toggleFav(${p.id})" class="absolute top-6 left-6 z-10 text-xl ${favoritos.includes(p.id) ? 'text-red-600' : 'text-gray-800'}">
+                    <div class="card-prod p-5 rounded-[2.5rem] flex flex-col relative ${qty > 0 ? 'ring-2 ring-orange-500' : ''} ${claseAgotado}">
+                        ${agotado ? '<div class="badge-agotado">AGOTADO</div>' : (esOferta ? '<div class="badge-oferta">OFERTA 🔥</div>' : '')}
+                        
+                        <button onclick="toggleFav(${p.id})" class="absolute top-6 left-6 z-10 text-xl ${favoritos.includes(p.id) ? 'text-red-600' : 'text-gray-800'}" ${agotado ? 'disabled' : ''}>
                             <i class="fas fa-heart"></i>
                         </button>
+                        
                         <div class="img-container h-44 mb-5 flex items-center justify-center p-5">
                             <img src="${p.img}" class="max-h-full object-contain" onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'">
                         </div>
+                        
                         <h3 class="text-[11px] font-black uppercase h-8 overflow-hidden text-gray-400 italic leading-tight">${p.nom}</h3>
-                        <p class="price-tag mt-3 italic">$${p.pre.toLocaleString()}</p>
+                        <p class="price-tag mt-3 italic">${agotado ? 'SIN STOCK' : '$' + p.pre.toLocaleString()}</p>
+                        
                         <div class="mt-5">
-                            ${qty === 0 ? 
-                                `<button onclick="add(${p.id},1)" class="w-full bg-orange-600 py-5 rounded-2xl font-black text-[10px] uppercase text-white shadow-xl hover:bg-orange-500 active:bg-white active:text-orange-600 transition-all">Agregar al pedido</button>` :
-                                `<div class="flex items-center bg-orange-600 rounded-2xl p-1 shadow-2xl">
-                                    <button onclick="add(${p.id},-1)" class="w-14 h-12 flex items-center justify-center text-white text-2xl font-black">－</button>
-                                    <span class="flex-1 text-center font-black text-white text-base">${qty}</span>
-                                    <button onclick="add(${p.id},1)" class="w-14 h-12 flex items-center justify-center text-white text-2xl font-black">＋</button>
-                                </div>`
+                            ${agotado ? 
+                                `<button disabled class="w-full bg-gray-800 py-5 rounded-2xl font-black text-[10px] uppercase text-gray-500 cursor-not-allowed">No Disponible</button>` :
+                                (qty === 0 ? 
+                                    `<button onclick="add(${p.id},1)" class="w-full bg-orange-600 py-5 rounded-2xl font-black text-[10px] uppercase text-white shadow-xl hover:bg-orange-500 active:bg-white active:text-orange-600 transition-all">Agregar al pedido</button>` :
+                                    `<div class="flex items-center bg-orange-600 rounded-2xl p-1 shadow-2xl">
+                                        <button onclick="add(${p.id},-1)" class="w-14 h-12 flex items-center justify-center text-white text-2xl font-black">－</button>
+                                        <span class="flex-1 text-center font-black text-white text-base">${qty}</span>
+                                        <button onclick="add(${p.id},1)" class="w-14 h-12 flex items-center justify-center text-white text-2xl font-black">＋</button>
+                                    </div>`
+                                )
                             }
                         </div>
                     </div>`;
@@ -349,14 +381,23 @@
             cart[id] = Math.max(0, (cart[id] || 0) + n); 
             if (cart[id] === 0) delete cart[id]; 
             
-            // EFECTO VISUAL BURST (Punto 2)
             const cartBtn = document.getElementById('count');
             cartBtn.classList.remove('bump');
-            void cartBtn.offsetWidth; // Trigger reflow
+            void cartBtn.offsetWidth; 
             cartBtn.classList.add('bump');
             
             update(); render();
         };
+
+        // Función Vaciar Carrito (NUEVO)
+        function vaciarCarrito() {
+            if (Object.keys(cart).length === 0) return;
+            if (confirm('¿Estás seguro de que quieres eliminar todos los productos del carrito?')) {
+                cart = {};
+                update();
+                render();
+            }
+        }
 
         function update() {
             let t = 0, c = 0, html = '';
