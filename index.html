@@ -20,72 +20,62 @@
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         .animate-marquee { display: flex; width: max-content; animation: marquee 25s linear infinite; }
 
-        /* Card de Producto Mejorada */
+        /* Card de Producto */
         .card-prod { 
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
             background: linear-gradient(145deg, #161616, #0c0c0c) !important; 
             border: 1px solid rgba(255, 107, 0, 0.1) !important; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
-        .card-prod:hover { 
-            transform: translateY(-8px); 
-            border-color: #ff6b00 !important; 
-            box-shadow: 0 15px 35px rgba(255, 107, 0, 0.2); 
-        }
-        .card-selected { border-color: #ff6b00 !important; box-shadow: 0 0 20px rgba(255, 107, 0, 0.3); }
+        .card-prod:hover { transform: translateY(-5px); border-color: #ff6b00 !important; }
         
         /* Imagen con Fondo Gradiente */
         .img-container { 
             background: radial-gradient(circle, #222 0%, #000 70%) !important; 
             border-radius: 1.5rem; 
             overflow: hidden; 
-            position: relative; 
-            border: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* Precios Impactantes */
+        /* Precios */
         .price-tag { 
             color: #ffffff; 
             background: linear-gradient(90deg, #ff6b00, #ff9e00);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 8px rgba(255, 107, 0, 0.5));
             font-weight: 900 !important; 
             font-size: 1.7rem;
-            letter-spacing: -1px;
         }
 
-        /* Carrusel Premium */
-        .carousel-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 15px; padding: 10px 0; }
-        .carousel-item { 
-            flex: 0 0 90%; scroll-snap-align: center; border-radius: 2rem; height: 200px; 
-            background-size: cover; background-position: center; position: relative; 
-            overflow: hidden; border: 1px solid rgba(255, 107, 0, 0.3);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        /* DISEÑO DE ALTO IMPACTO (Sustituye lo señalado en la foto) */
+        .promo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 15px;
+            padding: 20px 0;
         }
-        .carousel-overlay { 
-            background: linear-gradient(to right, rgba(0,0,0,0.9) 20%, transparent); 
-            height: 100%; width: 100%; display: flex; flex-direction: column; justify-content: center; padding: 30px; 
+        .promo-card {
+            height: 180px;
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s;
         }
-
-        /* Info Tags Cabecera (VENDIBLE) */
-        .info-tag {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 6px 12px;
-            border-radius: 12px;
+        .promo-card:hover { transform: scale(1.02); }
+        .promo-content {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
             display: flex;
-            align-items: center;
-            gap: 8px;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px;
         }
 
         /* Footer */
         .footer-premium { background: #0f0f0f; border-top: 1px solid #ff6b0033; }
-
         .cat-active { background-color: #ff6b00 !important; color: white !important; }
-        .cat-count { background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 6px; margin-left: 5px; font-size: 8px; }
         
-        #go-up { display: none; position: fixed; bottom: 100px; right: 24px; z-index: 90; background: #ff6b00; color: white; width: 45px; height: 45px; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        #go-up { display: none; position: fixed; bottom: 100px; right: 24px; z-index: 90; background: #ff6b00; color: white; width: 45px; height: 45px; border-radius: 50%; }
     </style>
 </head>
 <body class="dark-mode">
@@ -97,80 +87,56 @@
             <span>⚡ DISTRIBUIDORA EL URU - VIEDMA Y PATAGONES ⚡</span>
             <span>📦 PEDIDOS HASTA 12:30HS ENTREGA HOY 📦</span>
             <span>🔥 PRECIOS MAYORISTAS ACTUALIZADOS 2026 🔥</span>
-            <span>⚡ DISTRIBUIDORA EL URU - VIEDMA Y PATAGONES ⚡</span>
         </div>
     </div>
 
-    <nav class="bg-black/90 backdrop-blur-2xl sticky top-0 z-50 p-3 border-b border-white/5">
-        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-4">
-            
+    <nav class="bg-black/90 backdrop-blur-2xl sticky top-0 z-50 p-4 border-b border-white/5">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-12 h-12 rounded-2xl border border-orange-500 shadow-lg shadow-orange-500/20">
+                <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-12 h-12 rounded-2xl border border-orange-500">
                 <div>
-                    <h1 class="text-2xl font-black italic text-orange-500 uppercase leading-none tracking-tighter">El Uru</h1>
-                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-[0.2em]">Premium System</span>
+                    <h1 class="text-2xl font-black italic text-orange-500 uppercase leading-none">El Uru</h1>
+                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Premium System</span>
                 </div>
             </div>
-
-            <div class="hidden md:flex items-center gap-6">
-                <div class="info-tag">
-                    <i class="fas fa-shipping-fast text-orange-500 text-sm"></i>
-                    <div class="leading-none">
-                        <p class="text-[10px] font-black text-white uppercase">Envío Gratis</p>
-                        <p class="text-[8px] text-gray-500 font-bold uppercase">En la comarca</p>
-                    </div>
-                </div>
-                <div class="info-tag">
-                    <i class="fas fa-shield-alt text-orange-500 text-sm"></i>
-                    <div class="leading-none">
-                        <p class="text-[10px] font-black text-white uppercase">Compra Segura</p>
-                        <p class="text-[8px] text-gray-500 font-bold uppercase">Garantía Directa</p>
-                    </div>
-                </div>
-                <div class="info-tag">
-                    <i class="fas fa-check-double text-orange-500 text-sm"></i>
-                    <div class="leading-none">
-                        <p class="text-[10px] font-black text-white uppercase">Calidad</p>
-                        <p class="text-[8px] text-gray-500 font-bold uppercase">100% Original</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-3">
-                <button onclick="document.getElementById('cart').style.display='flex'" class="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-6 py-3 rounded-2xl font-black shadow-xl shadow-orange-600/20 flex items-center gap-3 text-xs active:scale-95 transition-all border border-orange-400/20">
-                    <div class="relative">
-                        <i class="fas fa-shopping-basket text-base"></i>
-                        <span id="count" class="absolute -top-3 -right-3 bg-white text-orange-600 w-5 h-5 rounded-full flex items-center justify-center text-[10px] shadow-sm">0</span>
-                    </div>
-                    <span class="uppercase tracking-widest">Ver Pedido</span>
-                </button>
-            </div>
+            <button onclick="document.getElementById('cart').style.display='flex'" class="bg-orange-600 text-white px-6 py-3 rounded-2xl font-black shadow-lg flex items-center gap-2 text-xs active:scale-95 transition-all">
+                <i class="fas fa-shopping-basket"></i> 
+                <span id="count">0</span>
+            </button>
         </div>
     </nav>
 
-    <section class="px-4 mt-6 max-w-5xl mx-auto">
-        <div class="carousel-container no-scrollbar">
-            <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1571767454098-246b930b5ad3?auto=format&fit=crop&q=80&w=800');">
-                <div class="carousel-overlay">
-                    <span class="bg-orange-600 text-white text-[10px] px-3 py-1 rounded-full w-fit font-black mb-3 uppercase tracking-tighter">Servicio VIP</span>
-                    <h2 class="text-3xl font-black text-white italic uppercase leading-none">Reparto Propio<br><span class="text-orange-500">Sin Cargo</span></h2>
-                    <p class="text-white/60 text-[10px] font-bold mt-2 uppercase">Viedma y Carmen de Patagones</p>
+    <section class="px-4 max-w-7xl mx-auto">
+        <div class="promo-grid">
+            <div class="promo-card" style="background: url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80&w=500') center/cover;">
+                <div class="promo-content">
+                    <span class="text-orange-500 font-black text-[10px] uppercase tracking-widest mb-1">Oferta Flash</span>
+                    <h3 class="text-xl font-black text-white leading-tight">BEBIDAS CON<br>DESCUENTO %</h3>
                 </div>
             </div>
-            <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1543007630-9710e4a00a20?auto=format&fit=crop&q=80&w=800');">
-                <div class="carousel-overlay">
-                    <span class="bg-white text-black text-[10px] px-3 py-1 rounded-full w-fit font-black mb-3 uppercase tracking-tighter">Logística Rápida</span>
-                    <h2 class="text-3xl font-black text-white italic uppercase leading-none">Pedidos hasta<br><span class="text-orange-500">12:30hs</span></h2>
-                    <p class="text-white/60 text-[10px] font-bold mt-2 uppercase">Entrega en el mismo día</p>
+            <div class="promo-card" style="background: url('https://images.unsplash.com/photo-1571767454098-246b930b5ad3?auto=format&fit=crop&q=80&w=500') center/cover;">
+                <div class="promo-content">
+                    <span class="text-green-500 font-black text-[10px] uppercase tracking-widest mb-1">Logística VIP</span>
+                    <h3 class="text-xl font-black text-white leading-tight">ENTREGA HOY<br>SIN CARGO</h3>
                 </div>
             </div>
-            <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1550989460-0adf9ea622e2?auto=format&fit=crop&q=80&w=800');">
-                <div class="carousel-overlay">
-                    <span class="bg-orange-600 text-white text-[10px] px-3 py-1 rounded-full w-fit font-black mb-3 uppercase tracking-tighter">Stock Permanente</span>
-                    <h2 class="text-3xl font-black text-white italic uppercase leading-none">Precios de<br><span class="text-orange-500">Fábrica</span></h2>
-                    <p class="text-white/60 text-[10px] font-bold mt-2 uppercase">Directo a tu comercio</p>
+            <div class="promo-card" style="background: url('https://images.unsplash.com/photo-1550989460-0adf9ea622e2?auto=format&fit=crop&q=80&w=500') center/cover;">
+                <div class="promo-content">
+                    <span class="text-blue-500 font-black text-[10px] uppercase tracking-widest mb-1">Stock Actualizado</span>
+                    <h3 class="text-xl font-black text-white leading-tight">NUEVOS<br>INGRESOS</h3>
                 </div>
             </div>
+        </div>
+
+        <div class="bg-gradient-to-r from-orange-600 to-red-600 rounded-[2rem] p-6 flex flex-col md:flex-row items-center justify-between shadow-2xl shadow-orange-900/20 mb-6">
+            <div class="flex items-center gap-6">
+                <div class="text-5xl md:text-7xl font-black text-white italic opacity-50">12:30</div>
+                <div class="text-center md:text-left">
+                    <h2 class="text-2xl md:text-4xl font-black text-white uppercase italic leading-none">Cierre de Pedidos</h2>
+                    <p class="text-white/80 font-bold uppercase text-xs mt-1">Hacé tu pedido ahora y recibilo hoy mismo</p>
+                </div>
+            </div>
+            <button onclick="window.scrollTo(0, 1000)" class="mt-4 md:mt-0 bg-white text-orange-600 px-8 py-4 rounded-2xl font-black uppercase text-sm hover:scale-105 transition-transform shadow-lg">Pedir Ahora</button>
         </div>
     </section>
 
@@ -180,7 +146,7 @@
                 <input type="text" id="search" onkeyup="render()" placeholder="Busca productos..." class="w-full p-5 pl-12 rounded-2xl bg-[#1a1a1a] text-white font-bold border border-white/5 outline-none focus:ring-2 focus:ring-orange-500">
                 <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-orange-500"></i>
             </div>
-            <button onclick="verFavoritos()" id="btn-favs" class="bg-[#1a1a1a] px-5 rounded-2xl text-gray-500 border border-white/5 active:scale-90 transition-all">
+            <button onclick="verFavoritos()" id="btn-favs" class="bg-[#1a1a1a] px-5 rounded-2xl text-gray-500 border border-white/5 transition-all">
                 <i class="fas fa-heart text-xl"></i>
             </button>
         </div>
@@ -197,30 +163,17 @@
                     <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-14 h-14 rounded-xl border-2 border-orange-500">
                     <h2 class="text-2xl font-black italic uppercase text-orange-500">El Uru</h2>
                 </div>
-                <p class="text-gray-500 text-sm font-medium">Líderes en distribución mayorista para comercios y eventos en la Comarca Viedma-Patagones.</p>
-                <div class="flex gap-4 pt-2">
-                    <a href="#" class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-orange-500 border border-white/10 hover:bg-orange-500 hover:text-white transition-all"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-orange-500 border border-white/10 hover:bg-orange-500 hover:text-white transition-all"><i class="fab fa-facebook-f"></i></a>
-                </div>
+                <p class="text-gray-500 text-sm font-medium">Líderes en distribución mayorista en la Comarca Viedma-Patagones.</p>
             </div>
-            <div class="space-y-4">
-                <h3 class="text-white font-black uppercase text-xs tracking-widest border-l-4 border-orange-500 pl-3">Información</h3>
-                <ul class="space-y-3 text-sm text-gray-400 font-bold uppercase">
-                    <li class="flex items-center gap-2"><i class="fas fa-truck text-orange-500"></i> Reparto en el día</li>
-                    <li class="flex items-center gap-2"><i class="fas fa-clock text-orange-500"></i> Cierre pedidos: 12:30hs</li>
-                    <li class="flex items-center gap-2"><i class="fas fa-check-circle text-orange-500"></i> Precios Directos</li>
-                </ul>
+            <div class="space-y-4 text-sm text-gray-400 font-bold uppercase">
+                <li class="flex items-center gap-2"><i class="fas fa-truck text-orange-500"></i> Reparto en el día</li>
+                <li class="flex items-center gap-2"><i class="fas fa-clock text-orange-500"></i> Cierre: 12:30hs</li>
             </div>
-            <div class="space-y-4">
-                <h3 class="text-white font-black uppercase text-xs tracking-widest border-l-4 border-orange-500 pl-3">Ubicación</h3>
-                <div class="h-40 rounded-2xl overflow-hidden border border-white/10">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3004.567!2d-62.99!3d-40.81!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDDCsDQ4JzM2LjAiUyA2MsKwNTknMjQuMCJX!5e0!3m2!1ses!2sar!4v1700000000000" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-                </div>
+            <div class="h-40 rounded-2xl overflow-hidden border border-white/10">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1521.23!2d-63.0!3d-40.8!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDDCsDQ4JzAwLjAiUyA2M8KwMDAnMDAuMCJX!5e0!3m2!1ses!2sar!4v1700000000000" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
             </div>
         </div>
-        <div class="mt-12 pt-8 border-t border-white/5 text-center">
-            <p class="text-[10px] text-gray-600 font-black tracking-[0.4em] uppercase">© 2026 Distribuidora El Uru - Viedma</p>
-        </div>
+        <div class="mt-12 text-center opacity-30 uppercase text-[10px] font-black tracking-widest">© 2026 Distribuidora El Uru</div>
     </footer>
 
     <div id="cart" style="display:none;" class="fixed inset-0 bg-black/95 backdrop-blur-xl z-[200] flex justify-end">
@@ -238,13 +191,13 @@
                     <p id="min-text" class="text-[10px] font-black uppercase text-center mb-2 text-gray-500"></p>
                     <div class="h-1.5 bg-white/5 rounded-full overflow-hidden"><div id="min-purchase-fill" class="h-full bg-orange-600 transition-all duration-500"></div></div>
                 </div>
-                <input type="text" id="user-name" oninput="saveUserData()" placeholder="Nombre del Comercio" class="w-full p-4 rounded-xl bg-[#1a1a1a] text-white font-bold border border-white/10 outline-none focus:border-orange-500">
-                <input type="text" id="user-address" oninput="saveUserData()" placeholder="Dirección de Entrega" class="w-full p-4 rounded-xl bg-[#1a1a1a] text-white font-bold border border-white/10 outline-none focus:border-orange-500">
+                <input type="text" id="user-name" oninput="saveUserData()" placeholder="Nombre del Comercio" class="w-full p-4 rounded-xl bg-[#1a1a1a] text-white font-bold border border-white/10 outline-none">
+                <input type="text" id="user-address" oninput="saveUserData()" placeholder="Dirección de Entrega" class="w-full p-4 rounded-xl bg-[#1a1a1a] text-white font-bold border border-white/10 outline-none">
                 <div class="flex justify-between items-center px-1">
-                    <span class="text-gray-500 font-black uppercase text-xs italic tracking-widest">Total:</span>
+                    <span class="text-gray-500 font-black uppercase text-xs italic">Total:</span>
                     <span class="text-orange-500 text-3xl font-black italic">$<span id="total">0</span></span>
                 </div>
-                <button id="btn-whatsapp" onclick="enviarPedido()" class="w-full bg-orange-600 text-white py-5 rounded-2xl font-black text-lg active:scale-95 transition-all shadow-xl shadow-orange-900/20">
+                <button id="btn-whatsapp" onclick="enviarPedido()" class="w-full bg-orange-600 text-white py-5 rounded-2xl font-black text-lg active:scale-95 transition-all shadow-xl">
                     FINALIZAR WHATSAPP
                 </button>
             </div>
@@ -287,8 +240,8 @@
             const cats = ['TODOS', ...uniqueCats];
             document.getElementById('category-filters').innerHTML = cats.map(c => `
                 <button onclick="activeCat='${c}'; renderCats(); render();" 
-                class="shrink-0 px-6 py-3 rounded-full bg-[#1a1a1a] text-[10px] font-black uppercase text-gray-500 transition-all flex items-center ${activeCat === c ? 'cat-active' : ''}">
-                    ${c} <span class="cat-count">${c === 'TODOS' ? data.length : data.filter(p => p.cat === c).length}</span>
+                class="shrink-0 px-6 py-3 rounded-full bg-[#1a1a1a] text-[10px] font-black uppercase text-gray-500 transition-all ${activeCat === c ? 'cat-active' : ''}">
+                    ${c}
                 </button>`).join('');
         }
 
@@ -300,8 +253,8 @@
             document.getElementById('catalogo').innerHTML = filtered.map(p => {
                 const qty = cart[p.id] || 0;
                 return `
-                    <div class="card-prod p-4 rounded-[2rem] flex flex-col relative ${qty > 0 ? 'card-selected' : ''}">
-                        <button onclick="toggleFav(${p.id})" class="absolute top-5 left-5 z-10 ${favoritos.includes(p.id) ? 'text-red-600' : 'text-gray-700 opacity-50'}">
+                    <div class="card-prod p-4 rounded-[2rem] flex flex-col relative ${qty > 0 ? 'ring-2 ring-orange-500' : ''}">
+                        <button onclick="toggleFav(${p.id})" class="absolute top-5 left-5 z-10 ${favoritos.includes(p.id) ? 'text-red-600' : 'text-gray-700'}">
                             <i class="fas fa-heart"></i>
                         </button>
                         <div class="img-container h-36 mb-4 flex items-center justify-center p-4">
@@ -311,11 +264,11 @@
                         <p class="price-tag mt-2 italic">$${p.pre.toLocaleString()}</p>
                         <div class="mt-4">
                             ${qty === 0 ? 
-                                `<button onclick="add(${p.id},1)" class="w-full bg-orange-600 py-4 rounded-2xl font-black text-[10px] uppercase text-white shadow-lg active:scale-95 transition-all">Agregar</button>` :
-                                `<div class="flex items-center bg-orange-600 rounded-2xl p-1 overflow-hidden shadow-lg">
-                                    <button onclick="add(${p.id},-1)" class="w-12 h-11 flex items-center justify-center text-white text-xl font-black">－</button>
+                                `<button onclick="add(${p.id},1)" class="w-full bg-orange-600 py-4 rounded-2xl font-black text-[10px] uppercase text-white shadow-lg">Agregar</button>` :
+                                `<div class="flex items-center bg-orange-600 rounded-2xl p-1 shadow-lg">
+                                    <button onclick="add(${p.id},-1)" class="w-12 h-11 text-white font-black text-xl">－</button>
                                     <span class="flex-1 text-center font-black text-white text-sm">${qty}</span>
-                                    <button onclick="add(${p.id},1)" class="w-12 h-11 flex items-center justify-center text-white text-xl font-black">＋</button>
+                                    <button onclick="add(${p.id},1)" class="w-12 h-11 text-white font-black text-xl">＋</button>
                                 </div>`
                             }
                         </div>
@@ -326,8 +279,7 @@
         window.add = (id, n) => { 
             cart[id] = Math.max(0, (cart[id] || 0) + n); 
             if (cart[id] === 0) delete cart[id]; 
-            update(); 
-            render();
+            update(); render();
         };
 
         function update() {
@@ -338,7 +290,7 @@
                 <div class="flex items-center gap-4 bg-white/5 p-3 rounded-2xl text-white border border-white/5">
                     <img src="${p.img}" class="w-10 h-10 object-contain bg-black rounded-lg">
                     <div class="flex-1 leading-tight"><h4 class="font-bold text-[9px] uppercase">${p.nom}</h4><p class="text-orange-500 font-black italic">$${(p.pre * q).toLocaleString()}</p></div>
-                    <div class="flex items-center gap-2"><span class="text-[10px] font-black">x${q}</span><button onclick="add(${id},-${q})" class="w-8 h-8 text-red-500"><i class="fas fa-trash"></i></button></div>
+                    <button onclick="add(${id},-${q})" class="text-red-500"><i class="fas fa-trash"></i></button>
                 </div>`;
             });
             document.getElementById('cart-items').innerHTML = html || '<p class="text-center py-10 opacity-30 text-white text-[10px] font-black uppercase">Vacío</p>';
