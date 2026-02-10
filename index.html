@@ -43,7 +43,7 @@
             border: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* Precios mucho más llamativos */
+        /* Precios Impactantes */
         .price-tag { 
             color: #ffffff; 
             background: linear-gradient(90deg, #ff6b00, #ff9e00);
@@ -55,16 +55,20 @@
             letter-spacing: -1px;
         }
 
-        /* Carrusel Premium */
+        /* Carrusel Premium Re-incorporado */
         .carousel-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 15px; padding: 10px 0; }
         .carousel-item { 
-            flex: 0 0 90%; scroll-snap-align: center; border-radius: 2rem; height: 180px; 
+            flex: 0 0 90%; scroll-snap-align: center; border-radius: 2rem; height: 200px; 
             background-size: cover; background-position: center; position: relative; 
-            overflow: hidden; border: 1px solid rgba(255,255,255,0.1);
+            overflow: hidden; border: 1px solid rgba(255, 107, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        .carousel-overlay { background: linear-gradient(to right, rgba(0,0,0,0.9), transparent); height: 100%; width: 100%; display: flex; flex-direction: column; justify-content: center; padding: 25px; }
+        .carousel-overlay { 
+            background: linear-gradient(to right, rgba(0,0,0,0.9) 20%, transparent); 
+            height: 100%; width: 100%; display: flex; flex-direction: column; justify-content: center; padding: 30px; 
+        }
 
-        /* Footer Estilo */
+        /* Footer */
         .footer-premium { background: #0f0f0f; border-top: 1px solid #ff6b0033; }
 
         .cat-active { background-color: #ff6b00 !important; color: white !important; }
@@ -106,14 +110,23 @@
         <div class="carousel-container no-scrollbar">
             <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1571767454098-246b930b5ad3?auto=format&fit=crop&q=80&w=800');">
                 <div class="carousel-overlay">
-                    <span class="bg-orange-600 text-white text-[9px] px-2 py-1 rounded w-fit font-black mb-2 uppercase">Viedma y Patagones</span>
-                    <h2 class="text-2xl font-black text-white italic uppercase leading-tight">Reparto Propio<br><span class="text-orange-500">Sin Cargo</span></h2>
+                    <span class="bg-orange-600 text-white text-[10px] px-3 py-1 rounded-full w-fit font-black mb-3 uppercase tracking-tighter">Servicio VIP</span>
+                    <h2 class="text-3xl font-black text-white italic uppercase leading-none">Reparto Propio<br><span class="text-orange-500">Sin Cargo</span></h2>
+                    <p class="text-white/60 text-[10px] font-bold mt-2 uppercase">Viedma y Carmen de Patagones</p>
                 </div>
             </div>
             <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1543007630-9710e4a00a20?auto=format&fit=crop&q=80&w=800');">
                 <div class="carousel-overlay">
-                    <span class="bg-orange-600 text-white text-[9px] px-2 py-1 rounded w-fit font-black mb-2 uppercase">Logística</span>
-                    <h2 class="text-2xl font-black text-white italic uppercase leading-tight">Pedidos hasta<br><span class="text-orange-500">12:30hs</span></h2>
+                    <span class="bg-white text-black text-[10px] px-3 py-1 rounded-full w-fit font-black mb-3 uppercase tracking-tighter">Logística Rápida</span>
+                    <h2 class="text-3xl font-black text-white italic uppercase leading-none">Pedidos hasta<br><span class="text-orange-500">12:30hs</span></h2>
+                    <p class="text-white/60 text-[10px] font-bold mt-2 uppercase">Entrega en el mismo día</p>
+                </div>
+            </div>
+            <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1550989460-0adf9ea622e2?auto=format&fit=crop&q=80&w=800');">
+                <div class="carousel-overlay">
+                    <span class="bg-orange-600 text-white text-[10px] px-3 py-1 rounded-full w-fit font-black mb-3 uppercase tracking-tighter">Stock Permanente</span>
+                    <h2 class="text-3xl font-black text-white italic uppercase leading-none">Precios de<br><span class="text-orange-500">Fábrica</span></h2>
+                    <p class="text-white/60 text-[10px] font-bold mt-2 uppercase">Directo a tu comercio</p>
                 </div>
             </div>
         </div>
@@ -133,8 +146,7 @@
     </div>
 
     <main id="catalogo" class="p-4 max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-20">
-        <div class="skeleton h-64"></div><div class="skeleton h-64"></div>
-    </main>
+        </main>
 
     <footer class="footer-premium pt-12 pb-24 px-6 mt-10">
         <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -160,7 +172,7 @@
             <div class="space-y-4">
                 <h3 class="text-white font-black uppercase text-xs tracking-widest border-l-4 border-orange-500 pl-3">Ubicación</h3>
                 <div class="h-40 rounded-2xl overflow-hidden border border-white/10">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12053.47525389658!2d-62.9961!3d-40.8135!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95952f9500000001%3A0x70d8a9561633530!2sViedma%2C%20R%C3%ADo%20Negro!5e0!3m2!1ses-419!2sar!4v1700000000000" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d3101.446864197415!2d-62.9866!3d-40.8122!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses!2sar!4v1710000000000" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                 </div>
             </div>
         </div>
@@ -178,23 +190,18 @@
                 </div>
                 <button onclick="document.getElementById('cart').style.display='none'" class="text-4xl text-gray-600 hover:text-white">×</button>
             </div>
-            
             <div id="cart-items" class="flex-1 overflow-y-auto p-4 space-y-3 bg-black/40"></div>
-            
             <div class="p-6 bg-[#0a0a0a] border-t border-white/5 space-y-4">
                 <div id="min-warning" class="bg-white/5 p-4 rounded-2xl border border-white/5">
                     <p id="min-text" class="text-[10px] font-black uppercase text-center mb-2 text-gray-500"></p>
                     <div class="h-1.5 bg-white/5 rounded-full overflow-hidden"><div id="min-purchase-fill" class="h-full bg-orange-600 transition-all duration-500"></div></div>
                 </div>
-
                 <input type="text" id="user-name" oninput="saveUserData()" placeholder="Nombre del Comercio" class="w-full p-4 rounded-xl bg-[#1a1a1a] text-white font-bold border border-white/10 outline-none focus:border-orange-500">
                 <input type="text" id="user-address" oninput="saveUserData()" placeholder="Dirección de Entrega" class="w-full p-4 rounded-xl bg-[#1a1a1a] text-white font-bold border border-white/10 outline-none focus:border-orange-500">
-                
                 <div class="flex justify-between items-center px-1">
                     <span class="text-gray-500 font-black uppercase text-xs italic tracking-widest">Total:</span>
                     <span class="text-orange-500 text-3xl font-black italic">$<span id="total">0</span></span>
                 </div>
-                
                 <button id="btn-whatsapp" onclick="enviarPedido()" class="w-full bg-orange-600 text-white py-5 rounded-2xl font-black text-lg active:scale-95 transition-all shadow-xl shadow-orange-900/20">
                     FINALIZAR WHATSAPP
                 </button>
@@ -296,7 +303,7 @@
             document.getElementById('total').innerText = t.toLocaleString();
             document.getElementById('count').innerText = c;
             const perc = Math.min(100, (t / MIN_COMPRA) * 100);
-            document.getElementById('min-purchase-fill').style.width = perc + '%';
+            if(document.getElementById('min-purchase-fill')) document.getElementById('min-purchase-fill').style.width = perc + '%';
             const btnW = document.getElementById('btn-whatsapp');
             const minTxt = document.getElementById('min-text');
             if (t < MIN_COMPRA) {
