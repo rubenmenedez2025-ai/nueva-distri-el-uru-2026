@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DISTRIBUIDORA EL URU | Sistema de Gestión 2026</title>
+    <title>DISTRIBUIDORA EL URU | Elite System 2026</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -22,7 +22,6 @@
             --bg-card: #121212;
             --bg-nav: rgba(13, 13, 13, 0.9);
             --text-main: #ffffff;
-            --text-muted: #9ca3af;
             --border-color: rgba(255, 255, 255, 0.08);
             --input-bg: rgba(255, 255, 255, 0.05);
         }
@@ -32,7 +31,6 @@
             --bg-card: #ffffff;
             --bg-nav: rgba(255, 255, 255, 0.9);
             --text-main: #0f172a;
-            --text-muted: #64748b;
             --border-color: rgba(0, 0, 0, 0.08);
             --input-bg: #f1f5f9;
         }
@@ -47,10 +45,8 @@
             background-color: var(--bg-body);
             color: var(--text-main);
             transition: background-color var(--transition-speed);
-            overflow-x: hidden;
         }
 
-        /* Animaciones */
         @keyframes marquee {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
@@ -64,7 +60,7 @@
 
         .glass-nav {
             background: var(--bg-nav);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(15px);
             border-bottom: 1px solid var(--border-color);
         }
 
@@ -72,23 +68,28 @@
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 1.5rem;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
 
         .card-uru:hover {
             transform: translateY(-5px);
             border-color: var(--primary);
-            box-shadow: 0 10px 30px -10px rgba(255, 107, 0, 0.2);
+            box-shadow: 0 15px 30px -10px rgba(255, 107, 0, 0.2);
         }
 
         .img-wrapper {
             aspect-ratio: 1/1;
             background: white;
-            border-radius: 1rem;
+            border-radius: 1.2rem;
+            margin: 0.5rem;
             padding: 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
         }
 
         .img-wrapper img {
@@ -112,12 +113,13 @@
             background: var(--primary);
             color: white;
             border-color: var(--primary);
+            box-shadow: 0 5px 15px rgba(255, 107, 0, 0.3);
         }
 
         .progress-fill {
             height: 100%;
             background: linear-gradient(90deg, var(--primary), #ffae00);
-            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: width 0.6s ease;
         }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -126,21 +128,20 @@
 <body class="dark-mode">
 
     <div id="zoom-overlay" onclick="closeZoom()" class="fixed inset-0 z-[1000] bg-black/90 hidden backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out">
-        <img id="zoom-img" src="" class="max-w-full max-h-[85vh] rounded-xl shadow-2xl">
+        <img id="zoom-img" src="" class="max-w-full max-h-[85vh] rounded-xl shadow-2xl scale-95 transition-transform duration-300">
     </div>
 
     <div class="bg-black py-2 overflow-hidden border-b border-white/10">
         <div class="animate-marquee font-black text-[10px] uppercase tracking-[0.3em] text-white/80">
             <span class="px-8">⚡ Distribuidora El Uru - Viedma y Carmen de Patagones ⚡</span>
             <span class="px-8">📦 Pedidos hasta 12:30hs para entrega en el día 📦</span>
-            <span class="px-8">🔥 Los mejores precios mayoristas 🔥</span>
+            <span class="px-8">🔥 Precios mayoristas actualizados 2026 🔥</span>
             <span class="px-8">⚡ Distribuidora El Uru - Viedma y Carmen de Patagones ⚡</span>
-            <span class="px-8">📦 Pedidos hasta 12:30hs para entrega en el día 📦</span>
         </div>
     </div>
 
-    <div id="status-delivery" class="py-2 text-center font-bold text-[10px] uppercase tracking-widest text-white transition-colors duration-500">
-        <span id="status-label">Cargando catálogo...</span>
+    <div id="status-delivery" class="py-2 text-center font-bold text-[10px] uppercase tracking-widest text-white transition-colors duration-700 bg-gray-800">
+        <span id="status-label italic"><i class="fas fa-sync fa-spin mr-2"></i>Sincronizando con base de datos...</span>
     </div>
 
     <nav class="sticky top-0 z-[100] glass-nav px-4 py-3">
@@ -154,10 +155,10 @@
             </div>
 
             <div class="flex items-center gap-2">
-                <button onclick="toggleTheme()" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400 border border-white/5">
+                <button onclick="toggleTheme()" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400 border border-white/5 hover:bg-white/10">
                     <i id="theme-icon" class="fas fa-moon"></i>
                 </button>
-                <button onclick="openCart()" class="relative bg-primary text-white h-10 px-4 rounded-xl font-black flex items-center gap-2 shadow-lg shadow-orange-900/20">
+                <button onclick="openCart()" class="relative bg-primary text-white h-10 px-4 rounded-xl font-black flex items-center gap-2 shadow-lg active:scale-95 transition-transform">
                     <i class="fas fa-shopping-basket"></i>
                     <span id="cart-counter" class="bg-black/20 px-1.5 rounded text-sm">0</span>
                 </button>
@@ -167,7 +168,7 @@
 
     <section class="max-w-7xl mx-auto px-4 mt-6">
         <div class="relative mb-6">
-            <input type="text" id="main-search" onkeyup="renderProducts()" placeholder="Buscar producto o marca..." 
+            <input type="text" id="main-search" onkeyup="renderProducts()" placeholder="¿Qué estás buscando hoy?" 
                 class="w-full p-4 pl-12 rounded-2xl bg-white/5 border border-white/10 text-base focus:border-primary outline-none transition-all">
             <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-primary opacity-50"></i>
         </div>
@@ -176,49 +177,49 @@
 
     <main class="max-w-7xl mx-auto px-4 pb-32 mt-4">
         <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            <div class="col-span-full py-20 text-center opacity-50 font-bold uppercase tracking-widest text-sm">
-                <i class="fas fa-spinner animate-spin mb-4 text-2xl block"></i>
-                Actualizando Precios...
+            <div class="col-span-full py-20 text-center">
+                <div class="inline-block w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                <p class="mt-4 text-xs font-bold uppercase opacity-50 tracking-widest">Cargando Catálogo...</p>
             </div>
         </div>
     </main>
 
-    <div id="cart-modal" class="fixed inset-0 z-[1000] hidden bg-black/60 backdrop-blur-sm">
-        <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full max-w-md bg-[var(--bg-card)] flex flex-col translate-x-full transition-transform duration-300 border-l border-white/10">
+    <div id="cart-modal" class="fixed inset-0 z-[1000] hidden bg-black/70 backdrop-blur-sm transition-opacity duration-300">
+        <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full max-w-md bg-[var(--bg-card)] flex flex-col translate-x-full transition-transform duration-500 border-l border-white/10">
             <div class="p-6 border-b border-white/5 flex justify-between items-center bg-white/5">
-                <h2 class="text-xl font-black uppercase text-primary">Tu Pedido</h2>
-                <button onclick="closeCart()" class="text-2xl p-2">&times;</button>
+                <h2 class="text-xl font-black uppercase text-primary italic">Tu Pedido</h2>
+                <button onclick="closeCart()" class="text-2xl p-2 hover:rotate-90 transition-transform">&times;</button>
             </div>
 
             <div class="p-6 bg-black/10 border-b border-white/5">
                 <div class="flex justify-between mb-2 items-end">
-                    <span class="text-[10px] font-black uppercase opacity-60">Mínimo de Compra</span>
+                    <span class="text-[10px] font-black uppercase opacity-60">Progreso Mínimo</span>
                     <span id="progress-percent" class="font-black text-primary text-sm">0%</span>
                 </div>
                 <div class="h-2 bg-white/10 rounded-full overflow-hidden">
                     <div id="progress-bar" class="progress-fill w-0"></div>
                 </div>
-                <p id="min-order-msg" class="mt-2 text-[9px] text-center font-bold uppercase opacity-60 tracking-wider"></p>
+                <p id="min-order-msg" class="mt-2 text-[9px] text-center font-bold uppercase opacity-60"></p>
             </div>
 
             <div id="cart-items-container" class="flex-1 overflow-y-auto p-4 space-y-3 no-scrollbar"></div>
 
             <div class="p-6 border-t border-white/10 space-y-4 bg-white/5">
-                <div class="space-y-2">
+                <div class="grid grid-cols-1 gap-2">
                     <input type="text" id="user-store-name" oninput="persistUserData()" placeholder="Nombre del Comercio" class="w-full p-3 rounded-xl bg-white/5 border border-white/10 text-sm font-bold focus:border-primary outline-none">
                     <input type="text" id="user-store-address" oninput="persistUserData()" placeholder="Dirección de Entrega" class="w-full p-3 rounded-xl bg-white/5 border border-white/10 text-sm font-bold focus:border-primary outline-none">
                 </div>
                 
-                <div class="flex justify-between items-center">
-                    <span class="text-[10px] font-black uppercase opacity-40">Total Estimado</span>
+                <div class="flex justify-between items-center py-2">
+                    <span class="text-[10px] font-black uppercase opacity-40">Total a Pagar</span>
                     <span class="text-3xl font-black italic text-primary">$<span id="cart-total-display">0</span></span>
                 </div>
 
                 <div class="grid grid-cols-5 gap-2">
-                    <button onclick="clearCart()" class="col-span-1 bg-white/5 hover:bg-red-500/20 text-gray-400 hover:text-red-500 rounded-xl transition-colors">
+                    <button onclick="clearCart()" title="Vaciar Carrito" class="col-span-1 bg-white/5 hover:bg-red-500/20 text-gray-500 hover:text-red-500 rounded-xl transition-all">
                         <i class="fas fa-trash-alt"></i>
                     </button>
-                    <button id="btn-checkout" onclick="executeCheckout()" class="col-span-4 py-4 rounded-xl bg-gray-800 text-gray-500 font-black uppercase tracking-widest shadow-lg transition-all disabled:opacity-50">
+                    <button id="btn-checkout" onclick="executeCheckout()" class="col-span-4 py-4 rounded-xl bg-gray-800 text-gray-500 font-black uppercase tracking-widest shadow-lg transition-all disabled:cursor-not-allowed">
                         Pedido Incompleto
                     </button>
                 </div>
@@ -241,6 +242,7 @@
             theme: localStorage.getItem('uru_theme') || 'dark-mode'
         };
 
+        // --- Inicialización ---
         window.addEventListener('DOMContentLoaded', async () => {
             applyTheme();
             updateDeliveryStatus();
@@ -248,34 +250,53 @@
             loadPersistedUser();
         });
 
+        // --- Motor de Datos ---
         async function fetchSheetData() {
             try {
+                // El parámetro cb evita que Google nos de datos viejos de su cache
                 const response = await fetch(`${APP_CONFIG.sheet_url}&cb=${Date.now()}`);
+                if (!response.ok) throw new Error("Fallo de red");
+                
                 const data = await response.text();
-                const rows = data.split('\n').slice(1);
+                // Separamos por saltos de línea y filtramos filas vacías
+                const rows = data.split(/\r?\n/).slice(1);
                 
                 state.products = rows.map((row, index) => {
-                    const columns = row.split('\t');
-                    // Limpieza pro de precios (maneja $1.200,50 o 1200)
-                    const cleanPrice = columns[1]?.replace(/[^\d,.]/g, '').replace(',', '.') || 0;
-                    
+                    const col = row.split('\t');
+                    if (!col[0] || col[0].trim() === "") return null;
+
+                    // Limpieza agresiva de precios ($ 1.200,50 -> 1200.50)
+                    let cleanPrice = col[1]?.toString()
+                        .replace(/[^\d,.]/g, '')
+                        .replace(/\./g, '')
+                        .replace(',', '.') || "0";
+
                     return {
-                        id: `p_${index}`,
-                        name: columns[0]?.trim(),
+                        id: `prod_${index}`,
+                        name: col[0].trim(),
                         price: parseFloat(cleanPrice) || 0,
-                        category: columns[2]?.trim().toUpperCase() || 'GENERAL',
-                        image: columns[3]?.trim() || APP_CONFIG.default_img
+                        category: (col[2] || 'GENERAL').trim().toUpperCase(),
+                        image: col[3]?.trim() || APP_CONFIG.default_img
                     };
-                }).filter(p => p.name && p.price > 0);
+                }).filter(p => p !== null && p.price > 0);
+
+                if (state.products.length === 0) throw new Error("Sin datos");
 
                 buildCategories();
                 renderProducts();
+                document.getElementById('status-label').innerHTML = `<i class="fas fa-check-circle mr-2 text-green-500"></i>Precios Sincronizados`;
             } catch (e) {
-                console.error("Error cargando DB:", e);
-                document.getElementById('status-label').innerText = "⚠️ Error de conexión. Reintente.";
+                console.error("Master Error:", e);
+                document.getElementById('products-grid').innerHTML = `
+                    <div class="col-span-full py-20 text-center">
+                        <i class="fas fa-exclamation-triangle text-3xl text-orange-500 mb-4"></i>
+                        <p class="font-bold opacity-50">ERROR AL CARGAR CATÁLOGO</p>
+                        <button onclick="location.reload()" class="mt-4 px-6 py-2 bg-primary rounded-full text-white font-bold">Reintentar</button>
+                    </div>`;
             }
         }
 
+        // --- Lógica de Interfaz ---
         function buildCategories() {
             const cats = ['TODOS', ...new Set(state.products.map(p => p.category))];
             document.getElementById('category-container').innerHTML = cats.map(c => `
@@ -294,29 +315,29 @@
             });
 
             if (filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full py-20 text-center opacity-50 font-bold uppercase tracking-widest text-sm">No se encontraron productos</div>`;
+                grid.innerHTML = `<div class="col-span-full py-20 text-center opacity-40 font-bold uppercase tracking-widest text-sm">No hay productos que coincidan</div>`;
                 return;
             }
 
             grid.innerHTML = filtered.map(p => {
                 const qty = state.cart[p.id] || 0;
                 return `
-                    <div class="card-uru p-3 flex flex-col ${qty > 0 ? 'ring-2 ring-primary bg-primary/5' : ''}">
-                        <div class="img-wrapper mb-3 cursor-zoom-in" onclick="openZoom('${p.image}')">
+                    <div class="card-uru p-3 ${qty > 0 ? 'ring-2 ring-primary bg-primary/[0.03]' : ''}">
+                        <div class="img-wrapper cursor-zoom-in" onclick="openZoom('${p.image}')">
                             <img src="${p.image}" onerror="this.src='${APP_CONFIG.default_img}'" loading="lazy">
                         </div>
-                        <div class="px-1 flex-1">
+                        <div class="px-1 flex-1 mt-2">
                             <span class="text-[7px] font-black text-primary uppercase tracking-tighter">${p.category}</span>
                             <h3 class="text-[11px] font-bold h-7 overflow-hidden uppercase mt-0.5 leading-tight">${p.name}</h3>
-                            <p class="text-xl font-black mt-1 italic text-primary">$${p.price.toLocaleString('es-AR', {minimumFractionDigits: 0})}</p>
+                            <p class="text-xl font-black mt-1 italic text-primary">$${p.price.toLocaleString('es-AR')}</p>
                         </div>
                         <div class="mt-3">
                             ${qty === 0 ? 
-                                `<button onclick="updateCart('${p.id}', 1)" class="w-full py-3 rounded-xl bg-primary text-white font-black text-[10px] uppercase shadow-md active:scale-95 transition-transform">Agregar</button>` :
+                                `<button onclick="updateCart('${p.id}', 1)" class="w-full py-3 rounded-xl bg-primary text-white font-black text-[10px] uppercase shadow-md active:scale-95 transition-all">Agregar</button>` :
                                 `<div class="flex items-center bg-white/5 rounded-xl border border-white/10 overflow-hidden">
-                                    <button onclick="updateCart('${p.id}', -1)" class="w-10 h-10 flex items-center justify-center hover:bg-white/5 text-primary">-</button>
+                                    <button onclick="updateCart('${p.id}', -1)" class="w-10 h-10 flex items-center justify-center hover:bg-white/5 text-primary font-bold">-</button>
                                     <span class="flex-1 text-center font-black text-sm">${qty}</span>
-                                    <button onclick="updateCart('${p.id}', 1)" class="w-10 h-10 flex items-center justify-center hover:bg-white/5 text-primary">+</button>
+                                    <button onclick="updateCart('${p.id}', 1)" class="w-10 h-10 flex items-center justify-center hover:bg-white/5 text-primary font-bold">+</button>
                                 </div>`
                             }
                         </div>
@@ -325,6 +346,7 @@
             }).join('');
         }
 
+        // --- Carrito ---
         function updateCart(id, delta) {
             state.cart[id] = (state.cart[id] || 0) + delta;
             if (state.cart[id] <= 0) delete state.cart[id];
@@ -333,7 +355,7 @@
         }
 
         function clearCart() {
-            if(confirm('¿Vaciar todo el pedido?')) {
+            if(confirm('¿Deseas vaciar todo el pedido actual?')) {
                 state.cart = {};
                 syncUI();
                 renderProducts();
@@ -344,11 +366,10 @@
         function syncUI() {
             let total = 0, count = 0;
             const container = document.getElementById('cart-items-container');
-            
             const cartEntries = Object.entries(state.cart);
             
             if (cartEntries.length === 0) {
-                container.innerHTML = `<div class="py-10 text-center opacity-30 font-bold uppercase text-xs">El carrito está vacío</div>`;
+                container.innerHTML = `<div class="py-20 text-center opacity-20 font-bold uppercase text-xs italic">Carrito Vacío</div>`;
             } else {
                 container.innerHTML = cartEntries.map(([id, qty]) => {
                     const p = state.products.find(x => x.id === id);
@@ -356,15 +377,15 @@
                     total += (p.price * qty); count += qty;
                     return `
                         <div class="flex gap-3 bg-white/5 p-3 rounded-xl items-center border border-white/5">
-                            <img src="${p.image}" class="w-10 h-10 rounded-lg bg-white p-1 object-contain">
+                            <img src="${p.image}" class="w-10 h-10 rounded-lg bg-white p-0.5 object-contain">
                             <div class="flex-1 min-w-0">
                                 <p class="text-[9px] font-bold uppercase truncate">${p.name}</p>
                                 <p class="text-primary font-black text-sm">$${(p.price * qty).toLocaleString('es-AR')}</p>
                             </div>
                             <div class="flex items-center gap-2">
-                                <button onclick="updateCart('${id}', -1)" class="w-6 h-6 rounded bg-white/10 text-xs">-</button>
+                                <button onclick="updateCart('${id}', -1)" class="w-7 h-7 rounded-lg bg-white/10 text-xs">-</button>
                                 <span class="font-black text-xs w-4 text-center">${qty}</span>
-                                <button onclick="updateCart('${id}', 1)" class="w-6 h-6 rounded bg-white/10 text-xs">+</button>
+                                <button onclick="updateCart('${id}', 1)" class="w-7 h-7 rounded-lg bg-white/10 text-xs">+</button>
                             </div>
                         </div>`;
                 }).join('');
@@ -383,24 +404,108 @@
             if (total >= APP_CONFIG.min_purchase) {
                 btn.disabled = false;
                 btn.className = "col-span-4 py-4 rounded-xl bg-green-600 text-white font-black uppercase tracking-widest cursor-pointer shadow-lg animate-pulse";
-                btn.innerText = "Enviar Pedido";
-                msg.innerText = "✅ Compra mínima superada";
+                btn.innerText = "Enviar WhatsApp";
+                msg.innerHTML = `<span class="text-green-500">✅ MÍNIMO ALCANZADO</span>`;
             } else {
                 btn.disabled = true;
                 btn.className = "col-span-4 py-4 rounded-xl bg-gray-800 text-gray-500 font-black uppercase tracking-widest cursor-not-allowed";
                 btn.innerText = `Faltan $${(APP_CONFIG.min_purchase - total).toLocaleString('es-AR')}`;
-                msg.innerText = `Mínimo de compra: $${APP_CONFIG.min_purchase.toLocaleString('es-AR')}`;
+                msg.innerText = `Compra mínima: $${APP_CONFIG.min_purchase.toLocaleString('es-AR')}`;
             }
         }
 
+        // --- Checkout ---
         function executeCheckout() {
             const store = document.getElementById('user-store-name').value.trim();
             const address = document.getElementById('user-store-address').value.trim();
             
             if (!store || !address) {
-                alert("Completa el nombre y dirección de entrega.");
+                alert("Por favor, ingresa el nombre de tu comercio y la dirección.");
                 return;
             }
 
-            let text = `*PEDIDO EL URU*\n`;
-            text +=
+            let msg = `*PEDIDO EL URU 2026*\n`;
+            msg += `*Comercio:* ${store.toUpperCase()}\n`;
+            msg += `*📍 Dir:* ${address}\n`;
+            msg += `--------------------------------\n`;
+            
+            Object.entries(state.cart).forEach(([id, qty]) => {
+                const p = state.products.find(x => x.id === id);
+                msg += `• ${qty}x ${p.name}\n`;
+            });
+            
+            msg += `--------------------------------\n`;
+            msg += `*TOTAL ESTIMADO: $${document.getElementById('cart-total-display').innerText}*`;
+            
+            window.open(`https://wa.me/${APP_CONFIG.whatsapp_number}?text=${encodeURIComponent(msg)}`);
+        }
+
+        // --- Utilidades de Sistema ---
+        function updateDeliveryStatus() {
+            const now = new Date();
+            const h = now.getHours();
+            const m = now.getMinutes();
+            const statusEl = document.getElementById('status-delivery');
+            const label = document.getElementById('status-label');
+            const isOpen = (h < 12 || (h === 12 && m <= 30));
+
+            if (isOpen) {
+                statusEl.className = "py-2 text-center font-bold text-[10px] uppercase tracking-widest text-white bg-green-600";
+                label.innerText = "🟢 ABIERTO: Reparto hoy hasta 12:30hs";
+            } else {
+                statusEl.className = "py-2 text-center font-bold text-[10px] uppercase tracking-widest text-white bg-orange-600";
+                label.innerText = "🕒 CERRADO: Pedidos para reparto de mañana";
+            }
+        }
+
+        function setFilterCategory(c) { 
+            state.currentCategory = c; 
+            buildCategories(); 
+            renderProducts(); 
+        }
+
+        function openCart() { 
+            document.getElementById('cart-modal').classList.remove('hidden');
+            setTimeout(() => document.getElementById('cart-sidebar').style.transform = 'translateX(0)', 10);
+        }
+
+        function closeCart() {
+            document.getElementById('cart-sidebar').style.transform = 'translateX(100%)';
+            setTimeout(() => document.getElementById('cart-modal').classList.add('hidden'), 500);
+        }
+
+        function toggleTheme() {
+            state.theme = (state.theme === 'dark-mode' ? 'light-mode' : 'dark-mode');
+            localStorage.setItem('uru_theme', state.theme);
+            applyTheme();
+        }
+
+        function applyTheme() {
+            document.body.className = state.theme;
+            document.getElementById('theme-icon').className = (state.theme === 'dark-mode' ? 'fas fa-moon' : 'fas fa-sun');
+        }
+
+        function persistUserData() {
+            localStorage.setItem('uru_store', document.getElementById('user-store-name').value);
+            localStorage.setItem('uru_address', document.getElementById('user-store-address').value);
+        }
+
+        function loadPersistedUser() {
+            document.getElementById('user-store-name').value = localStorage.getItem('uru_store') || '';
+            document.getElementById('user-store-address').value = localStorage.getItem('uru_address') || '';
+        }
+
+        function openZoom(src) {
+            const zImg = document.getElementById('zoom-img');
+            zImg.src = src;
+            document.getElementById('zoom-overlay').classList.remove('hidden');
+            setTimeout(() => zImg.classList.remove('scale-95'), 10);
+        }
+
+        function closeZoom() { 
+            document.getElementById('zoom-img').classList.add('scale-95');
+            setTimeout(() => document.getElementById('zoom-overlay').classList.add('hidden'), 200);
+        }
+    </script>
+</body>
+</html>
