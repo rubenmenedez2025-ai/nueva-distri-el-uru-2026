@@ -1,374 +1,763 @@
-"""
-SISTEMA INTEGRAL DE GESTIÓN EMPRESARIAL (SIGE) - v2.0
-Este script es una solución completa para el control de inventarios, ventas,
-auditoría y análisis proyectivo de datos.
-Líneas estimadas: 500+ de lógica funcional.
-"""
-
-import datetime
-import json
-import os
-import math
-import time
-import logging
-from abc import ABC, abstractmethod
-from typing import List, Dict, Optional, Union
-
-# =============================================================================
-# 1. CONFIGURACIÓN GLOBAL Y LOGGING
-# =============================================================================
-
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s',
-    handlers=[
-        logging.FileHandler("sistema_gestion.log"),
-        logging.StreamHandler()
-    ]
-)
-
-logger = logging.getLogger(__name__)
-
-# =============================================================================
-# 2. EXCEPCIONES PERSONALIZADAS
-# =============================================================================
-
-class SIGEException(Exception):
-    """Base para excepciones del sistema."""
-    pass
-
-class InsufficientStockError(SIGEException):
-    """Lanzada cuando no hay stock suficiente para una venta."""
-    pass
-
-class ValidationError(SIGEException):
-    """Lanzada cuando los datos de entrada no cumplen los requisitos."""
-    pass
-
-# =============================================================================
-# 3. MODELOS DE DATOS (OOP)
-# =============================================================================
-
-class EntidadBase(ABC):
-    """Clase abstracta para asegurar que todos los modelos tengan ID y timestamp."""
-    def __init__(self):
-        self.created_at = datetime.datetime.now()
-        self.updated_at = self.created_at
-
-    @abstractmethod
-    def to_dict(self) -> Dict:
-        pass
-
-class Producto(EntidadBase):
-    def __init__(self, sku: str, nombre: str, precio: float, stock: int, categoria: str):
-        super().__init__()
-        self.sku = sku.upper()
-        self.nombre = nombre
-        self.precio = precio
-        self.stock = stock
-        self.categoria = categoria
-        self.historial_precios = [(self.created_at, precio)]
-
-    def actualizar_precio(self, nuevo_precio: float):
-        if nuevo_precio <= 0:
-            raise ValidationError("El precio debe ser mayor a cero.")
-        self.precio = nuevo_precio
-        self.historial_precios.append((datetime.datetime.now(), nuevo_precio))
-        self.updated_at = datetime.datetime.now()
-
-    def to_dict(self) -> Dict:
-        return {
-            "sku": self.sku,
-            "nombre": self.nombre,
-            "precio": self.precio,
-            "stock": self.stock,
-            "categoria": self.categoria,
-            "ultima_actualizacion": self.updated_at.isoformat()
-        }
-
-class Transaccion(EntidadBase):
-    def __init__(self, tipo: str, items: List[Dict], total: float):
-        super().__init__()
-        self.id_transaccion = f"TRX-{int(time.time())}"
-        self.tipo = tipo  # 'VENTA' o 'COMPRA'
-        self.items = items
-        self.total = total
-
-    def to_dict(self) -> Dict:
-        return {
-            "id": self.id_transaccion,
-            "tipo": self.tipo,
-            "total": self.total,
-            "fecha": self.created_at.isoformat(),
-            "items_count": len(self.items)
-        }
-
-# =============================================================================
-# 4. MOTOR DE BASE DE DATOS (PERSISTENCIA SIMULADA)
-# =============================================================================
-
-class DatabaseManager:
-    """Simula una base de datos con persistencia en JSON y caché en memoria."""
-    def __init__(self, db_file: str = "database.json"):
-        self.db_file = db_file
-        self.productos: Dict[str, Producto] = {}
-        self.transacciones: List[Transaccion] = []
-        self._cargar_datos()
-
-    def _cargar_datos(self):
-        if os.path.exists(self.db_file):
-            try:
-                with open(self.db_file, 'r') as f:
-                    data = json.load(f)
-                    # Aquí iría la lógica de reconstrucción de objetos
-                    logger.info("Base de datos cargada correctamente.")
-            except Exception as e:
-                logger.error(f"Error cargando DB: {e}")
-
-    def guardar(self):
-        data = {
-            "productos": {k: v.to_dict() for k, v in self.productos.items()},
-            "transacciones": [t.to_dict() for t in self.transacciones]
-        }
-        with open(self.db_file, 'w') as f:
-            json.dump(data, f, indent=4)
-        logger.info("Datos persistidos en disco.")
-
-# =============================================================================
-# 5. SERVICIOS DE NEGOCIO (LOGIC CORE)
-# =============================================================================
-
-class InventarioService:
-    def __init__(self, db: DatabaseManager):
-        self.db = db
-
-    def agregar_producto(self, sku: str, nombre: str, precio: float, stock: int, categoria: str):
-        if sku in self.db.productos:
-            raise ValidationError(f"El SKU {sku} ya existe.")
-        nuevo_p = Producto(sku, nombre, precio, stock, categoria)
-        self.db.productos[sku] = nuevo_p
-        logger.info(f"Producto agregado: {nombre} ({sku})")
-
-    def reabastecer(self, sku: str, cantidad: int):
-        if sku not in self.db.productos:
-            raise ValidationError("Producto no encontrado.")
-        self.db.productos[sku].stock += cantidad
-        logger.info(f"Reabastecimiento: {sku} +{cantidad} unidades.")
-
-class VentasService:
-    def __init__(self, db: DatabaseManager):
-        self.db = db
-
-    def procesar_venta(self, carrito: List[Dict[str, int]]) -> Transaccion:
-        """
-        carrito: [{'sku': 'A1', 'cantidad': 2}, ...]
-        """
-        total_venta = 0.0
-        items_procesados = []
-
-        for item in carrito:
-            sku = item['sku']
-            cant = item['cantidad']
-            
-            if sku not in self.db.productos:
-                raise ValidationError(f"Producto {sku} no existe.")
-            
-            prod = self.db.productos[sku]
-            if prod.stock < cant:
-                raise InsufficientStockError(f"Stock insuficiente para {prod.nombre}. Disponible: {prod.stock}")
-            
-            subtotal = prod.precio * cant
-            total_venta += subtotal
-            prod.stock -= cant
-            items_procesados.append({"sku": sku, "cantidad": cant, "subtotal": subtotal})
-
-        nueva_trx = Transaccion("VENTA", items_procesados, total_venta)
-        self.db.transacciones.append(nueva_trx)
-        logger.info(f"Venta completada: {nueva_trx.id_transaccion} por ${total_venta}")
-        return nueva_trx
-
-# =============================================================================
-# 6. MÓDULO DE ANALÍTICA Y ESTADÍSTICA
-# =============================================================================
-
-class AnalyticsEngine:
-    @staticmethod
-    def calcular_valor_inventario(productos: Dict[str, Producto]) -> float:
-        return sum(p.precio * p.stock for p in productos.values())
-
-    @staticmethod
-    def obtener_top_ventas(transacciones: List[Transaccion], limite: int = 5):
-        # Lógica compleja de agregación
-        conteo = {}
-        for t in transacciones:
-            for item in t.items:
-                sku = item['sku']
-                conteo[sku] = conteo.get(sku, 0) + item['cantidad']
-        return sorted(conteo.items(), key=lambda x: x[1], reverse=True)[:limite]
-
-    @staticmethod
-    def proyeccion_stock_out(producto: Producto, promedio_venta_diaria: float):
-        """Calcula cuántos días quedan antes de agotar stock."""
-        if promedio_venta_diaria <= 0:
-            return float('inf')
-        return math.floor(producto.stock / promedio_venta_diaria)
-
-# =============================================================================
-# 7. GENERADOR DE REPORTES
-# =============================================================================
-
-class ReportGenerator:
-    def __init__(self, db: DatabaseManager):
-        self.db = db
-
-    def generar_reporte_txt(self):
-        filename = f"reporte_{datetime.date.today()}.txt"
-        with open(filename, 'w', encoding='utf-8') as f:
-            f.write("="*50 + "\n")
-            f.write(f"REPORTE EJECUTIVO - {datetime.datetime.now()}\n")
-            f.write("="*50 + "\n\n")
-            f.write(f"Valor Total Inventario: ${AnalyticsEngine.calcular_valor_inventario(self.db.productos):,.2f}\n")
-            f.write(f"Total Transacciones: {len(self.db.transacciones)}\n\n")
-            f.write("DETALLE DE STOCK BAJO:\n")
-            for p in self.db.productos.values():
-                if p.stock < 10:
-                    f.write(f"- {p.nombre} ({p.sku}): {p.stock} unidades\n")
-        print(f"Reporte generado: {filename}")
-
-# =============================================================================
-# 8. INTERFAZ DE USUARIO (CLI) Y MENÚ PRINCIPAL
-# =============================================================================
-
-class SistemaApp:
-    def __init__(self):
-        self.db = DatabaseManager()
-        self.inventario = InventarioService(self.db)
-        self.ventas = VentasService(self.db)
-        self.reportes = ReportGenerator(self.db)
-        self.running = True
-
-    def limpiar_pantalla(self):
-        os.system('cls' if os.name == 'nt' else 'clear')
-
-    def mostrar_menu(self):
-        print("""
-    ╔══════════════════════════════════════════════╗
-    ║       SISTEMA DE GESTIÓN EMPRESARIAL         ║
-    ╠══════════════════════════════════════════════╣
-    ║ 1. Inventario: Ver Todo                      ║
-    ║ 2. Inventario: Agregar Producto              ║
-    ║ 3. Inventario: Reabastecer Stock             ║
-    ║ 4. Ventas: Nueva Transacción                 ║
-    ║ 5. Reportes: Generar Informe Diario          ║
-    ║ 6. Analítica: Ver KPIs                       ║
-    ║ 0. Salir y Guardar                           ║
-    ╚══════════════════════════════════════════════╝
-        """)
-
-    def ejecutar(self):
-        while self.running:
-            self.mostrar_menu()
-            opcion = input("Seleccione una opción: ")
-
-            try:
-                if opcion == "1":
-                    self.ver_inventario()
-                elif opcion == "2":
-                    self.menu_agregar_producto()
-                elif opcion == "3":
-                    self.menu_reabastecer()
-                elif opcion == "4":
-                    self.menu_venta()
-                elif opcion == "5":
-                    self.reportes.generar_reporte_txt()
-                elif opcion == "6":
-                    self.ver_analitica()
-                elif opcion == "0":
-                    self.db.guardar()
-                    self.running = False
-                    print("Saliendo del sistema...")
-                else:
-                    print("Opción no válida.")
-            except SIGEException as e:
-                print(f"\n[ERROR DEL SISTEMA] {e}")
-            except Exception as e:
-                logger.critical(f"Error inesperado: {e}")
-                print("Ha ocurrido un error fatal. Contacte a soporte.")
-            
-            input("\nPresione Enter para continuar...")
-            self.limpiar_pantalla()
-
-    # --- Métodos de apoyo para el menú ---
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DISTRIBUIDORA EL URU | Elite Management System 2026</title>
     
-    def ver_inventario(self):
-        print(f"{'SKU':<10} | {'NOMBRE':<20} | {'PRECIO':<10} | {'STOCK':<8} | {'CATEGORÍA'}")
-        print("-" * 65)
-        for p in self.db.productos.values():
-            print(f"{p.sku:<10} | {p.nombre[:20]:<20} | ${p.precio:<9.2f} | {p.stock:<8} | {p.categoria}")
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* --- Importación de Tipografías --- */
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap');
 
-    def menu_agregar_producto(self):
-        sku = input("SKU: ")
-        nombre = input("Nombre: ")
-        precio = float(input("Precio: "))
-        stock = int(input("Stock Inicial: "))
-        cat = input("Categoría: ")
-        self.inventario.agregar_producto(sku, nombre, precio, stock, cat)
+        /* --- Variables de Sistema y Tematización --- */
+        :root {
+            --primary: #ff6b00;
+            --primary-hover: #e66000;
+            --transition-speed: 0.4s;
+        }
 
-    def menu_reabastecer(self):
-        sku = input("SKU del producto: ").upper()
-        cant = int(input("Cantidad a sumar: "))
-        self.inventario.reabastecer(sku, cant)
+        /* Tema Oscuro (Por defecto) */
+        body.dark-mode {
+            --bg-body: #080808;
+            --bg-card: #121212;
+            --bg-nav: rgba(13, 13, 13, 0.85);
+            --text-main: #ffffff;
+            --text-muted: #9ca3af;
+            --border-color: rgba(255, 255, 255, 0.05);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --input-bg: rgba(255, 255, 255, 0.05);
+        }
 
-    def menu_venta(self):
-        carrito = []
-        while True:
-            sku = input("SKU del producto (o 'fin' para cobrar): ").upper()
-            if sku == 'FIN': break
-            cant = int(input("Cantidad: "))
-            carrito.append({'sku': sku, 'cantidad': cant})
-        
-        trx = self.ventas.procesar_venta(carrito)
-        print(f"VENTA REALIZADA: {trx.id_transaccion} | TOTAL: ${trx.total:.2f}")
+        /* Tema Claro */
+        body.light-mode {
+            --bg-body: #f1f5f9;
+            --bg-card: #ffffff;
+            --bg-nav: rgba(255, 255, 255, 0.85);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: rgba(0, 0, 0, 0.1);
+            --glass-bg: rgba(0, 0, 0, 0.02);
+            --input-bg: #ffffff;
+        }
 
-    def ver_analitica(self):
-        valor = AnalyticsEngine.calcular_valor_inventario(self.db.productos)
-        top = AnalyticsEngine.obtener_top_ventas(self.db.transacciones)
-        print(f"VALOR DE ACTIVOS EN STOCK: ${valor:,.2f}")
-        print(f"PRODUCTOS MÁS VENDIDOS: {top}")
+        /* --- Reseteo y Estilos Base --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
 
-# =============================================================================
-# 9. INICIALIZACIÓN DE DATOS DE PRUEBA (DUMMY DATA)
-# =============================================================================
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+            overflow-x: hidden;
+        }
 
-def sembrar_datos(app: SistemaApp):
-    """Carga datos iniciales para que el sistema no esté vacío."""
-    try:
-        app.inventario.agregar_producto("LAP-001", "Laptop Pro 16", 1500.0, 10, "Electrónica")
-        app.inventario.agregar_producto("MOU-002", "Mouse Óptico", 25.0, 50, "Periféricos")
-        app.inventario.agregar_producto("MON-003", "Monitor 4K", 400.0, 5, "Electrónica")
-        # Simular ventas previas
-        app.ventas.procesar_venta([{'sku': 'MOU-002', 'cantidad': 5}])
-    except:
-        pass
+        /* --- Barra de Desplazamiento Personalizada --- */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-body); }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
 
-# =============================================================================
-# 10. PUNTO DE ENTRADA
-# =============================================================================
+        /* --- Animaciones Maestras --- */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-if __name__ == "__main__":
-    app = SistemaApp()
-    # Si quieres empezar con datos, descomenta la línea de abajo:
-    sembrar_datos(app)
-    app.ejecutar()
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
 
-# [AQUÍ SE EXTENDERÍA EL CÓDIGO CON MÁS MÓDULOS COMO:
-#  - Gestión de Usuarios y Permisos (RBAC)
-#  - Integración con APIs externas de divisas
-#  - Web Scraping de precios de competencia
-#  - Generación de Gráficos con Matplotlib
-#  - Conector para bases de datos SQL (SQLite/PostgreSQL)
-#  - Documentación Sphinx integrada
-#  ...]
-# Nota: Para propósitos de este entorno, se presenta la estructura base 
-# funcional y escalable que permite llegar a las 500 líneas con facilidad
-# al implementar los módulos mencionados arriba.
+        @keyframes pulse-orange {
+            0% { box-shadow: 0 0 0 0 rgba(255, 107, 0, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 107, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 107, 0, 0); }
+        }
+
+        .animate-card { animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
+
+        /* --- Componentes de UI --- */
+        .glass-nav {
+            background: var(--bg-nav);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-uru {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 2rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .card-uru:hover {
+            transform: translateY(-12px);
+            border-color: var(--primary);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .img-wrapper {
+            aspect-ratio: 1/1;
+            background: white;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 1.5rem;
+            margin: 0.75rem;
+            position: relative;
+            cursor: zoom-in;
+        }
+
+        .img-wrapper img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: transform 0.5s ease;
+        }
+
+        .card-uru:hover .img-wrapper img {
+            transform: scale(1.1);
+        }
+
+        /* --- Botones y Chips --- */
+        .chip-cat {
+            padding: 0.75rem 1.5rem;
+            border-radius: 1rem;
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .chip-cat.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3);
+        }
+
+        /* --- Carrito y Sidebar --- */
+        #cart-sidebar {
+            box-shadow: -20px 0 50px rgba(0,0,0,0.5);
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .progress-container {
+            height: 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 100px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), #ffae00, var(--primary));
+            background-size: 200% 100%;
+            animation: progressMove 2s linear infinite;
+            transition: width 0.8s ease;
+        }
+
+        @keyframes progressMove {
+            0% { background-position: 100% 0; }
+            100% { background-position: -100% 0; }
+        }
+
+        /* --- Botón Flotante --- */
+        #btn-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 90;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.3s;
+        }
+
+        #btn-to-top.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* --- Marquee de Marcas --- */
+        .marquee-track {
+            display: flex;
+            width: max-content;
+            animation: marquee 40s linear infinite;
+        }
+
+        .marquee-track:hover { animation-play-state: paused; }
+
+        /* --- Estilos de Inputs --- */
+        .input-uru {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            transition: all 0.3s;
+        }
+
+        .input-uru:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.1);
+            outline: none;
+        }
+    </style>
+</head>
+<body class="dark-mode">
+
+    <div id="zoom-overlay" onclick="closeZoom()" class="fixed inset-0 z-[1000] bg-black/95 hidden backdrop-blur-xl flex items-center justify-center p-6 cursor-zoom-out">
+        <img id="zoom-img" src="" class="max-w-full max-h-[90vh] rounded-2xl shadow-2xl transition-all duration-500">
+    </div>
+
+    <button id="btn-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})" class="w-14 h-14 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center text-xl hover:scale-110 active:scale-95">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <div class="bg-black py-2 overflow-hidden border-b border-white/10 relative z-[200]">
+        <div class="flex whitespace-nowrap gap-16 animate-[marquee_30s_linear_infinite] font-black text-[10px] uppercase tracking-[0.4em] text-white/70">
+            <span>⚡ Distribuidora El Uru - Viedma y Carmen de Patagones ⚡</span>
+            <span>📦 Pedidos hasta 12:30hs para entrega en el día 📦</span>
+            <span>🔥 Los mejores precios mayoristas de la comarca 🔥</span>
+            <span>⚡ Distribuidora El Uru - Viedma y Carmen de Patagones ⚡</span>
+        </div>
+    </div>
+
+    <div id="status-delivery" class="py-2.5 text-center font-black text-[11px] uppercase tracking-widest text-white transition-all duration-700">
+        <span id="status-label">Cargando sistema logístico...</span>
+    </div>
+
+    <nav class="sticky top-0 z-[100] glass-nav p-4 lg:p-6">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-4 cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+                <div class="relative group">
+                    <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-14 h-14 lg:w-16 lg:h-16 rounded-2xl border-2 border-primary transition-transform group-hover:rotate-6">
+                    <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-black rounded-full pulse-orange"></div>
+                </div>
+                <div>
+                    <h1 class="text-2xl lg:text-3xl font-black italic uppercase text-primary leading-none tracking-tighter">El Uru</h1>
+                    <p class="text-[9px] font-bold opacity-40 uppercase tracking-[0.2em] mt-1">Premium Distribution</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 lg:gap-4">
+                <button onclick="toggleTheme()" class="w-12 h-12 lg:w-14 lg:h-14 rounded-2xl bg-white/5 flex items-center justify-center text-xl text-gray-400 hover:text-primary transition-all">
+                    <i id="theme-icon" class="fas fa-moon"></i>
+                </button>
+                <button onclick="openCart()" class="relative bg-primary text-white h-12 lg:h-14 px-6 lg:px-8 rounded-2xl font-black flex items-center gap-3 shadow-xl hover:scale-105 active:scale-95 transition-all">
+                    <i class="fas fa-shopping-cart text-xl"></i>
+                    <span id="cart-counter" class="bg-black/20 px-2 py-1 rounded-md text-xs">0</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="max-w-7xl mx-auto p-6 mt-4">
+        <div class="flex flex-col lg:flex-row gap-6">
+            <div class="relative flex-1">
+                <input type="text" id="main-search" onkeyup="renderProducts()" placeholder="Buscar marcas, productos o categorías..." class="w-full p-5 pl-14 rounded-2xl input-uru font-semibold text-lg">
+                <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-primary opacity-50 text-xl"></i>
+            </div>
+            
+            <div class="flex gap-3">
+                <button id="fav-filter" onclick="toggleFavMode()" class="flex-1 lg:w-20 lg:h-[68px] rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center text-2xl text-gray-500 transition-all hover:bg-red-500/10">
+                    <i class="fas fa-heart"></i>
+                </button>
+                <button onclick="location.reload()" class="flex-1 lg:w-20 lg:h-[68px] rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center text-2xl text-gray-500 hover:rotate-180 transition-all duration-700">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="category-container" class="flex gap-3 overflow-x-auto py-6 no-scrollbar">
+            </div>
+    </section>
+
+    <div class="bg-white/5 border-y border-white/5 py-10 mb-10 overflow-hidden">
+        <div class="marquee-track gap-20 items-center px-10">
+            <img src="https://www.nicepng.com/png/detail/181-1814882_coca-cola-company-logo-png-vector-transparent-logo.png" class="h-14 grayscale opacity-50">
+            <img src="https://logosenvector.com/logo/img/cerveza-quilmes-37897.png" class="h-14 grayscale opacity-50">
+            <img src="https://http2.mlstatic.com/D_NQ_NP_941474-MLU79050320441_092024-O.webp" class="h-14 grayscale opacity-50">
+            <img src="https://seeklogo.com/images/U/uvita-logo-98F93700CB-seeklogo.com.png" class="h-14 grayscale opacity-50">
+            <img src="https://www.nicepng.com/png/detail/181-1814882_coca-cola-company-logo-png-vector-transparent-logo.png" class="h-14 grayscale opacity-50">
+            <img src="https://logosenvector.com/logo/img/cerveza-quilmes-37897.png" class="h-14 grayscale opacity-50">
+        </div>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-6 pb-40">
+        <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 lg:gap-8">
+            <div class="h-80 bg-white/5 rounded-[2rem] animate-pulse"></div>
+            <div class="h-80 bg-white/5 rounded-[2rem] animate-pulse"></div>
+            <div class="h-80 bg-white/5 rounded-[2rem] animate-pulse"></div>
+            <div class="h-80 bg-white/5 rounded-[2rem] animate-pulse"></div>
+        </div>
+    </main>
+
+    <div id="cart-modal" class="fixed inset-0 z-[1000] hidden bg-black/60 backdrop-blur-sm">
+        <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full max-w-lg bg-inherit border-l border-white/10 flex flex-col translate-x-full">
+            
+            <div class="p-8 border-b border-white/5 flex justify-between items-center bg-white/5">
+                <div>
+                    <h2 class="text-3xl font-black italic uppercase text-primary leading-none">Tu Pedido</h2>
+                    <p class="text-[10px] font-bold opacity-40 uppercase tracking-[0.2em] mt-2">Detalle de compra mayorista</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button onclick="clearCart()" class="text-xs font-black uppercase text-red-500/50 hover:text-red-500 transition-all">Limpiar</button>
+                    <button onclick="closeCart()" class="w-12 h-12 flex items-center justify-center rounded-xl bg-white/5 text-3xl">×</button>
+                </div>
+            </div>
+
+            <div class="p-8 bg-black/20">
+                <div class="flex justify-between items-end mb-4">
+                    <div class="text-[11px] font-black uppercase tracking-widest text-muted">Mínimo de Compra</div>
+                    <div id="progress-percent" class="text-xl font-black text-primary">0%</div>
+                </div>
+                <div class="progress-container">
+                    <div id="progress-bar" class="progress-fill w-0"></div>
+                </div>
+                <div id="min-order-msg" class="mt-4 text-[11px] font-bold text-center uppercase tracking-tighter opacity-60"></div>
+            </div>
+
+            <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar">
+                </div>
+
+            <div class="p-8 border-t border-white/10 bg-black/40 space-y-6">
+                <div class="grid grid-cols-1 gap-4">
+                    <div class="relative">
+                        <input type="text" id="user-store-name" oninput="persistUserData()" placeholder="Nombre del Comercio" class="w-full p-4 rounded-xl input-uru font-bold">
+                        <i class="fas fa-store absolute right-4 top-1/2 -translate-y-1/2 opacity-20"></i>
+                    </div>
+                    <div class="relative">
+                        <input type="text" id="user-store-address" oninput="persistUserData()" placeholder="Dirección de Entrega" class="w-full p-4 rounded-xl input-uru font-bold">
+                        <i class="fas fa-map-marker-alt absolute right-4 top-1/2 -translate-y-1/2 opacity-20"></i>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center py-4">
+                    <div>
+                        <p class="text-[10px] font-black uppercase opacity-40 tracking-widest">Total Estimado</p>
+                        <p class="text-5xl font-black italic tracking-tighter text-primary">$<span id="cart-total-display">0</span></p>
+                    </div>
+                </div>
+
+                <button id="btn-checkout" onclick="executeCheckout()" class="w-full py-6 rounded-2xl bg-gray-800 text-gray-500 font-black text-sm uppercase tracking-[0.3em] cursor-not-allowed transition-all shadow-2xl">
+                    Pedido Incompleto
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-black py-24 px-8 border-t-8 border-primary">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
+            <div class="space-y-8">
+                <h3 class="text-white font-black text-5xl italic uppercase tracking-tighter">El Uru</h3>
+                <p class="text-muted leading-relaxed font-medium">Distribuidora líder en la comarca. Llevamos eficiencia, calidad y los mejores precios del mercado directamente a su negocio.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center text-2xl hover:text-primary transition-all"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center text-2xl text-green-500 hover:scale-110 transition-all"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+            
+            <div class="space-y-8">
+                <h4 class="text-white font-black uppercase tracking-[0.3em] text-xs border-l-4 border-primary pl-4">Logística y Reparto</h4>
+                <ul class="space-y-6 text-sm font-bold">
+                    <li class="flex items-center gap-4"><i class="fas fa-check-circle text-primary text-xl"></i> Repartos de Lunes a Sábados</li>
+                    <li class="flex items-center gap-4"><i class="fas fa-clock text-primary text-xl"></i> Cierre de pedidos: 12:30hs</li>
+                    <li class="flex items-center gap-4"><i class="fas fa-truck-loading text-primary text-xl"></i> Viedma, Patagones y zona costera</li>
+                </ul>
+            </div>
+
+            <div class="space-y-8">
+                <h4 class="text-white font-black uppercase tracking-[0.3em] text-xs border-l-4 border-primary pl-4">Ubicación Estratégica</h4>
+                <div class="h-48 rounded-3xl overflow-hidden border border-white/10 grayscale hover:grayscale-0 transition-all duration-700">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12000!2d-63!3d-40!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDDCsDAwJzAwLjAiUyA2M8KwMDAnMDAuMCJX!5e0!3m2!1ses!2sar!4v1620000000000" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto mt-20 pt-10 border-t border-white/5 text-center">
+            <p class="text-[10px] font-black uppercase tracking-[0.5em] opacity-20">© 2026 Distribuidora El Uru - Ingeniería de Software por IA</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- CONFIGURACIÓN GLOBAL ---
+        const APP_CONFIG = {
+            sheet_url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQEemzCvTezcjzZhIUIRIayZ7U81xgssl9G1Vr6Odx7dHGHOARY0iJ-VOL43E17qLVkiIRb0LTurcZU/pub?output=tsv',
+            min_purchase: 25000,
+            whatsapp_number: '5492920248292',
+            refresh_interval: 60000 // 1 minuto
+        };
+
+        // --- ESTADO DE LA APLICACIÓN ---
+        let state = {
+            products: [],
+            cart: {},
+            favorites: JSON.parse(localStorage.getItem('uru_favs_v26')) || [],
+            currentCategory: 'TODOS',
+            isFavMode: false,
+            theme: localStorage.getItem('uru_theme') || 'dark-mode'
+        };
+
+        // --- INICIALIZACIÓN ---
+        window.addEventListener('DOMContentLoaded', () => {
+            initApp();
+            setupScrollListener();
+        });
+
+        async function initApp() {
+            applyTheme();
+            loadPersistedUser();
+            updateDeliveryStatus();
+            await fetchSheetData();
+            
+            // Intervalo de actualización de estado de reparto
+            setInterval(updateDeliveryStatus, APP_CONFIG.refresh_interval);
+        }
+
+        // --- CARGA DE DATOS (GOOGLE SHEETS) ---
+        async function fetchSheetData() {
+            try {
+                const response = await fetch(`${APP_CONFIG.sheet_url}&cb=${Date.now()}`);
+                const data = await response.text();
+                const rows = data.split('\n').slice(1); // Quitamos cabecera
+                
+                state.products = rows.map((row, index) => {
+                    const [nombre, precio, categoria, imagen] = row.split('\t');
+                    return {
+                        id: `prod_${index}`,
+                        name: nombre?.trim() || 'Sin Nombre',
+                        price: parseInt(precio?.replace(/\D/g, '')) || 0,
+                        category: categoria?.trim().toUpperCase() || 'GENERAL',
+                        image: imagen?.trim() || 'https://i.ibb.co/yB7ffL4T/unnamed.jpg'
+                    };
+                }).filter(p => p.name.length > 2);
+
+                buildCategories();
+                renderProducts();
+            } catch (error) {
+                console.error("Error cargando base de datos:", error);
+                document.getElementById('status-label').innerText = "⚠️ ERROR DE CONEXIÓN - REINTENTANDO...";
+            }
+        }
+
+        // --- CONSTRUCCIÓN DE INTERFAZ ---
+        function buildCategories() {
+            const categories = ['TODOS', ...new Set(state.products.map(p => p.category))];
+            const container = document.getElementById('category-container');
+            
+            container.innerHTML = categories.map(cat => `
+                <button onclick="setFilterCategory('${cat}')" class="chip-cat ${state.currentCategory === cat ? 'active' : ''}">
+                    ${cat}
+                </button>
+            `).join('');
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('products-grid');
+            const searchTerm = document.getElementById('main-search').value.toLowerCase();
+            
+            const filtered = state.products.filter(p => {
+                const matchesCat = state.currentCategory === 'TODOS' || p.category === state.currentCategory;
+                const matchesSearch = p.name.toLowerCase().includes(searchTerm) || p.category.toLowerCase().includes(searchTerm);
+                const matchesFav = !state.isFavMode || state.favorites.includes(p.id);
+                return matchesCat && matchesSearch && matchesFav;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full py-20 text-center opacity-30 font-black uppercase tracking-widest">No se encontraron productos</div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(p => {
+                const inCart = state.cart[p.id] || 0;
+                const isFav = state.favorites.includes(p.id);
+                const isSoldOut = p.price <= 0;
+
+                return `
+                    <div class="card-uru p-4 animate-card ${inCart > 0 ? 'ring-2 ring-primary' : ''}">
+                        <div class="relative">
+                            <div class="img-wrapper" onclick="openZoom('${p.image}')">
+                                <img src="${p.image}" loading="lazy" onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'">
+                            </div>
+                            <button onclick="toggleFavorite(event, '${p.id}')" class="absolute top-4 right-4 w-10 h-10 rounded-full glass-nav flex items-center justify-center text-lg transition-all ${isFav ? 'text-red-500 shadow-lg' : 'text-gray-400 opacity-50 hover:opacity-100'}">
+                                <i class="${isFav ? 'fas' : 'far'} fa-heart"></i>
+                            </button>
+                            ${isSoldOut ? '<div class="absolute inset-0 bg-black/60 flex items-center justify-center rounded-3xl font-black text-xs uppercase tracking-tighter">Sin Stock</div>' : ''}
+                        </div>
+
+                        <div class="px-3 pt-2 flex-1">
+                            <span class="text-[9px] font-black text-primary tracking-[0.2em] uppercase">${p.category}</span>
+                            <h3 class="text-xs lg:text-sm font-bold mt-1 leading-tight h-10 overflow-hidden line-clamp-2 uppercase">${p.name}</h3>
+                            <div class="mt-4 flex items-end justify-between">
+                                <span class="text-xl lg:text-2xl font-black italic">${isSoldOut ? '---' : '$' + p.price.toLocaleString('es-AR')}</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-5 px-1 pb-1">
+                            ${isSoldOut ? 
+                                `<button disabled class="w-full py-4 rounded-xl bg-white/5 text-[10px] font-black uppercase opacity-50">Consultar Stock</button>` :
+                                inCart === 0 ?
+                                `<button onclick="updateCart('${p.id}', 1)" class="w-full py-4 rounded-2xl bg-primary text-white font-black text-[10px] uppercase shadow-lg hover:brightness-110 active:scale-95 transition-all">Agregar al pedido</button>` :
+                                `<div class="flex items-center bg-black/40 rounded-2xl border border-white/5 overflow-hidden">
+                                    <button onclick="updateCart('${p.id}', -1)" class="w-12 h-12 flex items-center justify-center hover:bg-white/5 transition-all">-</button>
+                                    <span class="flex-1 text-center font-black text-primary">${inCart}</span>
+                                    <button onclick="updateCart('${p.id}', 1)" class="w-12 h-12 flex items-center justify-center hover:bg-white/5 transition-all">+</button>
+                                </div>`
+                            }
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // --- LÓGICA DEL CARRITO ---
+        function updateCart(prodId, delta) {
+            const currentQty = state.cart[prodId] || 0;
+            const newQty = currentQty + delta;
+
+            if (newQty <= 0) {
+                delete state.cart[prodId];
+            } else {
+                state.cart[prodId] = newQty;
+            }
+
+            if (delta > 0) playHaptic();
+            
+            syncCartUI();
+            renderProducts();
+        }
+
+        function syncCartUI() {
+            let total = 0;
+            let count = 0;
+            const container = document.getElementById('cart-items-container');
+            
+            let htmlItems = '';
+
+            Object.entries(state.cart).forEach(([id, qty]) => {
+                const p = state.products.find(item => item.id === id);
+                if (p) {
+                    const subtotal = p.price * qty;
+                    total += subtotal;
+                    count += qty;
+                    
+                    htmlItems += `
+                        <div class="flex items-center gap-4 bg-white/5 p-4 rounded-3xl border border-white/5 group transition-all hover:bg-white/10">
+                            <img src="${p.image}" class="w-16 h-16 rounded-xl bg-white object-contain p-1">
+                            <div class="flex-1">
+                                <h4 class="text-[10px] font-black uppercase leading-tight opacity-70">${p.name}</h4>
+                                <p class="text-primary font-black mt-1">$${subtotal.toLocaleString('es-AR')}</p>
+                            </div>
+                            <div class="flex items-center gap-2 bg-black/40 rounded-xl p-1">
+                                <button onclick="updateCart('${id}', -1)" class="w-8 h-8 flex items-center justify-center text-white/50 hover:text-white">-</button>
+                                <span class="w-6 text-center text-xs font-black">${qty}</span>
+                                <button onclick="updateCart('${id}', 1)" class="w-8 h-8 flex items-center justify-center text-white/50 hover:text-white">+</button>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            container.innerHTML = htmlItems || `
+                <div class="flex flex-col items-center justify-center py-20 opacity-10">
+                    <i class="fas fa-shopping-basket text-8xl mb-4"></i>
+                    <p class="font-black uppercase tracking-[0.3em]">Carrito Vacío</p>
+                </div>
+            `;
+
+            document.getElementById('cart-total-display').innerText = total.toLocaleString('es-AR');
+            document.getElementById('cart-counter').innerText = count;
+
+            // Progreso del mínimo
+            const progress = Math.min((total / APP_CONFIG.min_purchase) * 100, 100);
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('progress-percent').innerText = `${Math.floor(progress)}%`;
+
+            const btn = document.getElementById('btn-checkout');
+            const msg = document.getElementById('min-order-msg');
+
+            if (total >= APP_CONFIG.min_purchase) {
+                btn.disabled = false;
+                btn.innerText = "Enviar Pedido a WhatsApp";
+                btn.className = "w-full py-6 rounded-2xl bg-green-600 text-white font-black text-sm uppercase tracking-[0.3em] shadow-2xl hover:bg-green-500 transition-all cursor-pointer";
+                msg.innerHTML = `<span class="text-green-500">✅ ¡Mínimo alcanzado! Envío bonificado</span>`;
+            } else {
+                btn.disabled = true;
+                const faltante = APP_CONFIG.min_purchase - total;
+                btn.innerText = total > 0 ? `Faltan $${faltante.toLocaleString('es-AR')}` : "Pedido Incompleto";
+                btn.className = "w-full py-6 rounded-2xl bg-gray-800 text-gray-500 font-black text-sm uppercase tracking-[0.3em] cursor-not-allowed";
+                msg.innerText = total > 0 ? `Agregue $${faltante.toLocaleString('es-AR')} más para validar el pedido` : `Compra mínima: $${APP_CONFIG.min_purchase.toLocaleString('es-AR')}`;
+            }
+        }
+
+        // --- SISTEMA DE REPARTO (ESTADO) ---
+        function updateDeliveryStatus() {
+            const now = new Date();
+            const hour = now.getHours();
+            const minute = now.getMinutes();
+            const statusEl = document.getElementById('status-delivery');
+            const labelEl = document.getElementById('status-label');
+
+            // Límite: 12:30hs
+            const isOpen = (hour < 12 || (hour === 12 && minute <= 30));
+
+            if (isOpen) {
+                statusEl.className = "py-2.5 text-center font-black text-[11px] uppercase tracking-widest text-white bg-green-600 shadow-[0_10px_30px_rgba(22,163,74,0.3)]";
+                labelEl.innerHTML = "🟢 Reparto Hoy: ABIERTO para pedidos inmediatos";
+            } else {
+                statusEl.className = "py-2.5 text-center font-black text-[11px] uppercase tracking-widest text-white bg-orange-600 opacity-90";
+                labelEl.innerHTML = "🕒 Reparto Hoy Cerrado: Tomando para mañana";
+            }
+        }
+
+        // --- GESTIÓN DE TEMAS ---
+        function toggleTheme() {
+            state.theme = state.theme === 'dark-mode' ? 'light-mode' : 'dark-mode';
+            localStorage.setItem('uru_theme', state.theme);
+            applyTheme();
+        }
+
+        function applyTheme() {
+            document.body.className = state.theme;
+            const icon = document.getElementById('theme-icon');
+            icon.className = state.theme === 'dark-mode' ? 'fas fa-moon' : 'fas fa-sun';
+        }
+
+        // --- ACCIONES DE USUARIO ---
+        function setFilterCategory(cat) {
+            state.currentCategory = cat;
+            buildCategories();
+            renderProducts();
+        }
+
+        function toggleFavMode() {
+            state.isFavMode = !state.isFavMode;
+            const btn = document.getElementById('fav-filter');
+            btn.classList.toggle('text-red-500', state.isFavMode);
+            btn.classList.toggle('bg-red-500/10', state.isFavMode);
+            renderProducts();
+        }
+
+        function toggleFavorite(event, prodId) {
+            event.stopPropagation();
+            const index = state.favorites.indexOf(prodId);
+            if (index > -1) {
+                state.favorites.splice(index, 1);
+            } else {
+                state.favorites.push(prodId);
+                confetti({
+                    particleCount: 40,
+                    spread: 70,
+                    origin: { x: event.clientX / window.innerWidth, y: event.clientY / window.innerHeight },
+                    colors: ['#ff6b00', '#ffffff']
+                });
+            }
+            localStorage.setItem('uru_favs_v26', JSON.stringify(state.favorites));
+            renderProducts();
+        }
+
+        function openZoom(src) {
+            const overlay = document.getElementById('zoom-overlay');
+            const img = document.getElementById('zoom-img');
+            img.src = src;
+            overlay.classList.remove('hidden');
+        }
+
+        function closeZoom() {
+            document.getElementById('zoom-overlay').classList.add('hidden');
+        }
+
+        function openCart() {
+            const modal = document.getElementById('cart-modal');
+            const sidebar = document.getElementById('cart-sidebar');
+            modal.classList.remove('hidden');
+            setTimeout(() => sidebar.style.transform = 'translateX(0)', 10);
+        }
+
+        function closeCart() {
+            const modal = document.getElementById('cart-modal');
+            const sidebar = document.getElementById('cart-sidebar');
+            sidebar.style.transform = 'translateX(100%)';
+            setTimeout(() => modal.classList.add('hidden'), 500);
+        }
+
+        function clearCart() {
+            if (confirm("¿Seguro que desea vaciar el carrito?")) {
+                state.cart = {};
+                syncCartUI();
+                renderProducts();
+            }
+        }
+
+        // --- PERSISTENCIA Y CHECKOUT ---
+        function persistUserData() {
+            localStorage.setItem('uru_store_name', document.getElementById('user-store-name').value);
+            localStorage.setItem('uru_store_addr', document.getElementById('user-store-address').value);
+        }
+
+        function loadPersistedUser() {
+            document.getElementById('user-store-name').value = localStorage.getItem('uru_store_name') || '';
+            document.getElementById('user-store-address').value = localStorage.getItem('uru_store_addr') || '';
+        }
+
+        function executeCheckout() {
+            const store = document.getElementById('user-store-name').value.trim();
+            const addr = document.getElementById('user-store-address').value.trim();
+
+            if (!store || !addr) {
+                alert("⚠️ Por favor, ingrese el Nombre del Comercio y la Dirección.");
+                return;
+            }
+
+            // Efecto Confeti de éxito
+            confetti({ particleCount: 200, spread: 80, origin: { y: 0.7 } });
+
+            let msg = `*NUEVO PEDIDO MAYORISTA - EL URU*%0A`;
+            msg += `━━━━━━━━━━━━━━━━━━━━%0A`;
+            msg += `👤 *Comercio:* ${store}%0A`;
+            msg += `📍 *Dirección:* ${addr}%0A`;
+            msg += `━━━━━━━━━━━━━━━━━━━━%0A%0A`;
+
+            Object.entries(state.cart).forEach(([id, qty]) => {
+                const p = state.products.find(item => item.id === id);
+                msg += `🔹 *${qty}* x ${p.name}%0A`;
+            });
+
+            const total = document.getElementById('cart-total-display').innerText;
+            msg += `%0A━━━━━━━━━━━━━━━━━━━━%0A`;
+            msg += `💰 *TOTAL ESTIMADO: $${total}*`;
+
+            setTimeout(() => {
+                window.open(`https://wa.me/${APP_CONFIG.whatsapp_number}?text=${msg}`, '_blank');
+            }, 800);
+        }
+
+        // --- UTILIDADES ---
+        function setupScrollListener() {
+            window.addEventListener('scroll', () => {
+                const btn = document.getElementById('btn-to-top');
+                btn.classList.toggle('show', window.scrollY > 800);
+            });
+        }
+
+        function playHaptic() {
+            if ('vibrate' in navigator) navigator.vibrate(10);
+        }
+    </script>
+</body>
+</html>
