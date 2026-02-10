@@ -33,6 +33,38 @@
             box-shadow: 0 15px 35px rgba(255, 107, 0, 0.2); 
         }
         
+        /* Badge Oferta (PUNTO 1) */
+        .badge-oferta {
+            position: absolute;
+            top: 15px;
+            right: -10px;
+            background: #ff0000;
+            color: white;
+            font-weight: 900;
+            font-size: 10px;
+            padding: 5px 15px;
+            transform: rotate(15deg);
+            box-shadow: 0 5px 15px rgba(255,0,0,0.4);
+            z-index: 20;
+            border-radius: 5px;
+            letter-spacing: 1px;
+            animation: pulse-red 2s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% { transform: rotate(15deg) scale(1); }
+            50% { transform: rotate(15deg) scale(1.1); }
+            100% { transform: rotate(15deg) scale(1); }
+        }
+
+        /* Efecto Burst en Carrito (PUNTO 2) */
+        @keyframes cart-bump {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.5); color: #fff; }
+            100% { transform: scale(1); }
+        }
+        .bump { animation: cart-bump 0.4s ease-out; }
+
         /* Imagen con Fondo Gradiente */
         .img-container { 
             background: radial-gradient(circle, #222 0%, #000 70%) !important; 
@@ -124,7 +156,7 @@
             <button onclick="document.getElementById('cart').style.display='flex'" class="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-6 py-3 rounded-2xl font-black shadow-xl flex items-center gap-3 text-xs active:scale-95 transition-all">
                 <div class="relative">
                     <i class="fas fa-shopping-basket text-base"></i>
-                    <span id="count" class="absolute -top-3 -right-3 bg-white text-orange-600 w-5 h-5 rounded-full flex items-center justify-center text-[10px]">0</span>
+                    <span id="count" class="absolute -top-3 -right-3 bg-white text-orange-600 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold">0</span>
                 </div>
                 <span class="uppercase tracking-widest">Pedido</span>
             </button>
@@ -158,10 +190,10 @@
                 <div class="text-6xl md:text-8xl font-black text-white italic opacity-40 select-none">12:30</div>
                 <div class="text-center md:text-left">
                     <h2 class="text-3xl md:text-5xl font-black text-white uppercase italic leading-none tracking-tighter">Cierre de Pedidos</h2>
-                    <p class="text-white/90 font-bold uppercase text-xs mt-2 tracking-widest">Hacé tu pedido ahora y recibilo hoy mismo en tu local</p>
+                    <p class="text-white/90 font-bold uppercase text-xs mt-2 tracking-widest">Hacé tu pedido ahora y recibilo hoy mismo</p>
                 </div>
             </div>
-            <button onclick="window.scrollTo({top: 1000, behavior: 'smooth'})" class="mt-6 md:mt-0 bg-white text-orange-600 px-10 py-5 rounded-2xl font-black uppercase text-sm hover:scale-105 active:scale-95 transition-all shadow-2xl">Empezar a comprar</button>
+            <button onclick="window.scrollTo({top: 1200, behavior: 'smooth'})" class="mt-6 md:mt-0 bg-white text-orange-600 px-10 py-5 rounded-2xl font-black uppercase text-sm hover:scale-105 active:scale-95 transition-all">Empezar a comprar</button>
         </div>
     </section>
 
@@ -185,35 +217,29 @@
         <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-16">
             <div class="space-y-6">
                 <div class="flex items-center gap-4">
-                    <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-16 h-16 rounded-2xl border-2 border-orange-500 shadow-xl">
+                    <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-16 h-16 rounded-2xl border-2 border-orange-500">
                     <h2 class="text-3xl font-black italic uppercase text-orange-500">El Uru</h2>
                 </div>
-                <p class="text-gray-500 text-sm font-medium leading-relaxed max-w-xs">
-                    Distribuidora mayorista de confianza en Viedma y Patagones. Llevamos los mejores precios directo a tu góndola.
-                </p>
+                <p class="text-gray-500 text-sm font-medium leading-relaxed max-w-xs">Distribuidora mayorista de confianza en Viedma y Patagones.</p>
                 <div class="flex gap-4">
-                    <a href="#" class="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-orange-500 border border-white/10 hover:bg-orange-500 hover:text-white transition-all"><i class="fab fa-instagram text-2xl"></i></a>
-                    <a href="#" class="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-orange-500 border border-white/10 hover:bg-orange-500 hover:text-white transition-all"><i class="fab fa-facebook-f text-2xl"></i></a>
+                    <a href="#" class="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-orange-500 border border-white/10"><i class="fab fa-instagram text-2xl"></i></a>
+                    <a href="#" class="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-orange-500 border border-white/10"><i class="fab fa-facebook-f text-2xl"></i></a>
                 </div>
             </div>
             <div class="space-y-8">
                 <h3 class="text-white font-black uppercase text-xs tracking-[0.4em] border-l-4 border-orange-500 pl-4">Información VIP</h3>
-                <ul class="space-y-5 text-sm text-gray-400 font-bold uppercase tracking-tighter">
-                    <li class="flex items-center gap-4 group"><i class="fas fa-truck-loading text-orange-500 text-xl group-hover:scale-110 transition-transform"></i> Reparto Propio en el día</li>
-                    <li class="flex items-center gap-4 group"><i class="fas fa-hourglass-half text-orange-500 text-xl group-hover:scale-110 transition-transform"></i> Cierre de pedidos: 12:30hs</li>
-                    <li class="flex items-center gap-4 group"><i class="fas fa-map-marked-alt text-orange-500 text-xl group-hover:scale-110 transition-transform"></i> Viedma y Carmen de Patagones</li>
-                    <li class="flex items-center gap-4 group"><i class="fas fa-percentage text-orange-500 text-xl group-hover:scale-110 transition-transform"></i> Descuentos por Volumen</li>
+                <ul class="space-y-5 text-sm text-gray-400 font-bold uppercase">
+                    <li><i class="fas fa-truck-loading text-orange-500 mr-3"></i> Reparto Propio</li>
+                    <li><i class="fas fa-hourglass-half text-orange-500 mr-3"></i> Cierre: 12:30hs</li>
+                    <li><i class="fas fa-map-marked-alt text-orange-500 mr-3"></i> Viedma y Patagones</li>
                 </ul>
             </div>
             <div class="space-y-6">
                 <h3 class="text-white font-black uppercase text-xs tracking-[0.4em] border-l-4 border-orange-500 pl-4">Nuestra Base</h3>
-                <div class="h-48 rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-700">
-                    <iframe src="http://googleusercontent.com/maps.google.com/8" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                <div class="h-48 rounded-[2rem] overflow-hidden border border-white/10 opacity-70">
+                    <iframe src="http://googleusercontent.com/maps.google.com/9" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                 </div>
             </div>
-        </div>
-        <div class="mt-20 pt-10 border-t border-white/5 text-center">
-            <p class="text-[10px] text-gray-700 font-black tracking-[0.6em] uppercase">© 2026 Distribuidora El Uru - El Sistema Más Rápido de la Comarca</p>
         </div>
     </footer>
 
@@ -222,23 +248,23 @@
             <div class="p-8 border-b border-white/5 flex justify-between items-center bg-black">
                 <div>
                     <h2 class="text-2xl font-black uppercase italic text-orange-500">Mi Carrito</h2>
-                    <p class="text-[10px] text-gray-500 font-black uppercase tracking-widest mt-1">Mínimo Compra: $25.000</p>
+                    <p class="text-[10px] text-gray-500 font-black uppercase mt-1 tracking-widest">Mínimo: $25.000</p>
                 </div>
-                <button onclick="document.getElementById('cart').style.display='none'" class="text-5xl text-gray-700 hover:text-white transition-colors">×</button>
+                <button onclick="document.getElementById('cart').style.display='none'" class="text-5xl text-gray-700 hover:text-white">×</button>
             </div>
             <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4 bg-black/40"></div>
             <div class="p-8 bg-[#0a0a0a] border-t border-white/10 space-y-5">
                 <div id="min-warning" class="bg-white/5 p-5 rounded-3xl border border-white/5">
                     <p id="min-text" class="text-[11px] font-black uppercase text-center mb-3 text-gray-400"></p>
-                    <div class="h-2 bg-white/5 rounded-full overflow-hidden"><div id="min-purchase-fill" class="h-full bg-orange-600 transition-all duration-700 shadow-[0_0_15px_#ff6b00]"></div></div>
+                    <div class="h-2 bg-white/5 rounded-full overflow-hidden"><div id="min-purchase-fill" class="h-full bg-orange-600 transition-all duration-700"></div></div>
                 </div>
-                <input type="text" id="user-name" oninput="saveUserData()" placeholder="Nombre del Comercio" class="w-full p-5 rounded-2xl bg-[#1a1a1a] text-white font-bold border border-white/10 outline-none focus:border-orange-500 transition-all">
-                <input type="text" id="user-address" oninput="saveUserData()" placeholder="Dirección de Entrega" class="w-full p-5 rounded-2xl bg-[#1a1a1a] text-white font-bold border border-white/10 outline-none focus:border-orange-500 transition-all">
+                <input type="text" id="user-name" oninput="saveUserData()" placeholder="Nombre del Comercio" class="w-full p-5 rounded-2xl bg-[#1a1a1a] text-white font-bold border border-white/10 outline-none focus:border-orange-500">
+                <input type="text" id="user-address" oninput="saveUserData()" placeholder="Dirección de Entrega" class="w-full p-5 rounded-2xl bg-[#1a1a1a] text-white font-bold border border-white/10 outline-none focus:border-orange-500">
                 <div class="flex justify-between items-center px-2">
-                    <span class="text-gray-500 font-black uppercase text-sm tracking-widest">Total:</span>
-                    <span class="text-orange-500 text-4xl font-black italic tracking-tighter">$<span id="total">0</span></span>
+                    <span class="text-gray-500 font-black uppercase text-sm">Total:</span>
+                    <span class="text-orange-500 text-4xl font-black italic">$<span id="total">0</span></span>
                 </div>
-                <button id="btn-whatsapp" onclick="enviarPedido()" class="w-full bg-orange-600 text-white py-6 rounded-3xl font-black text-xl active:scale-95 transition-all shadow-[0_10px_30px_rgba(255,107,0,0.3)]">
+                <button id="btn-whatsapp" onclick="enviarPedido()" class="w-full bg-orange-600 text-white py-6 rounded-3xl font-black text-xl active:scale-95 transition-all shadow-xl">
                     ENVIAR POR WHATSAPP
                 </button>
             </div>
@@ -281,11 +307,7 @@
             const cats = ['TODOS', ...uniqueCats];
             document.getElementById('category-filters').innerHTML = cats.map(c => {
                 const count = c === 'TODOS' ? data.length : data.filter(p => p.cat === c).length;
-                return `
-                <button onclick="activeCat='${c}'; renderCats(); render();" 
-                class="shrink-0 px-7 py-4 rounded-full bg-[#151515] text-[10px] font-black uppercase text-gray-500 transition-all flex items-center shadow-lg ${activeCat === c ? 'cat-active' : ''}">
-                    ${c} <span class="cat-badge">${count}</span>
-                </button>`;
+                return `<button onclick="activeCat='${c}'; renderCats(); render();" class="shrink-0 px-7 py-4 rounded-full bg-[#151515] text-[10px] font-black uppercase text-gray-500 transition-all flex items-center shadow-lg ${activeCat === c ? 'cat-active' : ''}">${c} <span class="cat-badge">${count}</span></button>`;
             }).join('');
         }
 
@@ -296,8 +318,11 @@
 
             document.getElementById('catalogo').innerHTML = filtered.map(p => {
                 const qty = cart[p.id] || 0;
+                // LÓGICA DE OFERTA TERMINADA EN 99 (Punto 1)
+                const esOferta = p.pre.toString().endsWith('99');
                 return `
                     <div class="card-prod p-5 rounded-[2.5rem] flex flex-col relative ${qty > 0 ? 'ring-2 ring-orange-500' : ''}">
+                        ${esOferta ? '<div class="badge-oferta">OFERTA 🔥</div>' : ''}
                         <button onclick="toggleFav(${p.id})" class="absolute top-6 left-6 z-10 text-xl ${favoritos.includes(p.id) ? 'text-red-600' : 'text-gray-800'}">
                             <i class="fas fa-heart"></i>
                         </button>
@@ -308,79 +333,7 @@
                         <p class="price-tag mt-3 italic">$${p.pre.toLocaleString()}</p>
                         <div class="mt-5">
                             ${qty === 0 ? 
-                                `<button onclick="add(${p.id},1)" class="w-full bg-orange-600 py-5 rounded-2xl font-black text-[10px] uppercase text-white shadow-xl hover:bg-orange-500 transition-colors">Agregar al pedido</button>` :
+                                `<button onclick="add(${p.id},1)" class="w-full bg-orange-600 py-5 rounded-2xl font-black text-[10px] uppercase text-white shadow-xl hover:bg-orange-500 active:bg-white active:text-orange-600 transition-all">Agregar al pedido</button>` :
                                 `<div class="flex items-center bg-orange-600 rounded-2xl p-1 shadow-2xl">
                                     <button onclick="add(${p.id},-1)" class="w-14 h-12 flex items-center justify-center text-white text-2xl font-black">－</button>
-                                    <span class="flex-1 text-center font-black text-white text-base">${qty}</span>
-                                    <button onclick="add(${p.id},1)" class="w-14 h-12 flex items-center justify-center text-white text-2xl font-black">＋</button>
-                                </div>`
-                            }
-                        </div>
-                    </div>`;
-            }).join('');
-        }
-
-        window.add = (id, n) => { 
-            cart[id] = Math.max(0, (cart[id] || 0) + n); 
-            if (cart[id] === 0) delete cart[id]; 
-            update(); render();
-        };
-
-        function update() {
-            let t = 0, c = 0, html = '';
-            Object.entries(cart).forEach(([id, q]) => {
-                const p = data[id]; t += p.pre * q; c += q;
-                html += `
-                <div class="flex items-center gap-5 bg-white/5 p-4 rounded-3xl text-white border border-white/5">
-                    <img src="${p.img}" class="w-12 h-12 object-contain bg-black rounded-xl p-1">
-                    <div class="flex-1 leading-tight"><h4 class="font-black text-[10px] uppercase truncate w-32">${p.nom}</h4><p class="text-orange-500 font-black italic">$${(p.pre * q).toLocaleString()}</p></div>
-                    <div class="flex items-center gap-3">
-                        <span class="text-xs font-black bg-orange-600/20 text-orange-500 px-3 py-1 rounded-lg">x${q}</span>
-                        <button onclick="add(${id},-${q})" class="text-red-500 hover:text-red-400"><i class="fas fa-trash"></i></button>
-                    </div>
-                </div>`;
-            });
-            document.getElementById('cart-items').innerHTML = html || '<div class="text-center py-20 opacity-20"><i class="fas fa-shopping-basket text-6xl mb-4"></i><p class="text-xs font-black uppercase tracking-widest">Carrito Vacío</p></div>';
-            document.getElementById('total').innerText = t.toLocaleString();
-            document.getElementById('count').innerText = c;
-            const perc = Math.min(100, (t / MIN_COMPRA) * 100);
-            if(document.getElementById('min-purchase-fill')) document.getElementById('min-purchase-fill').style.width = perc + '%';
-            const btnW = document.getElementById('btn-whatsapp');
-            const minTxt = document.getElementById('min-text');
-            if (t < MIN_COMPRA) {
-                btnW.className = "w-full bg-gray-800 text-gray-500 py-6 rounded-3xl font-black text-xl pointer-events-none opacity-50";
-                minTxt.innerHTML = `Faltan <span class="text-white">$${(MIN_COMPRA - t).toLocaleString()}</span> para el pedido mínimo`;
-            } else {
-                btnW.className = "w-full bg-green-600 text-white py-6 rounded-3xl font-black text-xl active:scale-95 transition-all shadow-[0_10px_30px_rgba(22,163,74,0.4)] animate-pulse";
-                minTxt.innerHTML = `<span class="text-green-500">✅ PEDIDO MÍNIMO ALCANZADO</span>`;
-            }
-        }
-
-        function toggleFav(id) { 
-            if (favoritos.includes(id)) favoritos = favoritos.filter(f => f !== id); 
-            else favoritos.push(id); 
-            localStorage.setItem('uru_favs', JSON.stringify(favoritos)); 
-            render(); 
-        }
-
-        function verFavoritos() { 
-            soloFavs = !soloFavs; 
-            document.getElementById('btn-favs').classList.toggle('text-red-500', soloFavs); 
-            render(); 
-        }
-
-        function enviarPedido() {
-            const n = document.getElementById('user-name').value;
-            const a = document.getElementById('user-address').value;
-            if (!n || !a) return alert("Por favor, completa el Nombre del Comercio y la Dirección.");
-            confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 }, colors: ['#ff6b00', '#ffffff', '#ff9e00'] });
-            let m = "*NUEVO PEDIDO - DISTRI EL URU*%0A👤 *Comercio:* " + n + "%0A📍 *Dirección:* " + a + "%0A%0A";
-            Object.entries(cart).forEach(([id, q]) => m += "🔸 *" + q + "* x " + data[id].nom + "%0A");
-            m += "%0A💰 *TOTAL A PAGAR: $" + document.getElementById('total').innerText + "*";
-            m += "%0A%0A_Generado desde la App Premium_";
-            setTimeout(() => window.open("https://wa.me/5492920248292?text=" + m), 800);
-        }
-        window.onscroll = () => { document.getElementById('go-up').style.display = window.scrollY > 800 ? 'block' : 'none'; };
-    </script>
-</body>
-</html>
+               
