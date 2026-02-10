@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DISTRIBUIDORA EL URU | Elite Management 2026</title>
+    <title>DISTRIBUIDORA EL URU | Premium System 2026</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -13,26 +13,11 @@
 
         :root {
             --primary: #ff6b00;
-            --primary-hover: #e66000;
-            --transition-speed: 0.3s;
-        }
-
-        body.dark-mode {
+            --primary-light: #ff9142;
             --bg-body: #080808;
             --bg-card: #121212;
-            --bg-nav: rgba(13, 13, 13, 0.9);
             --text-main: #ffffff;
-            --border-color: rgba(255, 255, 255, 0.08);
-            --input-bg: rgba(255, 255, 255, 0.05);
-        }
-
-        body.light-mode {
-            --bg-body: #f8fafc;
-            --bg-card: #ffffff;
-            --bg-nav: rgba(255, 255, 255, 0.9);
-            --text-main: #0f172a;
-            --border-color: rgba(0, 0, 0, 0.08);
-            --input-bg: #f1f5f9;
+            --border-color: rgba(255, 107, 0, 0.15);
         }
 
         * {
@@ -44,184 +29,193 @@
         body {
             background-color: var(--bg-body);
             color: var(--text-main);
-            transition: background-color var(--transition-speed);
+            overflow-x: hidden;
         }
 
-        @keyframes marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
+        /* Marquee */
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        .animate-marquee { display: flex; width: max-content; animation: marquee 30s linear infinite; }
 
-        .animate-marquee {
-            display: flex;
-            width: max-content;
-            animation: marquee 30s linear infinite;
-        }
-
-        .glass-nav {
-            background: var(--bg-nav);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--border-color);
-        }
-
+        /* Estilos de Tarjeta */
         .card-uru {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 1.5rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            flex-direction: column;
-            height: 100%;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
-
         .card-uru:hover {
             transform: translateY(-5px);
             border-color: var(--primary);
-            box-shadow: 0 15px 30px -10px rgba(255, 107, 0, 0.2);
+            box-shadow: 0 10px 30px -10px rgba(255, 107, 0, 0.4);
         }
 
         .img-wrapper {
             aspect-ratio: 1/1;
-            background: white;
+            background: #fff;
             border-radius: 1.2rem;
             margin: 0.5rem;
-            padding: 1rem;
+            padding: 0.8rem;
             display: flex;
-            align-items: center;
-            justify-content: center;
+            align-items: center; justify-content: center;
+        }
+        .img-wrapper img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+        /* Textos en Naranja resaltado */
+        .text-orange-resaltado {
+            color: var(--primary);
+            text-shadow: 0 0 10px rgba(255, 107, 0, 0.2);
+        }
+
+        /* Carrusel */
+        .carousel-container {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: 12px;
+            padding: 10px 0;
+        }
+        .carousel-item {
+            flex: 0 0 85%;
+            scroll-snap-align: center;
+            border-radius: 1.5rem;
+            height: 160px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
             overflow: hidden;
         }
 
-        .img-wrapper img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-
         .chip-cat {
-            padding: 0.6rem 1.2rem;
-            border-radius: 0.8rem;
-            font-weight: 700;
-            font-size: 0.75rem;
-            white-space: nowrap;
-            background: var(--input-bg);
-            border: 1px solid var(--border-color);
-            transition: all 0.2s;
+            padding: 0.6rem 1.2rem; border-radius: 50px;
+            font-weight: 800; font-size: 0.75rem;
+            white-space: nowrap; background: #1a1a1a;
+            border: 1px solid var(--border-color); color: var(--primary);
         }
-
-        .chip-cat.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), #ffae00);
-            transition: width 0.6s ease;
-        }
+        .chip-cat.active { background: var(--primary); color: white; }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="dark-mode">
+<body>
 
-    <div id="zoom-overlay" onclick="closeZoom()" class="fixed inset-0 z-[1000] bg-black/90 hidden backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out">
-        <img id="zoom-img" src="" class="max-w-full max-h-[85vh] rounded-xl shadow-2xl transition-transform duration-300">
+    <div id="zoom-overlay" onclick="closeZoom()" class="fixed inset-0 z-[2000] bg-black/95 hidden backdrop-blur-md flex items-center justify-center p-4">
+        <img id="zoom-img" src="" class="max-w-full max-h-[85vh] rounded-xl shadow-2xl">
     </div>
 
-    <div class="bg-black py-2 overflow-hidden border-b border-white/10">
-        <div class="animate-marquee font-black text-[10px] uppercase tracking-[0.3em] text-white/80">
-            <span class="px-8">⚡ Distribuidora El Uru - Viedma y Carmen de Patagones ⚡</span>
-            <span class="px-8">📦 Pedidos hasta 12:30hs para entrega en el día 📦</span>
-            <span class="px-8">🔥 Precios mayoristas actualizados 2026 🔥</span>
-            <span class="px-8">⚡ Distribuidora El Uru - Viedma y Carmen de Patagones ⚡</span>
+    <div class="bg-black py-2 overflow-hidden border-b border-orange-500/20">
+        <div class="animate-marquee font-black text-[10px] uppercase tracking-[0.3em] text-orange-500">
+            <span class="px-8">⚡ Distribuidora El Uru - Viedma y Patagones ⚡</span>
+            <span class="px-8">📦 Pedidos hasta 12:30hs entrega hoy 📦</span>
+            <span class="px-8">🔥 Precios Mayoristas 2026 🔥</span>
+            <span class="px-8">⚡ Distribuidora El Uru - Viedma y Patagones ⚡</span>
         </div>
     </div>
 
-    <div id="status-delivery" class="py-2 text-center font-bold text-[10px] uppercase tracking-widest text-white transition-colors duration-700 bg-gray-800">
-        <span id="status-label"><i class="fas fa-sync fa-spin mr-2"></i>Conectando con Servidor...</span>
-    </div>
-
-    <nav class="sticky top-0 z-[100] glass-nav px-4 py-3">
+    <nav class="sticky top-0 z-[1000] bg-black/80 backdrop-blur-xl px-4 py-3 border-b border-white/5">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-                <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-10 h-10 rounded-xl border border-primary">
-                <div>
-                    <h1 class="text-xl font-black italic uppercase text-primary leading-none tracking-tighter">El Uru</h1>
-                    <p class="text-[8px] font-bold opacity-50 uppercase tracking-widest">Premium Dist.</p>
-                </div>
+            <div class="flex items-center gap-3">
+                <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-10 h-10 rounded-xl border border-orange-500">
+                <h1 class="text-2xl font-black italic text-orange-500 tracking-tighter uppercase">EL URU</h1>
             </div>
-
-            <div class="flex items-center gap-2">
-                <button onclick="toggleTheme()" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400 border border-white/5">
-                    <i id="theme-icon" class="fas fa-moon"></i>
-                </button>
-                <button onclick="openCart()" class="relative bg-primary text-white h-10 px-4 rounded-xl font-black flex items-center gap-2 shadow-lg">
-                    <i class="fas fa-shopping-basket"></i>
-                    <span id="cart-counter" class="bg-black/20 px-1.5 rounded text-sm">0</span>
-                </button>
-            </div>
+            <button onclick="openCart()" class="bg-orange-600 text-white h-11 px-5 rounded-2xl font-black flex items-center gap-3 shadow-lg shadow-orange-600/20 active:scale-95 transition-all">
+                <i class="fas fa-shopping-basket"></i>
+                <span id="cart-counter">0</span>
+            </button>
         </div>
     </nav>
 
-    <section class="max-w-7xl mx-auto px-4 mt-6">
-        <div class="relative mb-6">
-            <input type="text" id="main-search" onkeyup="renderProducts()" placeholder="¿Qué estás buscando hoy?" 
-                class="w-full p-4 pl-12 rounded-2xl bg-white/5 border border-white/10 text-base focus:border-primary outline-none transition-all">
-            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-primary opacity-50"></i>
+    <section class="px-4 mt-4 max-w-7xl mx-auto">
+        <div class="carousel-container no-scrollbar">
+            <div class="carousel-item shadow-2xl" style="background-image: linear-gradient(to right, rgba(0,0,0,0.8), transparent), url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800');">
+                <div class="absolute bottom-4 left-4">
+                    <span class="bg-orange-600 text-white text-[10px] px-2 py-1 rounded font-black">NUEVOS</span>
+                    <h2 class="text-xl font-black text-white italic">INGRESOS SEMANALES</h2>
+                </div>
+            </div>
+            <div class="carousel-item shadow-2xl" style="background-image: linear-gradient(to right, rgba(0,0,0,0.8), transparent), url('https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&q=80&w=800');">
+                <div class="absolute bottom-4 left-4">
+                    <span class="bg-orange-600 text-white text-[10px] px-2 py-1 rounded font-black">LOGÍSTICA</span>
+                    <h2 class="text-xl font-black text-white italic">REPARTO PROPIO</h2>
+                </div>
+            </div>
         </div>
-        <div id="category-container" class="flex gap-2 overflow-x-auto pb-2 no-scrollbar scroll-smooth"></div>
     </section>
 
-    <main class="max-w-7xl mx-auto px-4 pb-32 mt-4">
+    <section class="px-4 mt-6 max-w-7xl mx-auto">
+        <div class="relative mb-6">
+            <input type="text" id="main-search" onkeyup="renderProducts()" placeholder="Busca tu marca o producto..." 
+                class="w-full p-5 rounded-2xl bg-white/5 border border-white/10 text-white placeholder-white/30 outline-none focus:border-orange-500 transition-all shadow-inner">
+            <i class="fas fa-search absolute right-5 top-1/2 -translate-y-1/2 text-orange-500"></i>
+        </div>
+        <div id="category-container" class="flex gap-2 overflow-x-auto pb-4 no-scrollbar"></div>
+    </section>
+
+    <main class="px-4 pb-20 max-w-7xl mx-auto">
         <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            <div class="col-span-full py-20 text-center">
-                <div class="inline-block w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-                <p class="mt-4 text-xs font-bold uppercase opacity-50 tracking-widest">Cargando Precios...</p>
+            <div class="col-span-full py-20 text-center opacity-50 font-bold uppercase tracking-widest">
+                Sincronizando Precios...
             </div>
         </div>
     </main>
 
-    <div id="cart-modal" class="fixed inset-0 z-[1000] hidden bg-black/70 backdrop-blur-sm">
-        <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full max-w-md bg-[var(--bg-card)] flex flex-col translate-x-full transition-transform duration-500 border-l border-white/10">
-            <div class="p-6 border-b border-white/5 flex justify-between items-center bg-white/5">
-                <h2 class="text-xl font-black uppercase text-primary italic">Tu Pedido</h2>
-                <button onclick="closeCart()" class="text-2xl p-2">&times;</button>
+    <footer class="bg-[#0f0f0f] border-t border-orange-500/20 pt-10 pb-20 px-6">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
+            <div>
+                <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-16 h-16 rounded-2xl border-2 border-orange-500 mb-4">
+                <h3 class="text-2xl font-black italic text-orange-500">DISTRIBUIDORA EL URU</h3>
+                <p class="text-gray-400 text-sm mt-2 font-medium">Líderes en distribución mayorista en la Comarca Viedma - Patagones.</p>
             </div>
-
-            <div class="p-6 bg-black/10 border-b border-white/5">
-                <div class="flex justify-between mb-2">
-                    <span class="text-[10px] font-black uppercase opacity-60">Progreso Mínimo</span>
-                    <span id="progress-percent" class="font-black text-primary text-sm">0%</span>
+            <div class="space-y-4">
+                <h4 class="text-white font-black text-sm uppercase tracking-widest">Contacto Directo</h4>
+                <a href="#" class="flex items-center gap-3 text-gray-400 hover:text-orange-500 transition-colors">
+                    <i class="fab fa-whatsapp text-orange-500 text-xl"></i> 2920 24-8292
+                </a>
+                <div class="flex items-center gap-3 text-gray-400">
+                    <i class="fas fa-map-marker-alt text-orange-500 text-xl"></i> Viedma, Río Negro
                 </div>
-                <div class="h-2 bg-white/10 rounded-full overflow-hidden">
-                    <div id="progress-bar" class="progress-fill w-0"></div>
-                </div>
-                <p id="min-order-msg" class="mt-2 text-[9px] text-center font-bold uppercase opacity-60"></p>
             </div>
+            <div>
+                <h4 class="text-white font-black text-sm uppercase tracking-widest mb-4">Horarios de Cierre</h4>
+                <div class="bg-black/40 p-4 rounded-xl border border-white/5">
+                    <p class="text-xs text-gray-400">Lunes a Sábados</p>
+                    <p class="text-orange-500 font-black">Corte de pedidos: 12:30hs</p>
+                </div>
+            </div>
+        </div>
+        <div class="mt-10 pt-6 border-t border-white/5 text-center">
+            <p class="text-[10px] font-bold text-gray-600 uppercase tracking-[0.4em]">© 2026 EL URU PREMIUM - Todos los derechos reservados</p>
+        </div>
+    </footer>
 
+    <div id="cart-modal" class="fixed inset-0 z-[2000] hidden bg-black/80 backdrop-blur-md">
+        <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full max-w-md bg-[#0d0d0d] flex flex-col translate-x-full transition-transform duration-500">
+            <div class="p-6 border-b border-orange-500/20 flex justify-between items-center">
+                <h2 class="text-xl font-black text-orange-500 italic">MI PEDIDO</h2>
+                <button onclick="closeCart()" class="text-3xl text-white">&times;</button>
+            </div>
+            <div class="p-6 bg-orange-500/5">
+                <div class="flex justify-between text-[10px] font-black uppercase text-orange-500 mb-2">
+                    <span>Mínimo de Compra</span>
+                    <span id="progress-percent">0%</span>
+                </div>
+                <div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="h-full bg-orange-500 w-0 transition-all duration-700"></div>
+                </div>
+                <p id="min-order-msg" class="mt-2 text-[9px] text-gray-500 uppercase font-bold text-center"></p>
+            </div>
             <div id="cart-items-container" class="flex-1 overflow-y-auto p-4 space-y-3 no-scrollbar"></div>
-
-            <div class="p-6 border-t border-white/10 space-y-4 bg-white/5">
-                <div class="grid grid-cols-1 gap-2">
-                    <input type="text" id="user-store-name" oninput="persistUserData()" placeholder="Nombre del Comercio" class="w-full p-3 rounded-xl bg-white/5 border border-white/10 text-sm font-bold focus:border-primary outline-none">
-                    <input type="text" id="user-store-address" oninput="persistUserData()" placeholder="Dirección de Entrega" class="w-full p-3 rounded-xl bg-white/5 border border-white/10 text-sm font-bold focus:border-primary outline-none">
+            <div class="p-6 border-t border-orange-500/20 space-y-4">
+                <input type="text" id="user-store-name" oninput="persistUserData()" placeholder="Nombre del Comercio" class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-white font-bold text-sm">
+                <input type="text" id="user-store-address" oninput="persistUserData()" placeholder="Dirección de Entrega" class="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-white font-bold text-sm">
+                <div class="flex justify-between items-center py-2">
+                    <span class="text-xs font-bold uppercase opacity-50">Total Final</span>
+                    <span class="text-3xl font-black italic text-orange-500">$<span id="cart-total-display">0</span></span>
                 </div>
-                
-                <div class="flex justify-between items-center">
-                    <span class="text-[10px] font-black uppercase opacity-40">Total</span>
-                    <span class="text-3xl font-black italic text-primary">$<span id="cart-total-display">0</span></span>
-                </div>
-
-                <div class="grid grid-cols-5 gap-2">
-                    <button onclick="clearCart()" class="col-span-1 bg-white/5 hover:bg-red-500/20 text-gray-500 hover:text-red-500 rounded-xl transition-all">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                    <button id="btn-checkout" onclick="executeCheckout()" class="col-span-4 py-4 rounded-xl bg-gray-800 text-gray-500 font-black uppercase tracking-widest">
-                        Pedido Incompleto
-                    </button>
-                </div>
+                <button id="btn-checkout" onclick="executeCheckout()" class="w-full py-5 rounded-2xl bg-gray-800 text-gray-500 font-black uppercase tracking-widest shadow-xl shadow-orange-900/10">
+                    Pedido Incompleto
+                </button>
             </div>
         </div>
     </div>
@@ -234,73 +228,36 @@
             default_img: 'https://i.ibb.co/yB7ffL4T/unnamed.jpg'
         };
 
-        let state = {
-            products: [],
-            cart: {},
-            currentCategory: 'TODOS',
-            theme: localStorage.getItem('uru_theme') || 'dark-mode'
-        };
+        let state = { products: [], cart: {}, currentCategory: 'TODOS' };
 
         window.addEventListener('DOMContentLoaded', async () => {
-            applyTheme();
-            updateDeliveryStatus();
             await fetchSheetData();
             loadPersistedUser();
         });
 
         async function fetchSheetData() {
             try {
-                // El timestamp evita que el navegador cargue datos viejos
-                const response = await fetch(`${APP_CONFIG.sheet_url}&t=${new Date().getTime()}`);
+                const response = await fetch(`${APP_CONFIG.sheet_url}&t=${Date.now()}`);
                 const data = await response.text();
+                const rows = data.split(/\r?\n/).slice(1);
                 
-                // Dividir filas con cuidado (soporta diferentes formatos de salto de línea)
-                const rows = data.split(/\r?\n/);
-                const cleanProducts = [];
+                state.products = rows.map((row, i) => {
+                    const col = row.split('\t');
+                    if(!col[0] || !col[1]) return null;
+                    let pClean = col[1].replace(/[^\d,.]/g, '').replace(',', '.');
+                    return {
+                        id: `p_${i}`,
+                        name: col[0].trim(),
+                        price: parseFloat(pClean) || 0,
+                        category: (col[2] || 'GENERAL').trim().toUpperCase(),
+                        image: (col[3] || '').trim() || APP_CONFIG.default_img
+                    };
+                }).filter(p => p && p.price > 0);
 
-                // Empezamos desde la fila 1 (saltamos el encabezado)
-                for (let i = 1; i < rows.length; i++) {
-                    const cols = rows[i].split('\t');
-                    
-                    // Solo procesamos si hay nombre y precio
-                    if (cols[0] && cols[1] && cols[0].trim() !== "") {
-                        
-                        // Limpieza de precio robusta
-                        let priceRaw = cols[1].toString().replace(/[^\d,.]/g, '');
-                        if (priceRaw.includes(',') && priceRaw.includes('.')) {
-                            priceRaw = priceRaw.replace(/\./g, '').replace(',', '.');
-                        } else if (priceRaw.includes(',')) {
-                            priceRaw = priceRaw.replace(',', '.');
-                        }
-                        
-                        cleanProducts.push({
-                            id: `p_${i}`,
-                            name: cols[0].trim(),
-                            price: parseFloat(priceRaw) || 0,
-                            category: (cols[2] || 'GENERAL').trim().toUpperCase(),
-                            image: (cols[3] || '').trim() || APP_CONFIG.default_img
-                        });
-                    }
-                }
-
-                state.products = cleanProducts;
-
-                if (state.products.length > 0) {
-                    buildCategories();
-                    renderProducts();
-                    document.getElementById('status-label').innerHTML = `<i class="fas fa-check-circle text-green-500 mr-2"></i>Catálogo Sincronizado`;
-                } else {
-                    throw new Error("No se detectaron productos");
-                }
-
+                buildCategories();
+                renderProducts();
             } catch (e) {
-                console.error("Error cargando base de datos:", e);
-                document.getElementById('products-grid').innerHTML = `
-                    <div class="col-span-full py-20 text-center">
-                        <p class="font-bold text-orange-500">No se pudo cargar la base de datos.</p>
-                        <p class="text-xs opacity-50 mt-2">Verifica que el Google Sheet esté publicado como TSV.</p>
-                        <button onclick="location.reload()" class="mt-6 px-8 py-3 bg-primary text-white rounded-full font-bold">REINTENTAR</button>
-                    </div>`;
+                document.getElementById('products-grid').innerHTML = "<p class='col-span-full text-center text-orange-500'>Error al conectar con la base de datos.</p>";
             }
         }
 
@@ -314,32 +271,26 @@
         function renderProducts() {
             const grid = document.getElementById('products-grid');
             const search = document.getElementById('main-search').value.toLowerCase();
-            
-            const filtered = state.products.filter(p => {
-                const mCat = state.currentCategory === 'TODOS' || p.category === state.currentCategory;
-                const mSearch = p.name.toLowerCase().includes(search);
-                return mCat && mSearch;
-            });
+            const filtered = state.products.filter(p => (state.currentCategory === 'TODOS' || p.category === state.currentCategory) && p.name.toLowerCase().includes(search));
 
             grid.innerHTML = filtered.map(p => {
                 const qty = state.cart[p.id] || 0;
                 return `
-                    <div class="card-uru p-3 ${qty > 0 ? 'ring-2 ring-primary' : ''}">
-                        <div class="img-wrapper" onclick="openZoom('${p.image}')">
+                    <div class="card-uru p-3 flex flex-col h-full">
+                        <div class="img-wrapper cursor-zoom-in" onclick="openZoom('${p.image}')">
                             <img src="${p.image}" onerror="this.src='${APP_CONFIG.default_img}'">
                         </div>
                         <div class="px-1 flex-1 mt-2">
-                            <span class="text-[7px] font-black text-primary uppercase tracking-tighter">${p.category}</span>
-                            <h3 class="text-[11px] font-bold h-7 overflow-hidden uppercase mt-0.5 leading-tight">${p.name}</h3>
-                            <p class="text-xl font-black mt-1 italic text-primary">$${p.price.toLocaleString('es-AR')}</p>
+                            <h3 class="text-orange-resaltado text-[11px] font-black h-8 overflow-hidden uppercase leading-tight">${p.name}</h3>
+                            <p class="text-2xl font-black italic text-orange-500 mt-2">$${p.price.toLocaleString('es-AR')}</p>
                         </div>
-                        <div class="mt-3">
+                        <div class="mt-4">
                             ${qty === 0 ? 
-                                `<button onclick="updateCart('${p.id}', 1)" class="w-full py-3 rounded-xl bg-primary text-white font-black text-[10px] uppercase shadow-md active:scale-95 transition-all">Agregar</button>` :
-                                `<div class="flex items-center bg-white/5 rounded-xl border border-white/10 overflow-hidden">
-                                    <button onclick="updateCart('${p.id}', -1)" class="w-10 h-10 flex items-center justify-center">-</button>
-                                    <span class="flex-1 text-center font-black text-sm">${qty}</span>
-                                    <button onclick="updateCart('${p.id}', 1)" class="w-10 h-10 flex items-center justify-center">+</button>
+                                `<button onclick="updateCart('${p.id}', 1)" class="w-full py-3.5 rounded-xl border border-orange-500/30 text-orange-500 font-black text-[10px] uppercase hover:bg-orange-600 hover:text-white transition-all shadow-lg">Agregar</button>` :
+                                `<div class="flex items-center bg-orange-500 rounded-xl overflow-hidden shadow-lg">
+                                    <button onclick="updateCart('${p.id}', -1)" class="w-10 h-10 text-white font-bold">-</button>
+                                    <span class="flex-1 text-center font-black text-white">${qty}</span>
+                                    <button onclick="updateCart('${p.id}', 1)" class="w-10 h-10 text-white font-bold">+</button>
                                 </div>`
                             }
                         </div>
@@ -351,27 +302,29 @@
         function updateCart(id, delta) {
             state.cart[id] = (state.cart[id] || 0) + delta;
             if (state.cart[id] <= 0) delete state.cart[id];
-            syncUI();
-            renderProducts();
+            syncUI(); renderProducts();
         }
 
         function syncUI() {
             let total = 0, count = 0;
             const container = document.getElementById('cart-items-container');
-            const cartEntries = Object.entries(state.cart);
+            const entries = Object.entries(state.cart);
             
-            container.innerHTML = cartEntries.map(([id, qty]) => {
+            container.innerHTML = entries.map(([id, qty]) => {
                 const p = state.products.find(x => x.id === id);
-                if (!p) return '';
                 total += (p.price * qty); count += qty;
                 return `
-                    <div class="flex gap-3 bg-white/5 p-3 rounded-xl items-center border border-white/5">
-                        <img src="${p.image}" class="w-10 h-10 rounded-lg bg-white p-0.5 object-contain">
-                        <div class="flex-1 min-w-0">
-                            <p class="text-[9px] font-bold uppercase truncate">${p.name}</p>
-                            <p class="text-primary font-black text-sm">$${(p.price * qty).toLocaleString('es-AR')}</p>
+                    <div class="flex gap-4 bg-white/5 p-4 rounded-2xl items-center border border-white/5">
+                        <img src="${p.image}" class="w-12 h-12 rounded-lg bg-white p-1 object-contain">
+                        <div class="flex-1">
+                            <p class="text-[10px] font-black text-orange-500 uppercase truncate">${p.name}</p>
+                            <p class="text-white font-black">$${(p.price * qty).toLocaleString('es-AR')}</p>
                         </div>
-                        <div class="font-black text-xs px-2">${qty}</div>
+                        <div class="flex items-center gap-3">
+                            <button onclick="updateCart('${id}', -1)" class="w-6 h-6 rounded bg-orange-600 text-white text-xs font-bold">-</button>
+                            <span class="font-black text-xs text-white">${qty}</span>
+                            <button onclick="updateCart('${id}', 1)" class="w-6 h-6 rounded bg-orange-600 text-white text-xs font-bold">+</button>
+                        </div>
                     </div>`;
             }).join('');
 
@@ -387,63 +340,29 @@
             
             if (total >= APP_CONFIG.min_purchase) {
                 btn.disabled = false;
-                btn.className = "col-span-4 py-4 rounded-xl bg-green-600 text-white font-black uppercase tracking-widest cursor-pointer shadow-lg animate-pulse";
-                btn.innerText = "Enviar WhatsApp";
-                msg.innerHTML = `<span class="text-green-500">Mínimo Alcanzado</span>`;
+                btn.className = "w-full py-5 rounded-2xl bg-orange-600 text-white font-black uppercase tracking-widest shadow-xl animate-pulse";
+                btn.innerText = "Enviar Pedido WhatsApp";
+                msg.innerHTML = `<span class="text-orange-500">Mínimo Superado</span>`;
             } else {
                 btn.disabled = true;
-                btn.className = "col-span-4 py-4 rounded-xl bg-gray-800 text-gray-500 font-black uppercase tracking-widest cursor-not-allowed";
+                btn.className = "w-full py-5 rounded-2xl bg-gray-800 text-gray-500 font-black uppercase tracking-widest";
                 btn.innerText = `Faltan $${(APP_CONFIG.min_purchase - total).toLocaleString('es-AR')}`;
-                msg.innerText = `Compra mínima: $${APP_CONFIG.min_purchase.toLocaleString('es-AR')}`;
+                msg.innerText = `Mínimo: $${APP_CONFIG.min_purchase.toLocaleString('es-AR')}`;
             }
         }
 
         function executeCheckout() {
             const store = document.getElementById('user-store-name').value.trim();
             const address = document.getElementById('user-store-address').value.trim();
-            if (!store || !address) return alert("Completa los datos de entrega.");
+            if(!store || !address) return alert("Completa los datos de entrega");
 
-            let msg = `*PEDIDO EL URU 2026*\n`;
-            msg += `*Comercio:* ${store.toUpperCase()}\n`;
-            msg += `*Dirección:* ${address}\n`;
-            msg += `--------------------------------\n`;
+            let msg = `*PEDIDO EL URU 2026*\n*Comercio:* ${store.toUpperCase()}\n*Dir:* ${address}\n------------------\n`;
             Object.entries(state.cart).forEach(([id, qty]) => {
                 const p = state.products.find(x => x.id === id);
                 msg += `• ${qty}x ${p.name}\n`;
             });
-            msg += `--------------------------------\n`;
-            msg += `*TOTAL: $${document.getElementById('cart-total-display').innerText}*`;
+            msg += `------------------\n*TOTAL: $${document.getElementById('cart-total-display').innerText}*`;
             window.open(`https://wa.me/${APP_CONFIG.whatsapp_number}?text=${encodeURIComponent(msg)}`);
-        }
-
-        function clearCart() {
-            if(confirm('¿Vaciar carrito?')) { state.cart = {}; syncUI(); renderProducts(); closeCart(); }
-        }
-
-        function updateDeliveryStatus() {
-            const now = new Date();
-            const h = now.getHours();
-            const isOpen = (h < 12 || (h === 12 && now.getMinutes() <= 30));
-            const statusEl = document.getElementById('status-delivery');
-            const label = document.getElementById('status-label');
-            if (isOpen) {
-                statusEl.className = "py-2 text-center font-bold text-[10px] uppercase tracking-widest text-white bg-green-600";
-                label.innerText = "🟢 Reparto hoy hasta 12:30hs";
-            } else {
-                statusEl.className = "py-2 text-center font-bold text-[10px] uppercase tracking-widest text-white bg-orange-600";
-                label.innerText = "🕒 Reparto para mañana";
-            }
-        }
-
-        function toggleTheme() {
-            state.theme = state.theme === 'dark-mode' ? 'light-mode' : 'dark-mode';
-            localStorage.setItem('uru_theme', state.theme);
-            applyTheme();
-        }
-
-        function applyTheme() {
-            document.body.className = state.theme;
-            document.getElementById('theme-icon').className = state.theme === 'dark-mode' ? 'fas fa-moon' : 'fas fa-sun';
         }
 
         function setFilterCategory(c) { state.currentCategory = c; buildCategories(); renderProducts(); }
