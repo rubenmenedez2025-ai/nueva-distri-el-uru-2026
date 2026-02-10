@@ -3,520 +3,320 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DISTRIBUIDORA EL URU | Elite Management System 2026</title>
+    <title>DISTRIBUIDORA EL URU | Sistema de Gestión 2026</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        /* --- Importación de Tipografías --- */
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap');
 
-        /* --- Variables de Sistema y Tematización --- */
         :root {
             --primary: #ff6b00;
             --primary-hover: #e66000;
-            --transition-speed: 0.4s;
+            --transition-speed: 0.3s;
         }
 
-        /* Tema Oscuro (Por defecto) */
         body.dark-mode {
             --bg-body: #080808;
             --bg-card: #121212;
-            --bg-nav: rgba(13, 13, 13, 0.85);
+            --bg-nav: rgba(13, 13, 13, 0.9);
             --text-main: #ffffff;
             --text-muted: #9ca3af;
-            --border-color: rgba(255, 255, 255, 0.05);
-            --glass-bg: rgba(255, 255, 255, 0.03);
+            --border-color: rgba(255, 255, 255, 0.08);
             --input-bg: rgba(255, 255, 255, 0.05);
         }
 
-        /* Tema Claro */
         body.light-mode {
-            --bg-body: #f1f5f9;
+            --bg-body: #f8fafc;
             --bg-card: #ffffff;
-            --bg-nav: rgba(255, 255, 255, 0.85);
+            --bg-nav: rgba(255, 255, 255, 0.9);
             --text-main: #0f172a;
             --text-muted: #64748b;
-            --border-color: rgba(0, 0, 0, 0.1);
-            --glass-bg: rgba(0, 0, 0, 0.02);
-            --input-bg: #ffffff;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --input-bg: #f1f5f9;
         }
 
-        /* --- Reseteo y Estilos Base --- */
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
+            margin: 0; padding: 0; box-sizing: border-box;
             font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             background-color: var(--bg-body);
             color: var(--text-main);
-            transition: background-color var(--transition-speed), color var(--transition-speed);
+            transition: background-color var(--transition-speed);
             overflow-x: hidden;
         }
 
-        /* --- Barra de Desplazamiento Personalizada --- */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-body); }
-        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
-
-        /* --- Animaciones Maestras --- */
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
+        /* Animaciones */
         @keyframes marquee {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
         }
 
-        @keyframes pulse-orange {
-            0% { box-shadow: 0 0 0 0 rgba(255, 107, 0, 0.4); }
-            70% { box-shadow: 0 0 0 15px rgba(255, 107, 0, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 107, 0, 0); }
+        .animate-marquee {
+            display: flex;
+            width: max-content;
+            animation: marquee 30s linear infinite;
         }
 
-        .animate-card { animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
-
-        /* --- Componentes de UI --- */
         .glass-nav {
             background: var(--bg-nav);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border-color);
         }
 
         .card-uru {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 2rem;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+            border-radius: 1.5rem;
+            transition: all 0.3s ease;
         }
 
         .card-uru:hover {
-            transform: translateY(-12px);
+            transform: translateY(-5px);
             border-color: var(--primary);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 10px 30px -10px rgba(255, 107, 0, 0.2);
         }
 
         .img-wrapper {
             aspect-ratio: 1/1;
             background: white;
-            padding: 1.5rem;
+            border-radius: 1rem;
+            padding: 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 1.5rem;
-            margin: 0.75rem;
-            position: relative;
-            cursor: zoom-in;
         }
 
         .img-wrapper img {
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
-            transition: transform 0.5s ease;
         }
 
-        .card-uru:hover .img-wrapper img {
-            transform: scale(1.1);
-        }
-
-        /* --- Botones y Chips --- */
         .chip-cat {
-            padding: 0.75rem 1.5rem;
-            border-radius: 1rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.8rem;
             font-weight: 700;
             font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s;
+            white-space: nowrap;
             background: var(--input-bg);
             border: 1px solid var(--border-color);
-            white-space: nowrap;
+            transition: all 0.2s;
         }
 
         .chip-cat.active {
             background: var(--primary);
             color: white;
-            box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3);
-        }
-
-        /* --- Carrito y Sidebar --- */
-        #cart-sidebar {
-            box-shadow: -20px 0 50px rgba(0,0,0,0.5);
-            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .progress-container {
-            height: 12px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 100px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
+            border-color: var(--primary);
         }
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--primary), #ffae00, var(--primary));
-            background-size: 200% 100%;
-            animation: progressMove 2s linear infinite;
-            transition: width 0.8s ease;
+            background: linear-gradient(90deg, var(--primary), #ffae00);
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        @keyframes progressMove {
-            0% { background-position: 100% 0; }
-            100% { background-position: -100% 0; }
-        }
-
-        /* --- Botón Flotante --- */
-        #btn-to-top {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 90;
-            opacity: 0;
-            transform: scale(0);
-            transition: all 0.3s;
-        }
-
-        #btn-to-top.show {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        /* --- Marquee de Marcas --- */
-        .marquee-track {
-            display: flex;
-            width: max-content;
-            animation: marquee 40s linear infinite;
-        }
-
-        .marquee-track:hover { animation-play-state: paused; }
-
-        /* --- Estilos de Inputs --- */
-        .input-uru {
-            background: var(--input-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            transition: all 0.3s;
-        }
-
-        .input-uru:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.1);
-            outline: none;
-        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="dark-mode">
 
-    <div id="zoom-overlay" onclick="closeZoom()" class="fixed inset-0 z-[1000] bg-black/95 hidden backdrop-blur-xl flex items-center justify-center p-6 cursor-zoom-out">
-        <img id="zoom-img" src="" class="max-w-full max-h-[90vh] rounded-2xl shadow-2xl transition-all duration-500">
+    <div id="zoom-overlay" onclick="closeZoom()" class="fixed inset-0 z-[1000] bg-black/90 hidden backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out">
+        <img id="zoom-img" src="" class="max-w-full max-h-[85vh] rounded-xl shadow-2xl">
     </div>
 
-    <button id="btn-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'})" class="w-14 h-14 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center text-xl hover:scale-110 active:scale-95">
-        <i class="fas fa-chevron-up"></i>
-    </button>
-
-    <div class="bg-black py-2 overflow-hidden border-b border-white/10 relative z-[200]">
-        <div class="flex whitespace-nowrap gap-16 animate-[marquee_30s_linear_infinite] font-black text-[10px] uppercase tracking-[0.4em] text-white/70">
-            <span>⚡ Distribuidora El Uru - Viedma y Carmen de Patagones ⚡</span>
-            <span>📦 Pedidos hasta 12:30hs para entrega en el día 📦</span>
-            <span>🔥 Los mejores precios mayoristas de la comarca 🔥</span>
-            <span>⚡ Distribuidora El Uru - Viedma y Carmen de Patagones ⚡</span>
+    <div class="bg-black py-2 overflow-hidden border-b border-white/10">
+        <div class="animate-marquee font-black text-[10px] uppercase tracking-[0.3em] text-white/80">
+            <span class="px-8">⚡ Distribuidora El Uru - Viedma y Carmen de Patagones ⚡</span>
+            <span class="px-8">📦 Pedidos hasta 12:30hs para entrega en el día 📦</span>
+            <span class="px-8">🔥 Los mejores precios mayoristas 🔥</span>
+            <span class="px-8">⚡ Distribuidora El Uru - Viedma y Carmen de Patagones ⚡</span>
+            <span class="px-8">📦 Pedidos hasta 12:30hs para entrega en el día 📦</span>
         </div>
     </div>
 
-    <div id="status-delivery" class="py-2.5 text-center font-black text-[11px] uppercase tracking-widest text-white transition-all duration-700">
-        <span id="status-label">Cargando sistema logístico...</span>
+    <div id="status-delivery" class="py-2 text-center font-bold text-[10px] uppercase tracking-widest text-white transition-colors duration-500">
+        <span id="status-label">Cargando catálogo...</span>
     </div>
 
-    <nav class="sticky top-0 z-[100] glass-nav p-4 lg:p-6">
+    <nav class="sticky top-0 z-[100] glass-nav px-4 py-3">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-4 cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-                <div class="relative group">
-                    <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-14 h-14 lg:w-16 lg:h-16 rounded-2xl border-2 border-primary transition-transform group-hover:rotate-6">
-                    <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-black rounded-full pulse-orange"></div>
-                </div>
+            <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+                <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-10 h-10 rounded-xl border border-primary">
                 <div>
-                    <h1 class="text-2xl lg:text-3xl font-black italic uppercase text-primary leading-none tracking-tighter">El Uru</h1>
-                    <p class="text-[9px] font-bold opacity-40 uppercase tracking-[0.2em] mt-1">Premium Distribution</p>
+                    <h1 class="text-xl font-black italic uppercase text-primary leading-none tracking-tighter">El Uru</h1>
+                    <p class="text-[8px] font-bold opacity-50 uppercase tracking-widest">Premium Dist.</p>
                 </div>
             </div>
 
-            <div class="flex items-center gap-2 lg:gap-4">
-                <button onclick="toggleTheme()" class="w-12 h-12 lg:w-14 lg:h-14 rounded-2xl bg-white/5 flex items-center justify-center text-xl text-gray-400 hover:text-primary transition-all">
+            <div class="flex items-center gap-2">
+                <button onclick="toggleTheme()" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400 border border-white/5">
                     <i id="theme-icon" class="fas fa-moon"></i>
                 </button>
-                <button onclick="openCart()" class="relative bg-primary text-white h-12 lg:h-14 px-6 lg:px-8 rounded-2xl font-black flex items-center gap-3 shadow-xl hover:scale-105 active:scale-95 transition-all">
-                    <i class="fas fa-shopping-cart text-xl"></i>
-                    <span id="cart-counter" class="bg-black/20 px-2 py-1 rounded-md text-xs">0</span>
+                <button onclick="openCart()" class="relative bg-primary text-white h-10 px-4 rounded-xl font-black flex items-center gap-2 shadow-lg shadow-orange-900/20">
+                    <i class="fas fa-shopping-basket"></i>
+                    <span id="cart-counter" class="bg-black/20 px-1.5 rounded text-sm">0</span>
                 </button>
             </div>
         </div>
     </nav>
 
-    <section class="max-w-7xl mx-auto p-6 mt-4">
-        <div class="flex flex-col lg:flex-row gap-6">
-            <div class="relative flex-1">
-                <input type="text" id="main-search" onkeyup="renderProducts()" placeholder="Buscar marcas, productos o categorías..." class="w-full p-5 pl-14 rounded-2xl input-uru font-semibold text-lg">
-                <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-primary opacity-50 text-xl"></i>
-            </div>
-            
-            <div class="flex gap-3">
-                <button id="fav-filter" onclick="toggleFavMode()" class="flex-1 lg:w-20 lg:h-[68px] rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center text-2xl text-gray-500 transition-all hover:bg-red-500/10">
-                    <i class="fas fa-heart"></i>
-                </button>
-                <button onclick="location.reload()" class="flex-1 lg:w-20 lg:h-[68px] rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center text-2xl text-gray-500 hover:rotate-180 transition-all duration-700">
-                    <i class="fas fa-sync-alt"></i>
-                </button>
-            </div>
+    <section class="max-w-7xl mx-auto px-4 mt-6">
+        <div class="relative mb-6">
+            <input type="text" id="main-search" onkeyup="renderProducts()" placeholder="Buscar producto o marca..." 
+                class="w-full p-4 pl-12 rounded-2xl bg-white/5 border border-white/10 text-base focus:border-primary outline-none transition-all">
+            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-primary opacity-50"></i>
         </div>
-
-        <div id="category-container" class="flex gap-3 overflow-x-auto py-6 no-scrollbar">
-            </div>
+        <div id="category-container" class="flex gap-2 overflow-x-auto pb-2 no-scrollbar scroll-smooth"></div>
     </section>
 
-    <div class="bg-white/5 border-y border-white/5 py-10 mb-10 overflow-hidden">
-        <div class="marquee-track gap-20 items-center px-10">
-            <img src="https://www.nicepng.com/png/detail/181-1814882_coca-cola-company-logo-png-vector-transparent-logo.png" class="h-14 grayscale opacity-50">
-            <img src="https://logosenvector.com/logo/img/cerveza-quilmes-37897.png" class="h-14 grayscale opacity-50">
-            <img src="https://http2.mlstatic.com/D_NQ_NP_941474-MLU79050320441_092024-O.webp" class="h-14 grayscale opacity-50">
-            <img src="https://seeklogo.com/images/U/uvita-logo-98F93700CB-seeklogo.com.png" class="h-14 grayscale opacity-50">
-            <img src="https://www.nicepng.com/png/detail/181-1814882_coca-cola-company-logo-png-vector-transparent-logo.png" class="h-14 grayscale opacity-50">
-            <img src="https://logosenvector.com/logo/img/cerveza-quilmes-37897.png" class="h-14 grayscale opacity-50">
-        </div>
-    </div>
-
-    <main class="max-w-7xl mx-auto px-6 pb-40">
-        <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 lg:gap-8">
-            <div class="h-80 bg-white/5 rounded-[2rem] animate-pulse"></div>
-            <div class="h-80 bg-white/5 rounded-[2rem] animate-pulse"></div>
-            <div class="h-80 bg-white/5 rounded-[2rem] animate-pulse"></div>
-            <div class="h-80 bg-white/5 rounded-[2rem] animate-pulse"></div>
+    <main class="max-w-7xl mx-auto px-4 pb-32 mt-4">
+        <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            <div class="col-span-full py-20 text-center opacity-50 font-bold uppercase tracking-widest text-sm">
+                <i class="fas fa-spinner animate-spin mb-4 text-2xl block"></i>
+                Actualizando Precios...
+            </div>
         </div>
     </main>
 
     <div id="cart-modal" class="fixed inset-0 z-[1000] hidden bg-black/60 backdrop-blur-sm">
-        <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full max-w-lg bg-inherit border-l border-white/10 flex flex-col translate-x-full">
-            
-            <div class="p-8 border-b border-white/5 flex justify-between items-center bg-white/5">
-                <div>
-                    <h2 class="text-3xl font-black italic uppercase text-primary leading-none">Tu Pedido</h2>
-                    <p class="text-[10px] font-bold opacity-40 uppercase tracking-[0.2em] mt-2">Detalle de compra mayorista</p>
-                </div>
-                <div class="flex items-center gap-4">
-                    <button onclick="clearCart()" class="text-xs font-black uppercase text-red-500/50 hover:text-red-500 transition-all">Limpiar</button>
-                    <button onclick="closeCart()" class="w-12 h-12 flex items-center justify-center rounded-xl bg-white/5 text-3xl">×</button>
-                </div>
+        <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full max-w-md bg-[var(--bg-card)] flex flex-col translate-x-full transition-transform duration-300 border-l border-white/10">
+            <div class="p-6 border-b border-white/5 flex justify-between items-center bg-white/5">
+                <h2 class="text-xl font-black uppercase text-primary">Tu Pedido</h2>
+                <button onclick="closeCart()" class="text-2xl p-2">&times;</button>
             </div>
 
-            <div class="p-8 bg-black/20">
-                <div class="flex justify-between items-end mb-4">
-                    <div class="text-[11px] font-black uppercase tracking-widest text-muted">Mínimo de Compra</div>
-                    <div id="progress-percent" class="text-xl font-black text-primary">0%</div>
+            <div class="p-6 bg-black/10 border-b border-white/5">
+                <div class="flex justify-between mb-2 items-end">
+                    <span class="text-[10px] font-black uppercase opacity-60">Mínimo de Compra</span>
+                    <span id="progress-percent" class="font-black text-primary text-sm">0%</span>
                 </div>
-                <div class="progress-container">
+                <div class="h-2 bg-white/10 rounded-full overflow-hidden">
                     <div id="progress-bar" class="progress-fill w-0"></div>
                 </div>
-                <div id="min-order-msg" class="mt-4 text-[11px] font-bold text-center uppercase tracking-tighter opacity-60"></div>
+                <p id="min-order-msg" class="mt-2 text-[9px] text-center font-bold uppercase opacity-60 tracking-wider"></p>
             </div>
 
-            <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar">
+            <div id="cart-items-container" class="flex-1 overflow-y-auto p-4 space-y-3 no-scrollbar"></div>
+
+            <div class="p-6 border-t border-white/10 space-y-4 bg-white/5">
+                <div class="space-y-2">
+                    <input type="text" id="user-store-name" oninput="persistUserData()" placeholder="Nombre del Comercio" class="w-full p-3 rounded-xl bg-white/5 border border-white/10 text-sm font-bold focus:border-primary outline-none">
+                    <input type="text" id="user-store-address" oninput="persistUserData()" placeholder="Dirección de Entrega" class="w-full p-3 rounded-xl bg-white/5 border border-white/10 text-sm font-bold focus:border-primary outline-none">
+                </div>
+                
+                <div class="flex justify-between items-center">
+                    <span class="text-[10px] font-black uppercase opacity-40">Total Estimado</span>
+                    <span class="text-3xl font-black italic text-primary">$<span id="cart-total-display">0</span></span>
                 </div>
 
-            <div class="p-8 border-t border-white/10 bg-black/40 space-y-6">
-                <div class="grid grid-cols-1 gap-4">
-                    <div class="relative">
-                        <input type="text" id="user-store-name" oninput="persistUserData()" placeholder="Nombre del Comercio" class="w-full p-4 rounded-xl input-uru font-bold">
-                        <i class="fas fa-store absolute right-4 top-1/2 -translate-y-1/2 opacity-20"></i>
-                    </div>
-                    <div class="relative">
-                        <input type="text" id="user-store-address" oninput="persistUserData()" placeholder="Dirección de Entrega" class="w-full p-4 rounded-xl input-uru font-bold">
-                        <i class="fas fa-map-marker-alt absolute right-4 top-1/2 -translate-y-1/2 opacity-20"></i>
-                    </div>
+                <div class="grid grid-cols-5 gap-2">
+                    <button onclick="clearCart()" class="col-span-1 bg-white/5 hover:bg-red-500/20 text-gray-400 hover:text-red-500 rounded-xl transition-colors">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                    <button id="btn-checkout" onclick="executeCheckout()" class="col-span-4 py-4 rounded-xl bg-gray-800 text-gray-500 font-black uppercase tracking-widest shadow-lg transition-all disabled:opacity-50">
+                        Pedido Incompleto
+                    </button>
                 </div>
-
-                <div class="flex justify-between items-center py-4">
-                    <div>
-                        <p class="text-[10px] font-black uppercase opacity-40 tracking-widest">Total Estimado</p>
-                        <p class="text-5xl font-black italic tracking-tighter text-primary">$<span id="cart-total-display">0</span></p>
-                    </div>
-                </div>
-
-                <button id="btn-checkout" onclick="executeCheckout()" class="w-full py-6 rounded-2xl bg-gray-800 text-gray-500 font-black text-sm uppercase tracking-[0.3em] cursor-not-allowed transition-all shadow-2xl">
-                    Pedido Incompleto
-                </button>
             </div>
         </div>
     </div>
 
-    <footer class="bg-black py-24 px-8 border-t-8 border-primary">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
-            <div class="space-y-8">
-                <h3 class="text-white font-black text-5xl italic uppercase tracking-tighter">El Uru</h3>
-                <p class="text-muted leading-relaxed font-medium">Distribuidora líder en la comarca. Llevamos eficiencia, calidad y los mejores precios del mercado directamente a su negocio.</p>
-                <div class="flex gap-4">
-                    <a href="#" class="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center text-2xl hover:text-primary transition-all"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center text-2xl text-green-500 hover:scale-110 transition-all"><i class="fab fa-whatsapp"></i></a>
-                </div>
-            </div>
-            
-            <div class="space-y-8">
-                <h4 class="text-white font-black uppercase tracking-[0.3em] text-xs border-l-4 border-primary pl-4">Logística y Reparto</h4>
-                <ul class="space-y-6 text-sm font-bold">
-                    <li class="flex items-center gap-4"><i class="fas fa-check-circle text-primary text-xl"></i> Repartos de Lunes a Sábados</li>
-                    <li class="flex items-center gap-4"><i class="fas fa-clock text-primary text-xl"></i> Cierre de pedidos: 12:30hs</li>
-                    <li class="flex items-center gap-4"><i class="fas fa-truck-loading text-primary text-xl"></i> Viedma, Patagones y zona costera</li>
-                </ul>
-            </div>
-
-            <div class="space-y-8">
-                <h4 class="text-white font-black uppercase tracking-[0.3em] text-xs border-l-4 border-primary pl-4">Ubicación Estratégica</h4>
-                <div class="h-48 rounded-3xl overflow-hidden border border-white/10 grayscale hover:grayscale-0 transition-all duration-700">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12000!2d-63!3d-40!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDDCsDAwJzAwLjAiUyA2M8KwMDAnMDAuMCJX!5e0!3m2!1ses!2sar!4v1620000000000" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-                </div>
-            </div>
-        </div>
-        <div class="max-w-7xl mx-auto mt-20 pt-10 border-t border-white/5 text-center">
-            <p class="text-[10px] font-black uppercase tracking-[0.5em] opacity-20">© 2026 Distribuidora El Uru - Ingeniería de Software por IA</p>
-        </div>
-    </footer>
-
     <script>
-        // --- CONFIGURACIÓN GLOBAL ---
         const APP_CONFIG = {
             sheet_url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQEemzCvTezcjzZhIUIRIayZ7U81xgssl9G1Vr6Odx7dHGHOARY0iJ-VOL43E17qLVkiIRb0LTurcZU/pub?output=tsv',
             min_purchase: 25000,
             whatsapp_number: '5492920248292',
-            refresh_interval: 60000 // 1 minuto
+            default_img: 'https://i.ibb.co/yB7ffL4T/unnamed.jpg'
         };
 
-        // --- ESTADO DE LA APLICACIÓN ---
         let state = {
             products: [],
             cart: {},
-            favorites: JSON.parse(localStorage.getItem('uru_favs_v26')) || [],
             currentCategory: 'TODOS',
-            isFavMode: false,
             theme: localStorage.getItem('uru_theme') || 'dark-mode'
         };
 
-        // --- INICIALIZACIÓN ---
-        window.addEventListener('DOMContentLoaded', () => {
-            initApp();
-            setupScrollListener();
-        });
-
-        async function initApp() {
+        window.addEventListener('DOMContentLoaded', async () => {
             applyTheme();
-            loadPersistedUser();
             updateDeliveryStatus();
             await fetchSheetData();
-            
-            // Intervalo de actualización de estado de reparto
-            setInterval(updateDeliveryStatus, APP_CONFIG.refresh_interval);
-        }
+            loadPersistedUser();
+        });
 
-        // --- CARGA DE DATOS (GOOGLE SHEETS) ---
         async function fetchSheetData() {
             try {
                 const response = await fetch(`${APP_CONFIG.sheet_url}&cb=${Date.now()}`);
                 const data = await response.text();
-                const rows = data.split('\n').slice(1); // Quitamos cabecera
+                const rows = data.split('\n').slice(1);
                 
                 state.products = rows.map((row, index) => {
-                    const [nombre, precio, categoria, imagen] = row.split('\t');
+                    const columns = row.split('\t');
+                    // Limpieza pro de precios (maneja $1.200,50 o 1200)
+                    const cleanPrice = columns[1]?.replace(/[^\d,.]/g, '').replace(',', '.') || 0;
+                    
                     return {
-                        id: `prod_${index}`,
-                        name: nombre?.trim() || 'Sin Nombre',
-                        price: parseInt(precio?.replace(/\D/g, '')) || 0,
-                        category: categoria?.trim().toUpperCase() || 'GENERAL',
-                        image: imagen?.trim() || 'https://i.ibb.co/yB7ffL4T/unnamed.jpg'
+                        id: `p_${index}`,
+                        name: columns[0]?.trim(),
+                        price: parseFloat(cleanPrice) || 0,
+                        category: columns[2]?.trim().toUpperCase() || 'GENERAL',
+                        image: columns[3]?.trim() || APP_CONFIG.default_img
                     };
-                }).filter(p => p.name.length > 2);
+                }).filter(p => p.name && p.price > 0);
 
                 buildCategories();
                 renderProducts();
-            } catch (error) {
-                console.error("Error cargando base de datos:", error);
-                document.getElementById('status-label').innerText = "⚠️ ERROR DE CONEXIÓN - REINTENTANDO...";
+            } catch (e) {
+                console.error("Error cargando DB:", e);
+                document.getElementById('status-label').innerText = "⚠️ Error de conexión. Reintente.";
             }
         }
 
-        // --- CONSTRUCCIÓN DE INTERFAZ ---
         function buildCategories() {
-            const categories = ['TODOS', ...new Set(state.products.map(p => p.category))];
-            const container = document.getElementById('category-container');
-            
-            container.innerHTML = categories.map(cat => `
-                <button onclick="setFilterCategory('${cat}')" class="chip-cat ${state.currentCategory === cat ? 'active' : ''}">
-                    ${cat}
-                </button>
+            const cats = ['TODOS', ...new Set(state.products.map(p => p.category))];
+            document.getElementById('category-container').innerHTML = cats.map(c => `
+                <button onclick="setFilterCategory('${c}')" class="chip-cat ${state.currentCategory === c ? 'active' : ''}">${c}</button>
             `).join('');
         }
 
         function renderProducts() {
             const grid = document.getElementById('products-grid');
-            const searchTerm = document.getElementById('main-search').value.toLowerCase();
+            const search = document.getElementById('main-search').value.toLowerCase();
             
             const filtered = state.products.filter(p => {
-                const matchesCat = state.currentCategory === 'TODOS' || p.category === state.currentCategory;
-                const matchesSearch = p.name.toLowerCase().includes(searchTerm) || p.category.toLowerCase().includes(searchTerm);
-                const matchesFav = !state.isFavMode || state.favorites.includes(p.id);
-                return matchesCat && matchesSearch && matchesFav;
+                const mCat = state.currentCategory === 'TODOS' || p.category === state.currentCategory;
+                const mSearch = p.name.toLowerCase().includes(search);
+                return mCat && mSearch;
             });
 
             if (filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full py-20 text-center opacity-30 font-black uppercase tracking-widest">No se encontraron productos</div>`;
+                grid.innerHTML = `<div class="col-span-full py-20 text-center opacity-50 font-bold uppercase tracking-widest text-sm">No se encontraron productos</div>`;
                 return;
             }
 
             grid.innerHTML = filtered.map(p => {
-                const inCart = state.cart[p.id] || 0;
-                const isFav = state.favorites.includes(p.id);
-                const isSoldOut = p.price <= 0;
-
+                const qty = state.cart[p.id] || 0;
                 return `
-                    <div class="card-uru p-4 animate-card ${inCart > 0 ? 'ring-2 ring-primary' : ''}">
-                        <div class="relative">
-                            <div class="img-wrapper" onclick="openZoom('${p.image}')">
-                                <img src="${p.image}" loading="lazy" onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'">
-                            </div>
-                            <button onclick="toggleFavorite(event, '${p.id}')" class="absolute top-4 right-4 w-10 h-10 rounded-full glass-nav flex items-center justify-center text-lg transition-all ${isFav ? 'text-red-500 shadow-lg' : 'text-gray-400 opacity-50 hover:opacity-100'}">
-                                <i class="${isFav ? 'fas' : 'far'} fa-heart"></i>
-                            </button>
-                            ${isSoldOut ? '<div class="absolute inset-0 bg-black/60 flex items-center justify-center rounded-3xl font-black text-xs uppercase tracking-tighter">Sin Stock</div>' : ''}
+                    <div class="card-uru p-3 flex flex-col ${qty > 0 ? 'ring-2 ring-primary bg-primary/5' : ''}">
+                        <div class="img-wrapper mb-3 cursor-zoom-in" onclick="openZoom('${p.image}')">
+                            <img src="${p.image}" onerror="this.src='${APP_CONFIG.default_img}'" loading="lazy">
                         </div>
-
-                        <div class="px-3 pt-2 flex-1">
-                            <span class="text-[9px] font-black text-primary tracking-[0.2em] uppercase">${p.category}</span>
-                            <h3 class="text-xs lg:text-sm font-bold mt-1 leading-tight h-10 overflow-hidden line-clamp-2 uppercase">${p.name}</h3>
-                            <div class="mt-4 flex items-end justify-between">
-                                <span class="text-xl lg:text-2xl font-black italic">${isSoldOut ? '---' : '$' + p.price.toLocaleString('es-AR')}</span>
-                            </div>
+                        <div class="px-1 flex-1">
+                            <span class="text-[7px] font-black text-primary uppercase tracking-tighter">${p.category}</span>
+                            <h3 class="text-[11px] font-bold h-7 overflow-hidden uppercase mt-0.5 leading-tight">${p.name}</h3>
+                            <p class="text-xl font-black mt-1 italic text-primary">$${p.price.toLocaleString('es-AR', {minimumFractionDigits: 0})}</p>
                         </div>
-
-                        <div class="mt-5 px-1 pb-1">
-                            ${isSoldOut ? 
-                                `<button disabled class="w-full py-4 rounded-xl bg-white/5 text-[10px] font-black uppercase opacity-50">Consultar Stock</button>` :
-                                inCart === 0 ?
-                                `<button onclick="updateCart('${p.id}', 1)" class="w-full py-4 rounded-2xl bg-primary text-white font-black text-[10px] uppercase shadow-lg hover:brightness-110 active:scale-95 transition-all">Agregar al pedido</button>` :
-                                `<div class="flex items-center bg-black/40 rounded-2xl border border-white/5 overflow-hidden">
-                                    <button onclick="updateCart('${p.id}', -1)" class="w-12 h-12 flex items-center justify-center hover:bg-white/5 transition-all">-</button>
-                                    <span class="flex-1 text-center font-black text-primary">${inCart}</span>
-                                    <button onclick="updateCart('${p.id}', 1)" class="w-12 h-12 flex items-center justify-center hover:bg-white/5 transition-all">+</button>
+                        <div class="mt-3">
+                            ${qty === 0 ? 
+                                `<button onclick="updateCart('${p.id}', 1)" class="w-full py-3 rounded-xl bg-primary text-white font-black text-[10px] uppercase shadow-md active:scale-95 transition-transform">Agregar</button>` :
+                                `<div class="flex items-center bg-white/5 rounded-xl border border-white/10 overflow-hidden">
+                                    <button onclick="updateCart('${p.id}', -1)" class="w-10 h-10 flex items-center justify-center hover:bg-white/5 text-primary">-</button>
+                                    <span class="flex-1 text-center font-black text-sm">${qty}</span>
+                                    <button onclick="updateCart('${p.id}', 1)" class="w-10 h-10 flex items-center justify-center hover:bg-white/5 text-primary">+</button>
                                 </div>`
                             }
                         </div>
@@ -525,239 +325,82 @@
             }).join('');
         }
 
-        // --- LÓGICA DEL CARRITO ---
-        function updateCart(prodId, delta) {
-            const currentQty = state.cart[prodId] || 0;
-            const newQty = currentQty + delta;
-
-            if (newQty <= 0) {
-                delete state.cart[prodId];
-            } else {
-                state.cart[prodId] = newQty;
-            }
-
-            if (delta > 0) playHaptic();
-            
-            syncCartUI();
+        function updateCart(id, delta) {
+            state.cart[id] = (state.cart[id] || 0) + delta;
+            if (state.cart[id] <= 0) delete state.cart[id];
+            syncUI();
             renderProducts();
-        }
-
-        function syncCartUI() {
-            let total = 0;
-            let count = 0;
-            const container = document.getElementById('cart-items-container');
-            
-            let htmlItems = '';
-
-            Object.entries(state.cart).forEach(([id, qty]) => {
-                const p = state.products.find(item => item.id === id);
-                if (p) {
-                    const subtotal = p.price * qty;
-                    total += subtotal;
-                    count += qty;
-                    
-                    htmlItems += `
-                        <div class="flex items-center gap-4 bg-white/5 p-4 rounded-3xl border border-white/5 group transition-all hover:bg-white/10">
-                            <img src="${p.image}" class="w-16 h-16 rounded-xl bg-white object-contain p-1">
-                            <div class="flex-1">
-                                <h4 class="text-[10px] font-black uppercase leading-tight opacity-70">${p.name}</h4>
-                                <p class="text-primary font-black mt-1">$${subtotal.toLocaleString('es-AR')}</p>
-                            </div>
-                            <div class="flex items-center gap-2 bg-black/40 rounded-xl p-1">
-                                <button onclick="updateCart('${id}', -1)" class="w-8 h-8 flex items-center justify-center text-white/50 hover:text-white">-</button>
-                                <span class="w-6 text-center text-xs font-black">${qty}</span>
-                                <button onclick="updateCart('${id}', 1)" class="w-8 h-8 flex items-center justify-center text-white/50 hover:text-white">+</button>
-                            </div>
-                        </div>
-                    `;
-                }
-            });
-
-            container.innerHTML = htmlItems || `
-                <div class="flex flex-col items-center justify-center py-20 opacity-10">
-                    <i class="fas fa-shopping-basket text-8xl mb-4"></i>
-                    <p class="font-black uppercase tracking-[0.3em]">Carrito Vacío</p>
-                </div>
-            `;
-
-            document.getElementById('cart-total-display').innerText = total.toLocaleString('es-AR');
-            document.getElementById('cart-counter').innerText = count;
-
-            // Progreso del mínimo
-            const progress = Math.min((total / APP_CONFIG.min_purchase) * 100, 100);
-            document.getElementById('progress-bar').style.width = `${progress}%`;
-            document.getElementById('progress-percent').innerText = `${Math.floor(progress)}%`;
-
-            const btn = document.getElementById('btn-checkout');
-            const msg = document.getElementById('min-order-msg');
-
-            if (total >= APP_CONFIG.min_purchase) {
-                btn.disabled = false;
-                btn.innerText = "Enviar Pedido a WhatsApp";
-                btn.className = "w-full py-6 rounded-2xl bg-green-600 text-white font-black text-sm uppercase tracking-[0.3em] shadow-2xl hover:bg-green-500 transition-all cursor-pointer";
-                msg.innerHTML = `<span class="text-green-500">✅ ¡Mínimo alcanzado! Envío bonificado</span>`;
-            } else {
-                btn.disabled = true;
-                const faltante = APP_CONFIG.min_purchase - total;
-                btn.innerText = total > 0 ? `Faltan $${faltante.toLocaleString('es-AR')}` : "Pedido Incompleto";
-                btn.className = "w-full py-6 rounded-2xl bg-gray-800 text-gray-500 font-black text-sm uppercase tracking-[0.3em] cursor-not-allowed";
-                msg.innerText = total > 0 ? `Agregue $${faltante.toLocaleString('es-AR')} más para validar el pedido` : `Compra mínima: $${APP_CONFIG.min_purchase.toLocaleString('es-AR')}`;
-            }
-        }
-
-        // --- SISTEMA DE REPARTO (ESTADO) ---
-        function updateDeliveryStatus() {
-            const now = new Date();
-            const hour = now.getHours();
-            const minute = now.getMinutes();
-            const statusEl = document.getElementById('status-delivery');
-            const labelEl = document.getElementById('status-label');
-
-            // Límite: 12:30hs
-            const isOpen = (hour < 12 || (hour === 12 && minute <= 30));
-
-            if (isOpen) {
-                statusEl.className = "py-2.5 text-center font-black text-[11px] uppercase tracking-widest text-white bg-green-600 shadow-[0_10px_30px_rgba(22,163,74,0.3)]";
-                labelEl.innerHTML = "🟢 Reparto Hoy: ABIERTO para pedidos inmediatos";
-            } else {
-                statusEl.className = "py-2.5 text-center font-black text-[11px] uppercase tracking-widest text-white bg-orange-600 opacity-90";
-                labelEl.innerHTML = "🕒 Reparto Hoy Cerrado: Tomando para mañana";
-            }
-        }
-
-        // --- GESTIÓN DE TEMAS ---
-        function toggleTheme() {
-            state.theme = state.theme === 'dark-mode' ? 'light-mode' : 'dark-mode';
-            localStorage.setItem('uru_theme', state.theme);
-            applyTheme();
-        }
-
-        function applyTheme() {
-            document.body.className = state.theme;
-            const icon = document.getElementById('theme-icon');
-            icon.className = state.theme === 'dark-mode' ? 'fas fa-moon' : 'fas fa-sun';
-        }
-
-        // --- ACCIONES DE USUARIO ---
-        function setFilterCategory(cat) {
-            state.currentCategory = cat;
-            buildCategories();
-            renderProducts();
-        }
-
-        function toggleFavMode() {
-            state.isFavMode = !state.isFavMode;
-            const btn = document.getElementById('fav-filter');
-            btn.classList.toggle('text-red-500', state.isFavMode);
-            btn.classList.toggle('bg-red-500/10', state.isFavMode);
-            renderProducts();
-        }
-
-        function toggleFavorite(event, prodId) {
-            event.stopPropagation();
-            const index = state.favorites.indexOf(prodId);
-            if (index > -1) {
-                state.favorites.splice(index, 1);
-            } else {
-                state.favorites.push(prodId);
-                confetti({
-                    particleCount: 40,
-                    spread: 70,
-                    origin: { x: event.clientX / window.innerWidth, y: event.clientY / window.innerHeight },
-                    colors: ['#ff6b00', '#ffffff']
-                });
-            }
-            localStorage.setItem('uru_favs_v26', JSON.stringify(state.favorites));
-            renderProducts();
-        }
-
-        function openZoom(src) {
-            const overlay = document.getElementById('zoom-overlay');
-            const img = document.getElementById('zoom-img');
-            img.src = src;
-            overlay.classList.remove('hidden');
-        }
-
-        function closeZoom() {
-            document.getElementById('zoom-overlay').classList.add('hidden');
-        }
-
-        function openCart() {
-            const modal = document.getElementById('cart-modal');
-            const sidebar = document.getElementById('cart-sidebar');
-            modal.classList.remove('hidden');
-            setTimeout(() => sidebar.style.transform = 'translateX(0)', 10);
-        }
-
-        function closeCart() {
-            const modal = document.getElementById('cart-modal');
-            const sidebar = document.getElementById('cart-sidebar');
-            sidebar.style.transform = 'translateX(100%)';
-            setTimeout(() => modal.classList.add('hidden'), 500);
         }
 
         function clearCart() {
-            if (confirm("¿Seguro que desea vaciar el carrito?")) {
+            if(confirm('¿Vaciar todo el pedido?')) {
                 state.cart = {};
-                syncCartUI();
+                syncUI();
                 renderProducts();
+                closeCart();
             }
         }
 
-        // --- PERSISTENCIA Y CHECKOUT ---
-        function persistUserData() {
-            localStorage.setItem('uru_store_name', document.getElementById('user-store-name').value);
-            localStorage.setItem('uru_store_addr', document.getElementById('user-store-address').value);
-        }
+        function syncUI() {
+            let total = 0, count = 0;
+            const container = document.getElementById('cart-items-container');
+            
+            const cartEntries = Object.entries(state.cart);
+            
+            if (cartEntries.length === 0) {
+                container.innerHTML = `<div class="py-10 text-center opacity-30 font-bold uppercase text-xs">El carrito está vacío</div>`;
+            } else {
+                container.innerHTML = cartEntries.map(([id, qty]) => {
+                    const p = state.products.find(x => x.id === id);
+                    if (!p) return '';
+                    total += (p.price * qty); count += qty;
+                    return `
+                        <div class="flex gap-3 bg-white/5 p-3 rounded-xl items-center border border-white/5">
+                            <img src="${p.image}" class="w-10 h-10 rounded-lg bg-white p-1 object-contain">
+                            <div class="flex-1 min-w-0">
+                                <p class="text-[9px] font-bold uppercase truncate">${p.name}</p>
+                                <p class="text-primary font-black text-sm">$${(p.price * qty).toLocaleString('es-AR')}</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="updateCart('${id}', -1)" class="w-6 h-6 rounded bg-white/10 text-xs">-</button>
+                                <span class="font-black text-xs w-4 text-center">${qty}</span>
+                                <button onclick="updateCart('${id}', 1)" class="w-6 h-6 rounded bg-white/10 text-xs">+</button>
+                            </div>
+                        </div>`;
+                }).join('');
+            }
 
-        function loadPersistedUser() {
-            document.getElementById('user-store-name').value = localStorage.getItem('uru_store_name') || '';
-            document.getElementById('user-store-address').value = localStorage.getItem('uru_store_addr') || '';
+            document.getElementById('cart-total-display').innerText = total.toLocaleString('es-AR');
+            document.getElementById('cart-counter').innerText = count;
+            
+            const progress = Math.min((total / APP_CONFIG.min_purchase) * 100, 100);
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('progress-percent').innerText = `${Math.floor(progress)}%`;
+            
+            const btn = document.getElementById('btn-checkout');
+            const msg = document.getElementById('min-order-msg');
+            
+            if (total >= APP_CONFIG.min_purchase) {
+                btn.disabled = false;
+                btn.className = "col-span-4 py-4 rounded-xl bg-green-600 text-white font-black uppercase tracking-widest cursor-pointer shadow-lg animate-pulse";
+                btn.innerText = "Enviar Pedido";
+                msg.innerText = "✅ Compra mínima superada";
+            } else {
+                btn.disabled = true;
+                btn.className = "col-span-4 py-4 rounded-xl bg-gray-800 text-gray-500 font-black uppercase tracking-widest cursor-not-allowed";
+                btn.innerText = `Faltan $${(APP_CONFIG.min_purchase - total).toLocaleString('es-AR')}`;
+                msg.innerText = `Mínimo de compra: $${APP_CONFIG.min_purchase.toLocaleString('es-AR')}`;
+            }
         }
 
         function executeCheckout() {
             const store = document.getElementById('user-store-name').value.trim();
-            const addr = document.getElementById('user-store-address').value.trim();
-
-            if (!store || !addr) {
-                alert("⚠️ Por favor, ingrese el Nombre del Comercio y la Dirección.");
+            const address = document.getElementById('user-store-address').value.trim();
+            
+            if (!store || !address) {
+                alert("Completa el nombre y dirección de entrega.");
                 return;
             }
 
-            // Efecto Confeti de éxito
-            confetti({ particleCount: 200, spread: 80, origin: { y: 0.7 } });
-
-            let msg = `*NUEVO PEDIDO MAYORISTA - EL URU*%0A`;
-            msg += `━━━━━━━━━━━━━━━━━━━━%0A`;
-            msg += `👤 *Comercio:* ${store}%0A`;
-            msg += `📍 *Dirección:* ${addr}%0A`;
-            msg += `━━━━━━━━━━━━━━━━━━━━%0A%0A`;
-
-            Object.entries(state.cart).forEach(([id, qty]) => {
-                const p = state.products.find(item => item.id === id);
-                msg += `🔹 *${qty}* x ${p.name}%0A`;
-            });
-
-            const total = document.getElementById('cart-total-display').innerText;
-            msg += `%0A━━━━━━━━━━━━━━━━━━━━%0A`;
-            msg += `💰 *TOTAL ESTIMADO: $${total}*`;
-
-            setTimeout(() => {
-                window.open(`https://wa.me/${APP_CONFIG.whatsapp_number}?text=${msg}`, '_blank');
-            }, 800);
-        }
-
-        // --- UTILIDADES ---
-        function setupScrollListener() {
-            window.addEventListener('scroll', () => {
-                const btn = document.getElementById('btn-to-top');
-                btn.classList.toggle('show', window.scrollY > 800);
-            });
-        }
-
-        function playHaptic() {
-            if ('vibrate' in navigator) navigator.vibrate(10);
-        }
-    </script>
-</body>
-</html>
+            let text = `*PEDIDO EL URU*\n`;
+            text +=
