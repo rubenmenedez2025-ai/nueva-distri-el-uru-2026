@@ -3,136 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
-    <title>DISTRI EL URU | Catálogo Oficial 2026</title>
+    <title>DISTRI EL URU | Catálogo Premium 2026</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap');
         
-        /* --- TEMAS --- */
-        body.dark-mode { background-color: #0d0d0d; color: #f3f4f6; }
-        body.light-mode { background-color: #f9fafb; color: #111827; }
-        body { font-family: 'Inter', sans-serif; transition: background 0.4s ease; scroll-behavior: smooth; }
-
-        /* --- UI COMPONENTS --- */
-        .btn-naranja { background: #ff6b00; color: white; transition: all 0.3s; }
-        .btn-naranja:hover { filter: brightness(1.1); transform: translateY(-2px); }
-        
-        .card-prod { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; border-radius: 2.5rem; }
-        .dark-mode .card-prod { background: #181818; border: 1px solid rgba(255,255,255,0.05); }
-        .light-mode .card-prod { background: white; box-shadow: 0 10px 15px rgba(0,0,0,0.05); border: 1px solid #e5e7eb; }
-        .card-prod:hover { border-color: #ff6b00; transform: translateY(-8px); }
-
-        .img-container { height: 180px; display: flex; align-items: center; justify-content: center; padding: 1rem; background: white; cursor: zoom-in; }
-        .img-container img { max-height: 100%; max-width: 100%; object-fit: contain; }
-
-        .sold-out-badge { position: absolute; top: 12px; left: 12px; background: #374151; color: white; padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 900; z-index: 10; }
-
-        /* --- CARRUSEL CORREGIDO --- */
-        .brand-wrapper { 
-            overflow: hidden; padding: 30px 0; background: rgba(255,107,0,0.05); 
-            border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05);
+        :root {
+            --uru-orange: #ff6b00;
+            --uru-black: #0d0d0d;
+            --uru-gray: #1a1a1a;
         }
-        @keyframes marquee-brands { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        .animate-brands { display: flex; width: max-content; animation: marquee-brands 30s linear infinite; }
+
+        /* --- RESET Y BASE --- */
+        * { -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Inter', sans-serif; transition: background 0.4s ease; scroll-behavior: smooth; overflow-x: hidden; }
+        body.dark-mode { background-color: var(--uru-black); color: #f3f4f6; }
+        body.light-mode { background-color: #f3f4f6; color: var(--uru-black); }
+
+        /* --- SCROLLBAR --- */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* --- ANIMACIONES --- */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade { animation: fadeIn 0.4s ease forwards; }
+
+        /* --- PRODUCT CARDS --- */
+        .card-prod {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            border-radius: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid transparent;
+        }
+        .dark-mode .card-prod { background: var(--uru-gray); border-color: rgba(255,255,255,0.05); }
+        .light-mode .card-prod { background: white; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border-color: #e5e7eb; }
+        .card-prod:hover { transform: translateY(-10px); border-color: var(--uru-orange); box-shadow: 0 15px 35px rgba(255,107,0,0.2); }
+
+        .img-container {
+            height: 190px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 2rem 2rem 1.2rem 1.2rem;
+            cursor: zoom-in;
+            position: relative;
+            overflow: hidden;
+        }
+        .img-container img { max-height: 100%; max-width: 100%; object-fit: contain; transition: transform 0.5s; }
+        .card-prod:hover .img-container img { transform: scale(1.08); }
+
+        /* --- CARRUSEL DE MARCAS --- */
+        .brand-wrapper { overflow: hidden; padding: 35px 0; background: rgba(255,107,0,0.05); border-y: 1px solid rgba(255,107,0,0.1); }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        .animate-brands { display: flex; width: max-content; animation: marquee 35s linear infinite; }
         .brand-item {
             background: white; width: 85px; height: 85px; margin: 0 30px;
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            padding: 12px; flex-shrink: 0; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            padding: 15px; flex-shrink: 0; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
-        .brand-logo { max-height: 100%; max-width: 100%; object-fit: contain; }
+
+        /* --- UI COMPONENTS --- */
+        .cat-pill {
+            white-space: nowrap; transition: all 0.3s;
+            padding: 12px 24px; border-radius: 18px; font-weight: 800; font-size: 11px;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .cat-active { background: var(--uru-orange) !important; color: white !important; box-shadow: 0 8px 20px rgba(255,107,0,0.3); }
+
+        /* --- PROGRESS BAR --- */
+        .progress-bar-inner {
+            height: 100%; background: linear-gradient(90deg, #ff6b00, #ffae00);
+            transition: width 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 15px rgba(255,107,0,0.5);
+        }
+
+        /* --- BOTONES Y BADGES --- */
+        .badge-soldout {
+            position: absolute; top: 15px; left: 15px; background: #374151; color: white;
+            padding: 5px 12px; border-radius: 10px; font-size: 10px; font-weight: 900; z-index: 10;
+        }
+        #go-top {
+            position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px;
+            background: var(--uru-orange); color: white; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 20px;
+            opacity: 0; visibility: hidden; transition: 0.4s; z-index: 100;
+            box-shadow: 0 10px 25px rgba(255,107,0,0.4);
+        }
+        #go-top.visible { opacity: 1; visibility: visible; transform: scale(1); }
 
         /* --- ZOOM MODAL --- */
-        #zoom-modal { transition: all 0.3s ease; }
+        #zoom-modal { backdrop-filter: blur(12px); transition: all 0.3s ease; }
+        #zoom-modal.hidden { display: none; opacity: 0; }
         
-        /* --- UTILS --- */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        #go-top {
-            position: fixed; bottom: 30px; right: 30px; width: 55px; height: 55px;
-            background: #ff6b00; color: white; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            opacity: 0; visibility: hidden; transition: 0.3s; z-index: 100; box-shadow: 0 10px 20px rgba(255,107,0,0.3);
+        .quantity-control {
+            display: flex; align-items: center; background: rgba(0,0,0,0.2);
+            border-radius: 15px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05);
         }
-        #go-top.visible { opacity: 1; visibility: visible; }
     </style>
 </head>
-
 <body class="dark-mode">
 
-    <div id="zoom-modal" onclick="closeZoom()" class="fixed inset-0 z-[200] bg-black/95 backdrop-blur-md hidden flex items-center justify-center p-6">
-        <img id="zoom-img" src="" class="max-w-full max-h-[85vh] rounded-2xl shadow-2xl scale-95 transition-transform duration-300">
-        <p class="absolute bottom-10 text-white/50 font-bold uppercase tracking-widest">Toca para cerrar</p>
+    <div id="zoom-modal" onclick="this.classList.add('hidden')" class="fixed inset-0 z-[200] bg-black/90 hidden flex items-center justify-center p-4">
+        <button class="absolute top-8 right-8 text-white text-5xl">&times;</button>
+        <img id="zoom-img" src="" class="max-w-full max-h-[80vh] rounded-3xl shadow-2xl transition-transform duration-300">
     </div>
 
-    <div id="go-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-        <i class="fas fa-chevron-up text-xl"></i>
+    <div id="go-top" onclick="window.scrollTo({top:0, behavior:'smooth'})" class="cursor-pointer">
+        <i class="fas fa-chevron-up"></i>
     </div>
 
     <header class="relative z-50">
         <div class="bg-black py-2 overflow-hidden border-b border-white/5">
-            <div class="flex animate-marquee whitespace-nowrap gap-10 font-black text-[10px] uppercase text-white tracking-[0.2em]">
-                <style>@keyframes marquee-top { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } } .animate-marquee { animation: marquee-top 25s linear infinite; }</style>
+            <div class="flex animate-[marquee_30s_linear_infinite] whitespace-nowrap gap-12 font-black text-[10px] uppercase text-white/80 tracking-[0.2em]">
                 <span>🔥 DISTRIBUIDORA EL URU - VIEDMA & PATAGONES</span>
                 <span>🚀 REPARTO DIARIO: PEDIDOS HASTA 12:30HS</span>
                 <span>💎 CALIDAD Y PRECIO MAYORISTA</span>
                 <span>🔥 DISTRIBUIDORA EL URU - VIEDMA & PATAGONES</span>
             </div>
         </div>
-        <div id="status-bar" class="py-2.5 text-center font-black text-[11px] tracking-widest text-white transition-colors duration-500 bg-orange-600">
-            <span id="status-text">CONECTANDO...</span>
+        <div id="status-bar" class="py-3 text-center font-black text-[11px] tracking-widest text-white transition-all duration-700">
+            <span id="status-text uppercase text-xs">Sincronizando Precios...</span>
         </div>
     </header>
 
     <nav class="sticky top-0 z-40 p-4 border-b border-white/5 bg-inherit backdrop-blur-xl">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-4">
-                <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-12 h-12 rounded-full border-2 border-[#ff6b00]">
+                <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-14 h-14 rounded-full border-2 border-[#ff6b00] shadow-lg">
                 <div>
-                    <h1 class="text-2xl font-black italic text-[#ff6b00] uppercase tracking-tighter">El Uru</h1>
-                    <p class="text-[9px] font-bold uppercase tracking-widest opacity-40">Catálogo Mayorista</p>
+                    <h1 class="text-2xl font-black italic text-[#ff6b00] uppercase leading-none tracking-tighter">El Uru</h1>
+                    <p class="text-[9px] font-bold uppercase tracking-widest opacity-40">Catálogo Digital</p>
                 </div>
             </div>
-            <div class="flex items-center gap-3">
-                <button onclick="toggleTheme()" class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-gray-500">
+            <div class="flex items-center gap-2">
+                <button onclick="toggleTheme()" class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-gray-400 hover:text-white transition-colors">
                     <i id="theme-icon" class="fas fa-moon"></i>
                 </button>
-                <button onclick="openCart()" class="btn-naranja px-6 py-4 rounded-2xl font-black flex items-center gap-3 shadow-lg active:scale-95">
-                    <i class="fas fa-shopping-basket"></i>
-                    <span id="cart-count" class="bg-white text-[#ff6b00] px-2 py-0.5 rounded-lg text-xs">0</span>
+                <button onclick="openCart()" class="bg-[#ff6b00] text-white px-6 h-14 rounded-[20px] font-black flex items-center gap-3 shadow-xl hover:scale-105 transition-all">
+                    <i class="fas fa-shopping-basket text-xl"></i>
+                    <span id="cart-count" class="bg-black/20 px-2.5 py-1 rounded-lg text-xs">0</span>
                 </button>
             </div>
         </div>
     </nav>
 
-    <section class="p-6 max-w-6xl mx-auto space-y-6">
+    <section class="p-6 max-w-7xl mx-auto space-y-6">
         <div class="flex flex-col md:flex-row gap-4">
             <div class="relative flex-1">
-                <input type="text" id="search" onkeyup="render()" placeholder="¿Qué necesitas hoy?" class="w-full p-5 pl-14 rounded-3xl bg-white/5 border-2 border-transparent focus:border-[#ff6b00] outline-none transition-all font-bold">
-                <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 opacity-20"></i>
+                <input type="text" id="search" onkeyup="render()" placeholder="¿Qué estás buscando hoy?" class="w-full p-5 pl-14 rounded-[22px] bg-white/5 border-2 border-transparent focus:border-[#ff6b00] outline-none transition-all font-bold">
+                <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 opacity-30"></i>
             </div>
-            <button onclick="toggleFavs()" id="btn-favs" class="px-8 h-[64px] rounded-3xl bg-white/5 font-black border border-white/5 flex items-center justify-center gap-3 transition-all">
-                <i class="fas fa-heart text-red-500"></i>
-            </button>
+            <div class="flex gap-2">
+                <button onclick="toggleFavs()" id="btn-favs" class="w-16 h-[64px] rounded-[22px] bg-white/5 flex items-center justify-center text-gray-500 border border-white/5 transition-all">
+                    <i class="fas fa-heart text-xl"></i>
+                </button>
+                <button onclick="location.reload()" class="w-16 h-[64px] rounded-[22px] bg-white/5 flex items-center justify-center text-gray-500 border border-white/5">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
         </div>
-        <div id="cats" class="flex gap-3 overflow-x-auto pb-2 no-scrollbar"></div>
+        <div id="cats" class="flex gap-3 overflow-x-auto pb-4 no-scrollbar"></div>
     </section>
 
-    <div class="brand-wrapper mb-10">
+    <div class="brand-wrapper mb-12">
         <div class="animate-brands flex items-center">
-            <div class="brand-item"><img src="https://www.nicepng.com/png/detail/181-1814882_coca-cola-company-logo-png-vector-transparent-logo.png" class="brand-logo"></div>
-            <div class="brand-item"><img src="https://logosenvector.com/logo/img/cerveza-quilmes-37897.png" class="brand-logo"></div>
-            <div class="brand-item"><img src="https://http2.mlstatic.com/D_NQ_NP_941474-MLU79050320441_092024-O.webp" class="brand-logo"></div>
-            <div class="brand-item"><img src="https://seeklogo.com/images/U/uvita-logo-98F93700CB-seeklogo.com.png" class="brand-logo"></div>
-            <div class="brand-item"><img src="https://i.pinimg.com/736x/d0/34/c6/d034c65bda6ef517a889de21ad01def0.jpg" class="brand-logo"></div>
-            <div class="brand-item"><img src="https://www.nicepng.com/png/detail/181-1814882_coca-cola-company-logo-png-vector-transparent-logo.png" class="brand-logo"></div>
-            <div class="brand-item"><img src="https://logosenvector.com/logo/img/cerveza-quilmes-37897.png" class="brand-logo"></div>
-            <div class="brand-item"><img src="https://http2.mlstatic.com/D_NQ_NP_941474-MLU79050320441_092024-O.webp" class="brand-logo"></div>
-            <div class="brand-item"><img src="https://seeklogo.com/images/U/uvita-logo-98F93700CB-seeklogo.com.png" class="brand-logo"></div>
-            <div class="brand-item"><img src="https://i.pinimg.com/736x/d0/34/c6/d034c65bda6ef517a889de21ad01def0.jpg" class="brand-logo"></div>
+            <div class="brand-item"><img src="https://www.nicepng.com/png/detail/181-1814882_coca-cola-company-logo-png-vector-transparent-logo.png" class="max-h-full"></div>
+            <div class="brand-item"><img src="https://logosenvector.com/logo/img/cerveza-quilmes-37897.png" class="max-h-full"></div>
+            <div class="brand-item"><img src="https://http2.mlstatic.com/D_NQ_NP_941474-MLU79050320441_092024-O.webp" class="max-h-full"></div>
+            <div class="brand-item"><img src="https://seeklogo.com/images/U/uvita-logo-98F93700CB-seeklogo.com.png" class="max-h-full"></div>
+            <div class="brand-item"><img src="https://i.pinimg.com/736x/d0/34/c6/d034c65bda6ef517a889de21ad01def0.jpg" class="max-h-full"></div>
+            <div class="brand-item"><img src="https://www.nicepng.com/png/detail/181-1814882_coca-cola-company-logo-png-vector-transparent-logo.png" class="max-h-full"></div>
+            <div class="brand-item"><img src="https://logosenvector.com/logo/img/cerveza-quilmes-37897.png" class="max-h-full"></div>
+            <div class="brand-item"><img src="https://http2.mlstatic.com/D_NQ_NP_941474-MLU79050320441_092024-O.webp" class="max-h-full"></div>
         </div>
     </div>
 
@@ -140,133 +190,181 @@
         <div id="grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"></div>
     </main>
 
-    <footer class="bg-black text-gray-500 py-20 px-8 border-t-8 border-[#ff6b00]">
+    <footer class="bg-black text-gray-500 py-24 px-8 border-t-8 border-[#ff6b00]">
         <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-16">
             <div class="space-y-6">
-                <h3 class="text-white font-black text-3xl italic uppercase">El Uru</h3>
-                <p class="text-sm">Distribuidora referente en Viedma y Patagones. Brindamos el mejor servicio y precio para tu comercio.</p>
+                <h3 class="text-white font-black text-4xl italic uppercase">El Uru</h3>
+                <p class="text-sm leading-relaxed">Distribuidora líder en el sector minorista de Viedma y Carmen de Patagones. Calidad garantizada en cada entrega.</p>
                 <div class="flex gap-4">
-                    <a href="https://www.instagram.com/distri_el_uru/" target="_blank" class="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center text-xl hover:text-[#ff6b00]"><i class="fab fa-instagram"></i></a>
-                    <a href="https://wa.me/5492920248292" target="_blank" class="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center text-xl text-green-500"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://www.instagram.com/distri_el_uru/" target="_blank" class="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center text-2xl hover:text-[#ff6b00] transition-all"><i class="fab fa-instagram"></i></a>
+                    <a href="https://wa.me/5492920248292" target="_blank" class="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center text-2xl text-green-500 hover:scale-110 transition-all"><i class="fab fa-whatsapp"></i></a>
                 </div>
             </div>
-            <div class="space-y-4">
-                <h4 class="text-white font-black uppercase tracking-widest border-l-4 border-[#ff6b00] pl-4">Logística</h4>
-                <p class="text-sm font-bold">📍 Viedma / Patagones / Zona</p>
-                <p class="text-sm font-bold">⏰ Pedidos hasta: 12:30hs</p>
-                <p class="text-sm font-bold">🚚 Reparto: Lunes a Sábado</p>
+            <div class="space-y-6">
+                <h4 class="text-white font-black uppercase tracking-widest border-l-4 border-[#ff6b00] pl-4">Logística y Horarios</h4>
+                <ul class="space-y-4 font-bold">
+                    <li class="flex items-center gap-3"><i class="fas fa-truck text-[#ff6b00]"></i> Repartos Lunes a Sábado</li>
+                    <li class="flex items-center gap-3"><i class="fas fa-clock text-[#ff6b00]"></i> Pedidos hasta las 12:30hs</li>
+                    <li class="flex items-center gap-3"><i class="fas fa-map-marker-alt text-[#ff6b00]"></i> Viedma - Patagones - Zona</li>
+                </ul>
             </div>
-            <div class="space-y-4">
+            <div class="space-y-6">
                 <h4 class="text-white font-black uppercase tracking-widest border-l-4 border-[#ff6b00] pl-4">Ubicación</h4>
-                <div class="h-40 rounded-2xl overflow-hidden border border-white/10 grayscale">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12053.4735232876!2d-63.00!3d-40.81!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDDCsDQ4JzM2LjAiUyA2M8KwMDAnMDAuMCJX!5e0!3m2!1ses!2sar!4v1700000000000!5m2!1ses!2sar4" width="100%" height="100%" style="border:0;" loading="lazy"></iframe>
+                <div class="h-48 rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1512.215234567!2d-62.98!3d-40.81!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDDCsDQ4JzM2LjAiUyA2MsKwNTgnNDguMCJX!5e0!3m2!1ses!2sar!4v1700000000000" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                 </div>
             </div>
         </div>
     </footer>
 
     <div id="modal" class="fixed inset-0 z-[100] bg-black/80 hidden backdrop-blur-md">
-        <div id="sidebar" class="fixed top-0 right-0 h-full w-full max-w-md bg-gray-900 flex flex-col translate-x-full transition-transform duration-500">
-            <div class="p-8 border-b border-white/5 flex justify-between items-center">
+        <div id="sidebar" class="fixed top-0 right-0 h-full w-full max-w-md bg-gray-900 flex flex-col translate-x-full shadow-2xl transition-transform duration-500">
+            <div class="p-8 border-b border-white/5 flex justify-between items-center bg-black/20">
                 <h2 class="text-2xl font-black text-[#ff6b00] italic uppercase">Mi Pedido</h2>
-                <button onclick="closeCart()" class="text-5xl text-gray-500">×</button>
-            </div>
-            <div id="cart-list" class="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar"></div>
-            <div class="p-8 border-t border-white/5 space-y-4">
-                <input type="text" id="u-n" oninput="save()" placeholder="Comercio" class="w-full p-4 rounded-2xl bg-white/5 text-white font-bold border border-white/5 outline-none">
-                <input type="text" id="u-a" oninput="save()" placeholder="Dirección" class="w-full p-4 rounded-2xl bg-white/5 text-white font-bold border border-white/5 outline-none">
-                <div class="text-right">
-                    <p class="text-5xl font-black text-[#ff6b00] italic">$<span id="total">0</span></p>
-                    <p id="min-warning" class="text-[10px] font-bold text-red-500 mt-2 uppercase"></p>
+                <div class="flex items-center gap-4">
+                    <button onclick="clearCart()" class="text-red-500 font-black text-[10px] uppercase border border-red-500/20 px-3 py-1.5 rounded-lg hover:bg-red-500/10">Vaciar</button>
+                    <button onclick="closeCart()" class="text-4xl text-gray-500">&times;</button>
                 </div>
-                <button id="send" onclick="send()" class="w-full py-6 rounded-3xl font-black text-lg bg-gray-800 text-gray-600 cursor-not-allowed uppercase tracking-widest transition-all">Enviar Pedido</button>
+            </div>
+            
+            <div class="px-8 py-6 bg-black/30 border-b border-white/5">
+                <div class="flex justify-between text-[10px] font-black uppercase mb-3 tracking-widest">
+                    <span id="progress-label" class="text-gray-400">Progreso del mínimo</span>
+                    <span id="progress-perc" class="text-[#ff6b00]">0%</span>
+                </div>
+                <div class="h-3 bg-white/5 rounded-full overflow-hidden p-0.5 border border-white/10">
+                    <div id="progress-bar" class="progress-bar-inner rounded-full w-0"></div>
+                </div>
+                <p id="min-warning" class="text-center text-[10px] font-bold mt-3 text-white/40 uppercase tracking-tighter italic"></p>
+            </div>
+
+            <div id="cart-list" class="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar"></div>
+
+            <div class="p-8 border-t border-white/5 space-y-4 bg-black/40">
+                <input type="text" id="u-n" oninput="saveData()" placeholder="Nombre del Comercio" class="w-full p-5 rounded-[20px] bg-white/5 text-white font-bold border border-white/5 focus:border-[#ff6b00] outline-none">
+                <input type="text" id="u-a" oninput="saveData()" placeholder="Dirección de Entrega" class="w-full p-5 rounded-[20px] bg-white/5 text-white font-bold border border-white/5 focus:border-[#ff6b00] outline-none">
+                <div class="flex justify-between items-end mb-4">
+                    <div>
+                        <p class="text-[10px] font-black opacity-30 uppercase">Subtotal</p>
+                        <p class="text-5xl font-black text-[#ff6b00] italic tracking-tighter">$<span id="total">0</span></p>
+                    </div>
+                </div>
+                <button id="send-btn" onclick="sendWhatsApp()" class="w-full py-6 rounded-[22px] font-black text-lg bg-gray-800 text-gray-600 cursor-not-allowed uppercase tracking-widest transition-all">Enviar Pedido</button>
             </div>
         </div>
     </div>
 
     <script>
-        const URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQEemzCvTezcjzZhIUIRIayZ7U81xgssl9G1Vr6Odx7dHGHOARY0iJ-VOL43E17qLVkiIRb0LTurcZU/pub?output=tsv';
-        const MIN = 25000;
-        let data = [], cart = {}, favs = JSON.parse(localStorage.getItem('uru_favs')) || [];
-        let cat = 'TODOS', onlyFavs = false;
+        // CONFIGURACIÓN CENTRAL
+        const URL_DB = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQEemzCvTezcjzZhIUIRIayZ7U81xgssl9G1Vr6Odx7dHGHOARY0iJ-VOL43E17qLVkiIRb0LTurcZU/pub?output=tsv';
+        const MIN_ORDER = 25000;
+        
+        // ESTADO GLOBAL
+        let inventory = [], cart = {}, favs = JSON.parse(localStorage.getItem('uru_favs')) || [];
+        let currentCat = 'TODOS', onlyFavs = false;
 
-        window.onload = () => {
-            document.getElementById('u-n').value = localStorage.getItem('un') || '';
-            document.getElementById('u-a').value = localStorage.getItem('ua') || '';
-            fetchData();
-            updateStatus();
+        // INICIO
+        window.onload = async () => {
+            document.getElementById('u-n').value = localStorage.getItem('uru_name') || '';
+            document.getElementById('u-a').value = localStorage.getItem('uru_addr') || '';
+            await loadData();
+            updateRepartoStatus();
         };
 
-        window.onscroll = () => { document.getElementById('go-top').classList.toggle('visible', window.scrollY > 500); };
+        window.onscroll = () => {
+            document.getElementById('go-top').classList.toggle('visible', window.scrollY > 600);
+        };
 
-        function openZoom(img) {
-            const m = document.getElementById('zoom-modal');
-            const i = document.getElementById('zoom-img');
-            i.src = img; m.classList.remove('hidden');
-            setTimeout(() => i.classList.remove('scale-95'), 10);
-        }
-        function closeZoom() {
-            document.getElementById('zoom-img').classList.add('scale-95');
-            setTimeout(() => document.getElementById('zoom-modal').classList.add('hidden'), 200);
-        }
-
-        async function fetchData() {
+        // CARGA DE DATOS
+        async function loadData() {
+            const statusText = document.getElementById('status-bar');
             try {
-                const r = await fetch(URL + '&cb=' + Date.now());
-                const t = await r.text();
-                const rows = t.split(/\r?\n/).slice(1);
-                data = rows.map((row, i) => {
-                    const c = row.split('\t');
-                    const cleanPrice = c[1] ? parseInt(c[1].replace(/\D/g, '')) : 0;
-                    return { id: i, name: c[0]?.trim() || '', price: cleanPrice || 0, cat: c[2]?.trim().toUpperCase() || 'VARIOS', img: c[3]?.trim() || '' };
-                }).filter(x => x.name);
-                renderCats(); render();
-            } catch (e) { document.getElementById('status-text').innerText = "ERROR DE CONEXIÓN"; }
+                const response = await fetch(URL_DB + '&cb=' + Date.now());
+                const raw = await response.text();
+                const lines = raw.split(/\r?\n/).slice(1);
+                
+                inventory = lines.map((line, idx) => {
+                    const cols = line.split('\t');
+                    const cleanPrice = cols[1] ? parseInt(cols[1].replace(/\D/g, '')) : 0;
+                    return {
+                        id: idx,
+                        name: cols[0]?.trim() || '',
+                        price: cleanPrice,
+                        cat: cols[2]?.trim().toUpperCase() || 'VARIOS',
+                        img: cols[3]?.trim() || ''
+                    };
+                }).filter(p => p.name.length > 2);
+
+                renderCategories();
+                render();
+            } catch (err) {
+                console.error(err);
+                document.getElementById('status-text').innerText = "ERROR DE CONEXIÓN";
+            }
         }
 
-        function renderCats() {
-            const list = ['TODOS', ...new Set(data.map(s => s.cat))];
-            document.getElementById('cats').innerHTML = list.map(c => `
-                <button onclick="setCat('${c}')" class="px-8 py-4 rounded-2xl font-black text-[10px] uppercase transition-all whitespace-nowrap 
-                ${cat === c ? 'bg-[#ff6b00] text-white' : 'bg-white/5 text-gray-500'}">
+        // RENDERIZADO
+        function renderCategories() {
+            const cats = ['TODOS', ...new Set(inventory.map(p => p.cat))];
+            document.getElementById('cats').innerHTML = cats.map(c => `
+                <button onclick="setCategory('${c}')" class="cat-pill ${currentCat === c ? 'cat-active' : 'bg-white/5 text-gray-500'}">
                     ${c}
                 </button>
             `).join('');
         }
 
-        function setCat(c) { cat = c; renderCats(); render(); }
+        function setCategory(c) {
+            currentCat = c;
+            renderCategories();
+            render();
+        }
 
         function render() {
-            const s = document.getElementById('search').value.toLowerCase();
+            const query = document.getElementById('search').value.toLowerCase();
             const grid = document.getElementById('grid');
-            const filt = data.filter(p => (cat === 'TODOS' || p.cat === cat) && p.name.toLowerCase().includes(s) && (!onlyFavs || favs.includes(p.id)));
+            
+            const filtered = inventory.filter(p => {
+                const matchesCat = currentCat === 'TODOS' || p.cat === currentCat;
+                const matchesSearch = p.name.toLowerCase().includes(query);
+                const matchesFav = !onlyFavs || favs.includes(p.id);
+                return matchesCat && matchesSearch && matchesFav;
+            });
 
-            grid.innerHTML = filt.map(p => {
-                const q = cart[p.id] || 0, isF = favs.includes(p.id);
-                const isSoldOut = p.price <= 0;
+            grid.innerHTML = filtered.map(p => {
+                const q = cart[p.id] || 0;
+                const isFav = favs.includes(p.id);
+                const soldOut = p.price <= 0;
+
                 return `
-                    <div class="card-prod p-5 rounded-[2.5rem] flex flex-col ${q > 0 ? 'ring-2 ring-[#ff6b00]' : ''} ${isSoldOut ? 'grayscale opacity-60' : ''}">
-                        ${isSoldOut ? '<div class="sold-out-badge">AGOTADO</div>' : ''}
-                        <button onclick="toggleF(event, ${p.id})" class="absolute top-5 left-5 z-10 transition-transform active:scale-150">
-                            <i class="fa${isF ? 's' : 'r'} fa-heart text-xl ${isF ? 'text-red-500' : 'text-gray-400 opacity-30'}"></i>
+                    <div class="card-prod p-5 animate-fade ${q > 0 ? 'ring-2 ring-[#ff6b00]' : ''} ${soldOut ? 'grayscale opacity-60' : ''}">
+                        ${soldOut ? '<div class="badge-soldout">AGOTADO</div>' : ''}
+                        
+                        <button onclick="toggleFav(event, ${p.id})" class="absolute top-5 right-5 z-20 text-xl transition-all active:scale-150">
+                            <i class="${isFav ? 'fas text-red-500' : 'far text-gray-400 opacity-40'} fa-heart"></i>
                         </button>
-                        <div class="img-container rounded-3xl" onclick="openZoom('${p.img}')">
+
+                        <div class="img-container" onclick="openZoom('${p.img}')">
                             <img src="${p.img}" onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'">
                         </div>
-                        <div class="flex-1 mt-4">
+
+                        <div class="mt-5 flex-1">
                             <p class="text-[9px] font-black text-[#ff6b00] uppercase mb-1">${p.cat}</p>
-                            <h3 class="font-bold text-xs uppercase h-10 overflow-hidden leading-tight">${p.name}</h3>
-                            <p class="text-2xl font-black italic mt-2 ${isSoldOut ? 'text-gray-500' : 'text-[#ff6b00]'}">
-                                ${isSoldOut ? '---' : '$' + p.price.toLocaleString()}
-                            </p>
+                            <h3 class="font-bold text-xs uppercase h-9 overflow-hidden leading-tight text-white/90">${p.name}</h3>
+                            <div class="flex items-baseline gap-1 mt-3">
+                                <span class="text-2xl font-black italic text-[#ff6b00]">${soldOut ? '---' : '$' + p.price.toLocaleString()}</span>
+                            </div>
                         </div>
-                        <div class="mt-5 flex gap-2">
-                            ${isSoldOut ? 
-                                `<button disabled class="flex-1 bg-white/5 text-gray-500 py-4 rounded-2xl font-black text-[10px]">SIN STOCK</button>` :
-                                `<button onclick="modCart(${p.id}, 1)" class="flex-1 btn-naranja py-4 rounded-2xl font-black text-[10px] uppercase shadow-lg">
-                                    ${q > 0 ? 'EN CARRITO ('+q+')' : 'AGREGAR'}
-                                </button>
-                                ${q > 0 ? `<button onclick="modCart(${p.id}, -1)" class="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center font-black">-</button>` : ''}`
+
+                        <div class="mt-6">
+                            ${soldOut ? 
+                                `<button disabled class="w-full py-4 rounded-2xl bg-white/5 text-gray-500 font-black text-[10px]">SIN STOCK</button>` :
+                                q === 0 ? 
+                                `<button onclick="updateCart(${p.id}, 1)" class="w-full py-4 rounded-2xl bg-[#ff6b00] text-white font-black text-[10px] uppercase shadow-lg shadow-orange-900/20 active:scale-95 transition-all">Agregar</button>` :
+                                `<div class="quantity-control">
+                                    <button onclick="updateCart(${p.id}, -1)" class="w-12 h-12 flex items-center justify-center text-white font-black hover:bg-white/10">-</button>
+                                    <span class="flex-1 text-center font-black text-sm text-[#ff6b00]">${q}</span>
+                                    <button onclick="updateCart(${p.id}, 1)" class="w-12 h-12 flex items-center justify-center text-white font-black hover:bg-white/10">+</button>
+                                </div>`
                             }
                         </div>
                     </div>
@@ -274,64 +372,165 @@
             }).join('');
         }
 
-        function modCart(id, v) {
-            cart[id] = Math.max(0, (cart[id] || 0) + v);
-            if (cart[id] === 0) delete cart[id];
-            updateUI(); render();
+        // LOGICA DE CARRITO
+        function updateCart(id, delta) {
+            cart[id] = (cart[id] || 0) + delta;
+            if (cart[id] <= 0) delete cart[id];
+            
+            updateUI();
+            render();
         }
 
         function updateUI() {
-            let t = 0, c = 0, h = '';
+            let subtotal = 0, count = 0, html = '';
+            
             Object.entries(cart).forEach(([id, q]) => {
-                const p = data[id]; t += p.price * q; c += q;
-                h += `<div class="flex items-center gap-4 bg-white/5 p-4 rounded-3xl">
-                    <img src="${p.img}" class="w-10 h-10 object-contain bg-white rounded-lg p-1">
-                    <div class="flex-1 text-[10px] font-black uppercase">${p.name}<br><span class="text-[#ff6b00]">$${(p.price*q).toLocaleString()}</span></div>
-                    <span class="font-black">x${q}</span>
-                </div>`;
+                const p = inventory[id];
+                subtotal += p.price * q;
+                count += q;
+                html += `
+                    <div class="flex items-center gap-4 bg-white/5 p-4 rounded-3xl border border-white/5 animate-fade">
+                        <img src="${p.img}" class="w-12 h-12 object-contain bg-white rounded-xl p-1">
+                        <div class="flex-1">
+                            <h4 class="text-[10px] font-black uppercase leading-tight">${p.name}</h4>
+                            <p class="text-[#ff6b00] font-black mt-1">$${(p.price * q).toLocaleString()}</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="updateCart(${id}, -1)" class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">-</button>
+                            <span class="w-6 text-center font-black text-xs">${q}</span>
+                            <button onclick="updateCart(${id}, 1)" class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">+</button>
+                        </div>
+                    </div>
+                `;
             });
-            document.getElementById('cart-list').innerHTML = h || '<p class="text-center py-20 opacity-20 font-black">Carrito Vacío</p>';
-            document.getElementById('total').innerText = t.toLocaleString();
-            document.getElementById('cart-count').innerText = c;
-            const btn = document.getElementById('send');
-            const warn = document.getElementById('min-warning');
-            if (t >= MIN) {
-                btn.className = "w-full py-6 rounded-3xl font-black text-lg bg-green-500 text-white shadow-xl cursor-pointer";
-                btn.disabled = false; warn.innerText = "";
+
+            document.getElementById('cart-list').innerHTML = html || `<div class="py-20 text-center opacity-20"><i class="fas fa-shopping-basket text-6xl mb-4"></i><p class="font-black uppercase text-sm">Carrito Vacío</p></div>`;
+            document.getElementById('total').innerText = subtotal.toLocaleString();
+            document.getElementById('cart-count').innerText = count;
+
+            // Progreso
+            const progress = Math.min((subtotal / MIN_ORDER) * 100, 100);
+            const bar = document.getElementById('progress-bar');
+            const percText = document.getElementById('progress-perc');
+            const btn = document.getElementById('send-btn');
+            const warning = document.getElementById('min-warning');
+
+            bar.style.width = progress + '%';
+            percText.innerText = Math.floor(progress) + '%';
+
+            if (subtotal >= MIN_ORDER) {
+                btn.className = "w-full py-6 rounded-[22px] font-black text-lg bg-green-500 text-white shadow-xl shadow-green-900/40 cursor-pointer active:scale-95";
+                btn.disabled = false;
+                warning.innerText = "✅ ¡MÍNIMO SUPERADO! YA PUEDE ENVIAR";
+                warning.style.color = "#22c55e";
             } else {
-                btn.className = "w-full py-6 rounded-3xl font-black bg-gray-800 text-gray-600 cursor-not-allowed";
+                btn.className = "w-full py-6 rounded-[22px] font-black text-lg bg-gray-800 text-gray-600 cursor-not-allowed uppercase";
                 btn.disabled = true;
-                if (t > 0) warn.innerText = `Mínimo: $${MIN.toLocaleString()}`;
+                if (subtotal > 0) {
+                    warning.innerText = `FALTAN $${(MIN_ORDER - subtotal).toLocaleString()} PARA EL MÍNIMO`;
+                    warning.style.color = "";
+                } else {
+                    warning.innerText = "";
+                }
             }
+        }
+
+        // FUNCIONES AUXILIARES
+        function toggleFav(e, id) {
+            e.stopPropagation();
+            if (favs.includes(id)) favs = favs.filter(f => f !== id);
+            else {
+                favs.push(id);
+                confetti({ particleCount: 30, scalar: 0.7, origin: { x: e.clientX/window.innerWidth, y: e.clientY/window.innerHeight } });
+            }
+            localStorage.setItem('uru_favs', JSON.stringify(favs));
+            render();
+        }
+
+        function toggleFavs() {
+            onlyFavs = !onlyFavs;
+            document.getElementById('btn-favs').classList.toggle('text-red-500');
+            document.getElementById('btn-favs').classList.toggle('bg-red-500/10');
+            render();
+        }
+
+        function updateRepartoStatus() {
+            const h = new Date().getHours(), m = new Date().getMinutes();
+            const bar = document.getElementById('status-bar');
+            const txt = document.getElementById('status-text');
+            
+            if (h < 12 || (h === 12 && m <= 30)) {
+                bar.className = "py-3 text-center font-black text-[11px] tracking-widest text-white bg-green-600 uppercase";
+                txt.innerText = "🟢 Reparto Hoy: ABIERTO para pedidos";
+            } else {
+                bar.className = "py-3 text-center font-black text-[11px] tracking-widest text-white bg-orange-600 uppercase";
+                txt.innerText = "🕒 Pedidos para Mañana: Reparto de hoy cerrado";
+            }
+        }
+
+        function openZoom(img) {
+            const modal = document.getElementById('zoom-modal');
+            const zImg = document.getElementById('zoom-img');
+            zImg.src = img;
+            modal.classList.remove('hidden');
+            zImg.style.transform = 'scale(0.9)';
+            setTimeout(() => zImg.style.transform = 'scale(1)', 10);
         }
 
         function toggleTheme() {
             const b = document.body;
-            b.classList.toggle('dark-mode'); b.classList.toggle('light-mode');
+            b.classList.toggle('dark-mode');
+            b.classList.toggle('light-mode');
             document.getElementById('theme-icon').className = b.classList.contains('dark-mode') ? 'fas fa-moon' : 'fas fa-sun';
         }
 
-        function updateStatus() {
-            const h = new Date().getHours(), m = new Date().getMinutes();
-            const bar = document.getElementById('status-bar'), txt = document.getElementById('status-text');
-            if (h < 12 || (h === 12 && m <= 30)) { bar.className = "py-2.5 text-center bg-green-600 text-white font-black tracking-widest"; txt.innerText = "🟢 ABIERTO: REPARTO PARA HOY"; }
-            else { bar.className = "py-2.5 text-center bg-orange-600 text-white font-black tracking-widest"; txt.innerText = "🕒 PRÓXIMO REPARTO: MAÑANA"; }
+        function openCart() {
+            document.getElementById('modal').classList.remove('hidden');
+            setTimeout(() => document.getElementById('sidebar').style.transform = 'translateX(0)', 10);
         }
 
-        function toggleF(e, id) { e.stopPropagation(); if (favs.includes(id)) favs = favs.filter(f => f !== id); else favs.push(id); localStorage.setItem('uru_favs', JSON.stringify(favs)); render(); }
-        function toggleFavs() { onlyFavs = !onlyFavs; document.getElementById('btn-favs').classList.toggle('bg-red-500/10'); render(); }
-        function openCart() { document.getElementById('modal').classList.remove('hidden'); setTimeout(() => document.getElementById('sidebar').style.transform = 'translateX(0)', 10); }
-        function closeCart() { document.getElementById('sidebar').style.transform = 'translateX(100%)'; setTimeout(() => document.getElementById('modal').classList.add('hidden'), 400); }
-        function save() { localStorage.setItem('un', document.getElementById('u-n').value); localStorage.setItem('ua', document.getElementById('u-a').value); }
-        
-        function send() {
-            const n = document.getElementById('u-n').value, a = document.getElementById('u-a').value;
-            if (!n || !a) return alert("Completa tus datos");
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-            let msg = `*PEDIDO EL URU*%0A👤 *Comercio:* ${n}%0A📍 *Dirección:* ${a}%0A%0A`;
-            Object.entries(cart).forEach(([id, q]) => msg += `✅ *${q}* x ${data[id].name}%0A`);
-            msg += `%0A💰 *TOTAL: $${document.getElementById('total').innerText}*`;
-            window.open(`https://wa.me/5492920248292?text=${msg}`);
+        function closeCart() {
+            document.getElementById('sidebar').style.transform = 'translateX(100%)';
+            setTimeout(() => document.getElementById('modal').classList.add('hidden'), 500);
+        }
+
+        function clearCart() {
+            if (confirm("¿Deseas vaciar todo el carrito?")) {
+                cart = {};
+                updateUI();
+                render();
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('uru_name', document.getElementById('u-n').value);
+            localStorage.setItem('uru_addr', document.getElementById('u-a').value);
+        }
+
+        function sendWhatsApp() {
+            const name = document.getElementById('u-n').value.trim();
+            const addr = document.getElementById('u-a').value.trim();
+            
+            if (!name || !addr) return alert("Por favor completa el nombre del comercio y la dirección.");
+            
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#ff6b00', '#ffffff', '#000000'] });
+
+            let message = `*NUEVO PEDIDO EL URU*%0A`;
+            message += `👤 *Comercio:* ${name}%0A`;
+            message += `📍 *Dirección:* ${addr}%0A%0A`;
+            message += `----------------------------%0A`;
+            
+            Object.entries(cart).forEach(([id, q]) => {
+                const p = inventory[id];
+                message += `✅ *${q}* x ${p.name}%0A`;
+            });
+            
+            message += `----------------------------%0A`;
+            message += `💰 *TOTAL: $${document.getElementById('total').innerText}*`;
+            
+            setTimeout(() => {
+                window.open(`https://wa.me/5492920248292?text=${message}`);
+            }, 800);
         }
     </script>
 </body>
