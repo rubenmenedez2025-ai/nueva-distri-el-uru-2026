@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <title>DISTRI EL URU | Viedma y Patagones </title>
+    <title>DISTRI EL URU | Premium</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -51,7 +51,7 @@
             animation: pulse-red 2s infinite;
         }
 
-        /* Badge Agotado (NUEVO) */
+        /* Badge Agotado */
         .badge-agotado {
             position: absolute;
             top: 15px;
@@ -102,32 +102,24 @@
             letter-spacing: -1px;
         }
 
-        /* Panel de Alto Impacto */
-        .promo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            padding: 20px 0;
-        }
-        .promo-card {
-            height: 200px;
-            border-radius: 2rem;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(255, 107, 0, 0.3);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .promo-card:hover { transform: scale(1.03); }
-        .promo-content {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.95) 30%, transparent);
+        /* NUEVO: Barra de Info Sutil (Reemplaza las cards grandes) */
+        .info-pill {
+            background: #111;
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 12px 20px;
+            border-radius: 100px;
             display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            padding: 25px;
+            align-items: center;
+            gap: 10px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #888;
+            white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
+        .info-pill i { font-size: 14px; }
+        .info-pill span { color: #fff; }
 
         /* Categorías y Contadores */
         .cat-active { background-color: #ff6b00 !important; color: white !important; }
@@ -167,7 +159,7 @@
                 <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-12 h-12 rounded-2xl border border-orange-500 shadow-lg shadow-orange-500/20">
                 <div>
                     <h1 class="text-2xl font-black italic text-orange-500 uppercase leading-none tracking-tighter">El Uru</h1>
-                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-[0.2em]">Distribuidora</span>
+                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-[0.2em]">Premium System</span>
                 </div>
             </div>
             <button onclick="document.getElementById('cart').style.display='flex'" class="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-6 py-3 rounded-2xl font-black shadow-xl flex items-center gap-3 text-xs active:scale-95 transition-all">
@@ -180,37 +172,34 @@
         </div>
     </nav>
 
-    <section class="px-4 max-w-7xl mx-auto mt-4">
-        <div class="promo-grid">
-            <div class="promo-card" style="background: url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80&w=600') center/cover;">
-                <div class="promo-content">
-                    <span class="bg-orange-600 text-white text-[10px] px-3 py-1 rounded-full w-fit font-black mb-2 uppercase">Ofertas Flash</span>
-                    <h3 class="text-2xl font-black text-white italic leading-tight uppercase">Bebidas con<br><span class="text-orange-500">Descuento</span></h3>
-                </div>
+    <section class="px-4 max-w-7xl mx-auto mt-6">
+        <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2 mb-6">
+            <div class="info-pill shrink-0">
+                <i class="fas fa-check-circle text-green-500"></i>
+                <div>Reparto <span>Sin Cargo</span></div>
             </div>
-            <div class="promo-card" style="background: url('https://images.unsplash.com/photo-1571767454098-246b930b5ad3?auto=format&fit=crop&q=80&w=600') center/cover;">
-                <div class="promo-content">
-                    <span class="bg-green-600 text-white text-[10px] px-3 py-1 rounded-full w-fit font-black mb-2 uppercase">Logística VIP</span>
-                    <h3 class="text-2xl font-black text-white italic leading-tight uppercase">Entrega En El Dia<br><span class="text-green-500">Sin Cargo</span></h3>
-                </div>
+            <div class="info-pill shrink-0">
+                <i class="fas fa-bolt text-orange-500"></i>
+                <div>Ofertas <span>Flash 2026</span></div>
             </div>
-            <div class="promo-card" style="background: url('https://images.unsplash.com/photo-1550989460-0adf9ea622e2?auto=format&fit=crop&q=80&w=600') center/cover;">
-                <div class="promo-content">
-                    <span class="bg-blue-600 text-white text-[10px] px-3 py-1 rounded-full w-fit font-black mb-2 uppercase">Stock Mayorista</span>
-                    <h3 class="text-2xl font-black text-white italic leading-tight uppercase">Nuevos<br><span class="text-blue-400">Ingresos 2026</span></h3>
-                </div>
+            <div class="info-pill shrink-0">
+                <i class="fas fa-boxes text-blue-500"></i>
+                <div>Stock <span>Mayorista</span></div>
+            </div>
+             <div class="info-pill shrink-0">
+                <i class="fas fa-map-marker-alt text-red-500"></i>
+                <div>Viedma <span>& Patagones</span></div>
             </div>
         </div>
 
-        <div class="bg-gradient-to-r from-orange-600 to-red-600 rounded-[2.5rem] p-8 flex flex-col md:flex-row items-center justify-between shadow-2xl shadow-orange-900/40 mb-8 border border-white/10">
-            <div class="flex items-center gap-8">
-                <div class="text-6xl md:text-8xl font-black text-white italic opacity-40 select-none">12:30</div>
+        <div class="bg-gradient-to-r from-orange-600 to-red-600 rounded-[2.5rem] p-6 flex flex-col md:flex-row items-center justify-between shadow-2xl shadow-orange-900/40 mb-8 border border-white/10">
+            <div class="flex items-center gap-6">
+                <div class="text-5xl md:text-7xl font-black text-white italic opacity-40 select-none">12:30</div>
                 <div class="text-center md:text-left">
-                    <h2 class="text-3xl md:text-5xl font-black text-white uppercase italic leading-none tracking-tighter">Cierre de Pedidos</h2>
-                    <p class="text-white/90 font-bold uppercase text-xs mt-2 tracking-widest">Hacé tu pedido ahora y recibilo hoy mismo</p>
+                    <h2 class="text-2xl md:text-4xl font-black text-white uppercase italic leading-none tracking-tighter">Cierre de Pedidos</h2>
+                    <p class="text-white/90 font-bold uppercase text-[10px] mt-1 tracking-widest">Hacé tu pedido ahora y recibilo hoy</p>
                 </div>
             </div>
-            <button onclick="window.scrollTo({top: 1200, behavior: 'smooth'})" class="mt-6 md:mt-0 bg-white text-orange-600 px-10 py-5 rounded-2xl font-black uppercase text-sm hover:scale-105 active:scale-95 transition-all">Empezar a comprar</button>
         </div>
     </section>
 
@@ -246,13 +235,13 @@
             <div class="space-y-8">
                 <h3 class="text-white font-black uppercase text-xs tracking-[0.4em] border-l-4 border-orange-500 pl-4">Información VIP</h3>
                 <ul class="space-y-5 text-sm text-gray-400 font-bold uppercase">
-                    <li><i class="fas fa-truck-loading text-orange-500 mr-3"></i> Envios En La Zona</li>
+                    <li><i class="fas fa-truck-loading text-orange-500 mr-3"></i> Reparto Propio</li>
                     <li><i class="fas fa-hourglass-half text-orange-500 mr-3"></i> Cierre: 12:30hs</li>
                     <li><i class="fas fa-map-marked-alt text-orange-500 mr-3"></i> Viedma y Patagones</li>
                 </ul>
             </div>
             <div class="space-y-6">
-                <h3 class="text-white font-black uppercase text-xs tracking-[0.4em] border-l-4 border-orange-500 pl-4">Viedma Rio Negro</h3>
+                <h3 class="text-white font-black uppercase text-xs tracking-[0.4em] border-l-4 border-orange-500 pl-4">Nuestra Base</h3>
                 <div class="h-48 rounded-[2rem] overflow-hidden border border-white/10 opacity-70">
                     <iframe src="http://googleusercontent.com/maps.google.com/9" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                 </div>
@@ -338,11 +327,8 @@
 
             document.getElementById('catalogo').innerHTML = filtered.map(p => {
                 const qty = cart[p.id] || 0;
-                // LOGICA DE PRECIO Y AGOTADO
                 const agotado = p.pre === 0;
                 const esOferta = !agotado && p.pre.toString().endsWith('99');
-                
-                // Si está agotado, aplicamos filtro de grises y opacidad
                 const claseAgotado = agotado ? 'grayscale opacity-60' : '';
 
                 return `
@@ -389,7 +375,6 @@
             update(); render();
         };
 
-        // Función Vaciar Carrito (NUEVO)
         function vaciarCarrito() {
             if (Object.keys(cart).length === 0) return;
             if (confirm('¿Estás seguro de que quieres eliminar todos los productos del carrito?')) {
@@ -403,13 +388,20 @@
             let t = 0, c = 0, html = '';
             Object.entries(cart).forEach(([id, q]) => {
                 const p = data[id]; t += p.pre * q; c += q;
+                // MEJORA VISUAL DEL CARRITO AQUÍ
                 html += `
-                <div class="flex items-center gap-5 bg-white/5 p-4 rounded-3xl text-white border border-white/5">
-                    <img src="${p.img}" class="w-12 h-12 object-contain bg-black rounded-xl p-1">
-                    <div class="flex-1 leading-tight"><h4 class="font-black text-[10px] uppercase truncate w-32">${p.nom}</h4><p class="text-orange-500 font-black italic">$${(p.pre * q).toLocaleString()}</p></div>
-                    <div class="flex items-center gap-3">
-                        <span class="text-xs font-black bg-orange-600/20 text-orange-500 px-3 py-1 rounded-lg">x${q}</span>
-                        <button onclick="add(${id},-${q})" class="text-red-500 hover:text-red-400"><i class="fas fa-trash"></i></button>
+                <div class="flex items-center gap-4 bg-[#1a1a1a] p-4 rounded-2xl text-white border border-white/10 shadow-lg mb-2">
+                    <div class="w-16 h-16 bg-black rounded-xl p-1 flex items-center justify-center shrink-0 border border-white/5">
+                         <img src="${p.img}" class="max-w-full max-h-full object-contain" onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'">
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-bold text-sm text-white uppercase truncate leading-tight mb-1">${p.nom}</h4>
+                        <p class="text-orange-500 font-black text-lg">$${(p.pre * q).toLocaleString()}</p>
+                        <div class="text-[10px] text-gray-500 font-bold uppercase">$${p.pre.toLocaleString()} unitario</div>
+                    </div>
+                    <div class="flex flex-col items-end gap-2 shrink-0">
+                        <span class="text-xs font-black bg-white text-black px-2 py-1 rounded-md">x${q}</span>
+                        <button onclick="add(${id},-${q})" class="text-red-500 hover:text-red-400 text-sm p-2"><i class="fas fa-trash-alt"></i></button>
                     </div>
                 </div>`;
             });
