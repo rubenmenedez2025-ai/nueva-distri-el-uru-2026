@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <title>DISTRI EL URU | Premium</title>
+    <title>DISTRI EL URU | Web</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -102,7 +102,7 @@
             letter-spacing: -1px;
         }
 
-        /* NUEVO: Barra de Info Sutil (Reemplaza las cards grandes) */
+        /* Barra de Info Sutil */
         .info-pill {
             background: #111;
             border: 1px solid rgba(255,255,255,0.05);
@@ -159,7 +159,7 @@
                 <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-12 h-12 rounded-2xl border border-orange-500 shadow-lg shadow-orange-500/20">
                 <div>
                     <h1 class="text-2xl font-black italic text-orange-500 uppercase leading-none tracking-tighter">El Uru</h1>
-                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-[0.2em]">Premium System</span>
+                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-[0.2em]">WEB</span>
                 </div>
             </div>
             <button onclick="document.getElementById('cart').style.display='flex'" class="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-6 py-3 rounded-2xl font-black shadow-xl flex items-center gap-3 text-xs active:scale-95 transition-all">
@@ -176,7 +176,7 @@
         <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2 mb-6">
             <div class="info-pill shrink-0">
                 <i class="fas fa-check-circle text-green-500"></i>
-                <div>Reparto <span>Sin Cargo</span></div>
+                <div>Envios <span>Sin Cargo</span></div>
             </div>
             <div class="info-pill shrink-0">
                 <i class="fas fa-bolt text-orange-500"></i>
@@ -235,13 +235,13 @@
             <div class="space-y-8">
                 <h3 class="text-white font-black uppercase text-xs tracking-[0.4em] border-l-4 border-orange-500 pl-4">Información VIP</h3>
                 <ul class="space-y-5 text-sm text-gray-400 font-bold uppercase">
-                    <li><i class="fas fa-truck-loading text-orange-500 mr-3"></i> Reparto Propio</li>
+                    <li><i class="fas fa-truck-loading text-orange-500 mr-3"></i> Envio Sin Cargo</li>
                     <li><i class="fas fa-hourglass-half text-orange-500 mr-3"></i> Cierre: 12:30hs</li>
                     <li><i class="fas fa-map-marked-alt text-orange-500 mr-3"></i> Viedma y Patagones</li>
                 </ul>
             </div>
             <div class="space-y-6">
-                <h3 class="text-white font-black uppercase text-xs tracking-[0.4em] border-l-4 border-orange-500 pl-4">Nuestra Base</h3>
+                <h3 class="text-white font-black uppercase text-xs tracking-[0.4em] border-l-4 border-orange-500 pl-4">Viedma Rio Negro</h3>
                 <div class="h-48 rounded-[2rem] overflow-hidden border border-white/10 opacity-70">
                     <iframe src="http://googleusercontent.com/maps.google.com/9" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                 </div>
@@ -251,30 +251,36 @@
 
     <div id="cart" style="display:none;" class="fixed inset-0 bg-black/95 backdrop-blur-2xl z-[200] flex justify-end">
         <div class="bg-[#0c0c0c] w-full max-w-md h-full flex flex-col shadow-2xl border-l border-white/5">
-            <div class="p-8 border-b border-white/5 flex justify-between items-center bg-black">
+            
+            <div class="p-5 border-b border-white/5 flex justify-between items-center bg-black">
                 <div>
                     <h2 class="text-2xl font-black uppercase italic text-orange-500">Mi Carrito</h2>
                     <p class="text-[10px] text-gray-500 font-black uppercase mt-1 tracking-widest">Mínimo: $25.000</p>
                 </div>
-                <button onclick="document.getElementById('cart').style.display='none'" class="text-5xl text-gray-700 hover:text-white">×</button>
+                <button onclick="document.getElementById('cart').style.display='none'" class="text-4xl text-gray-700 hover:text-white">×</button>
             </div>
-            <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4 bg-black/40"></div>
-            <div class="p-8 bg-[#0a0a0a] border-t border-white/10 space-y-5">
-                <div id="min-warning" class="bg-white/5 p-5 rounded-3xl border border-white/5">
-                    <p id="min-text" class="text-[11px] font-black uppercase text-center mb-3 text-gray-400"></p>
-                    <div class="h-2 bg-white/5 rounded-full overflow-hidden"><div id="min-purchase-fill" class="h-full bg-orange-600 transition-all duration-700"></div></div>
+
+            <div id="cart-items" class="flex-1 overflow-y-auto p-4 space-y-3 bg-black/40"></div>
+
+            <div class="p-5 bg-[#0a0a0a] border-t border-white/10 space-y-3">
+                <div id="min-warning" class="bg-white/5 p-3 rounded-2xl border border-white/5">
+                    <p id="min-text" class="text-[10px] font-black uppercase text-center mb-2 text-gray-400"></p>
+                    <div class="h-1.5 bg-white/5 rounded-full overflow-hidden"><div id="min-purchase-fill" class="h-full bg-orange-600 transition-all duration-700"></div></div>
                 </div>
-                <input type="text" id="user-name" oninput="saveUserData()" placeholder="Nombre del Comercio" class="w-full p-5 rounded-2xl bg-[#1a1a1a] text-white font-bold border border-white/10 outline-none focus:border-orange-500">
-                <input type="text" id="user-address" oninput="saveUserData()" placeholder="Dirección de Entrega" class="w-full p-5 rounded-2xl bg-[#1a1a1a] text-white font-bold border border-white/10 outline-none focus:border-orange-500">
-                <div class="flex justify-between items-center px-2">
-                    <span class="text-gray-500 font-black uppercase text-sm">Total:</span>
-                    <span class="text-orange-500 text-4xl font-black italic">$<span id="total">0</span></span>
+                
+                <input type="text" id="user-name" oninput="saveUserData()" placeholder="Nombre del Comercio" class="w-full p-3 rounded-xl bg-[#1a1a1a] text-white font-bold border border-white/10 outline-none focus:border-orange-500 text-sm">
+                <input type="text" id="user-address" oninput="saveUserData()" placeholder="Dirección de Entrega" class="w-full p-3 rounded-xl bg-[#1a1a1a] text-white font-bold border border-white/10 outline-none focus:border-orange-500 text-sm">
+                
+                <div class="flex justify-between items-center px-1">
+                    <span class="text-gray-500 font-black uppercase text-xs">Total:</span>
+                    <span class="text-orange-500 text-3xl font-black italic">$<span id="total">0</span></span>
                 </div>
-                <button id="btn-whatsapp" onclick="enviarPedido()" class="w-full bg-orange-600 text-white py-6 rounded-3xl font-black text-xl active:scale-95 transition-all shadow-xl">
+                
+                <button id="btn-whatsapp" onclick="enviarPedido()" class="w-full bg-orange-600 text-white py-4 rounded-2xl font-black text-lg active:scale-95 transition-all shadow-xl">
                     ENVIAR POR WHATSAPP
                 </button>
-                <button onclick="vaciarCarrito()" class="w-full text-red-500 text-xs font-black uppercase tracking-widest hover:text-red-400 transition-colors py-2">
-                    <i class="fas fa-trash-alt mr-2"></i> Vaciar todo el carrito
+                <button onclick="vaciarCarrito()" class="w-full text-red-500 text-[10px] font-black uppercase tracking-widest hover:text-red-400 transition-colors py-1">
+                    <i class="fas fa-trash-alt mr-2"></i> Vaciar carrito
                 </button>
             </div>
         </div>
@@ -388,20 +394,20 @@
             let t = 0, c = 0, html = '';
             Object.entries(cart).forEach(([id, q]) => {
                 const p = data[id]; t += p.pre * q; c += q;
-                // MEJORA VISUAL DEL CARRITO AQUÍ
+                // MEJORA VISUAL DEL PRODUCTO EN CARRITO: MÁS CLARO Y GRANDE
                 html += `
-                <div class="flex items-center gap-4 bg-[#1a1a1a] p-4 rounded-2xl text-white border border-white/10 shadow-lg mb-2">
-                    <div class="w-16 h-16 bg-black rounded-xl p-1 flex items-center justify-center shrink-0 border border-white/5">
+                <div class="flex items-center gap-3 bg-[#222] p-3 rounded-2xl text-white border border-white/10 shadow-md mb-2 shrink-0">
+                    <div class="w-16 h-16 bg-white rounded-xl p-1 flex items-center justify-center shrink-0 border border-white/10">
                          <img src="${p.img}" class="max-w-full max-h-full object-contain" onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'">
                     </div>
                     <div class="flex-1 min-w-0">
-                        <h4 class="font-bold text-sm text-white uppercase truncate leading-tight mb-1">${p.nom}</h4>
-                        <p class="text-orange-500 font-black text-lg">$${(p.pre * q).toLocaleString()}</p>
-                        <div class="text-[10px] text-gray-500 font-bold uppercase">$${p.pre.toLocaleString()} unitario</div>
+                        <h4 class="font-bold text-xs text-white uppercase truncate leading-tight mb-1">${p.nom}</h4>
+                        <p class="text-orange-500 font-black text-base">$${(p.pre * q).toLocaleString()}</p>
+                        <div class="text-[9px] text-gray-400 font-bold uppercase">$${p.pre.toLocaleString()} c/u</div>
                     </div>
-                    <div class="flex flex-col items-end gap-2 shrink-0">
-                        <span class="text-xs font-black bg-white text-black px-2 py-1 rounded-md">x${q}</span>
-                        <button onclick="add(${id},-${q})" class="text-red-500 hover:text-red-400 text-sm p-2"><i class="fas fa-trash-alt"></i></button>
+                    <div class="flex flex-col items-end gap-2 shrink-0 pl-2">
+                        <span class="text-xs font-black bg-orange-600 text-white px-2 py-0.5 rounded-md">x${q}</span>
+                        <button onclick="add(${id},-${q})" class="text-red-500 hover:text-red-400 text-sm p-1"><i class="fas fa-trash-alt"></i></button>
                     </div>
                 </div>`;
             });
@@ -413,10 +419,10 @@
             const btnW = document.getElementById('btn-whatsapp');
             const minTxt = document.getElementById('min-text');
             if (t < MIN_COMPRA) {
-                btnW.className = "w-full bg-gray-800 text-gray-500 py-6 rounded-3xl font-black text-xl pointer-events-none opacity-50";
+                btnW.className = "w-full bg-gray-800 text-gray-500 py-4 rounded-2xl font-black text-lg pointer-events-none opacity-50";
                 minTxt.innerHTML = `Faltan <span class="text-white">$${(MIN_COMPRA - t).toLocaleString()}</span> para el pedido mínimo`;
             } else {
-                btnW.className = "w-full bg-green-600 text-white py-6 rounded-3xl font-black text-xl active:scale-95 transition-all shadow-[0_10px_30px_rgba(22,163,74,0.4)] animate-pulse";
+                btnW.className = "w-full bg-green-600 text-white py-4 rounded-2xl font-black text-lg active:scale-95 transition-all shadow-[0_10px_30px_rgba(22,163,74,0.4)] animate-pulse";
                 minTxt.innerHTML = `<span class="text-green-500">✅ PEDIDO MÍNIMO ALCANZADO</span>`;
             }
         }
