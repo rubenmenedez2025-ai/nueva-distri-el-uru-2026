@@ -55,7 +55,7 @@
             letter-spacing: -1px;
         }
 
-        /* Carrusel Premium Re-incorporado */
+        /* Carrusel Premium */
         .carousel-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 15px; padding: 10px 0; }
         .carousel-item { 
             flex: 0 0 90%; scroll-snap-align: center; border-radius: 2rem; height: 200px; 
@@ -66,6 +66,17 @@
         .carousel-overlay { 
             background: linear-gradient(to right, rgba(0,0,0,0.9) 20%, transparent); 
             height: 100%; width: 100%; display: flex; flex-direction: column; justify-content: center; padding: 30px; 
+        }
+
+        /* Info Tags Cabecera (VENDIBLE) */
+        .info-tag {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 6px 12px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         /* Footer */
@@ -90,19 +101,50 @@
         </div>
     </div>
 
-    <nav class="bg-black/80 backdrop-blur-xl sticky top-0 z-50 p-4 border-b border-white/5">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
+    <nav class="bg-black/90 backdrop-blur-2xl sticky top-0 z-50 p-3 border-b border-white/5">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-4">
+            
             <div class="flex items-center gap-3">
-                <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-11 h-11 rounded-xl border border-orange-500 shadow-lg shadow-orange-500/20">
+                <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-12 h-12 rounded-2xl border border-orange-500 shadow-lg shadow-orange-500/20">
                 <div>
-                    <h1 class="text-xl font-black italic text-orange-500 uppercase leading-none">El Uru</h1>
-                    <span class="text-[8px] text-gray-500 font-bold uppercase tracking-widest">Premium System</span>
+                    <h1 class="text-2xl font-black italic text-orange-500 uppercase leading-none tracking-tighter">El Uru</h1>
+                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-[0.2em]">Premium System</span>
                 </div>
             </div>
-            <button onclick="document.getElementById('cart').style.display='flex'" class="bg-orange-600 text-white px-5 py-3 rounded-2xl font-black shadow-lg flex items-center gap-2 text-xs active:scale-95 transition-transform">
-                <i class="fas fa-shopping-basket"></i> 
-                <span id="count">0</span>
-            </button>
+
+            <div class="hidden md:flex items-center gap-6">
+                <div class="info-tag">
+                    <i class="fas fa-shipping-fast text-orange-500 text-sm"></i>
+                    <div class="leading-none">
+                        <p class="text-[10px] font-black text-white uppercase">Envío Gratis</p>
+                        <p class="text-[8px] text-gray-500 font-bold uppercase">En la comarca</p>
+                    </div>
+                </div>
+                <div class="info-tag">
+                    <i class="fas fa-shield-alt text-orange-500 text-sm"></i>
+                    <div class="leading-none">
+                        <p class="text-[10px] font-black text-white uppercase">Compra Segura</p>
+                        <p class="text-[8px] text-gray-500 font-bold uppercase">Garantía Directa</p>
+                    </div>
+                </div>
+                <div class="info-tag">
+                    <i class="fas fa-check-double text-orange-500 text-sm"></i>
+                    <div class="leading-none">
+                        <p class="text-[10px] font-black text-white uppercase">Calidad</p>
+                        <p class="text-[8px] text-gray-500 font-bold uppercase">100% Original</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button onclick="document.getElementById('cart').style.display='flex'" class="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-6 py-3 rounded-2xl font-black shadow-xl shadow-orange-600/20 flex items-center gap-3 text-xs active:scale-95 transition-all border border-orange-400/20">
+                    <div class="relative">
+                        <i class="fas fa-shopping-basket text-base"></i>
+                        <span id="count" class="absolute -top-3 -right-3 bg-white text-orange-600 w-5 h-5 rounded-full flex items-center justify-center text-[10px] shadow-sm">0</span>
+                    </div>
+                    <span class="uppercase tracking-widest">Ver Pedido</span>
+                </button>
+            </div>
         </div>
     </nav>
 
@@ -146,7 +188,7 @@
     </div>
 
     <main id="catalogo" class="p-4 max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-20">
-        </main>
+    </main>
 
     <footer class="footer-premium pt-12 pb-24 px-6 mt-10">
         <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -172,7 +214,7 @@
             <div class="space-y-4">
                 <h3 class="text-white font-black uppercase text-xs tracking-widest border-l-4 border-orange-500 pl-3">Ubicación</h3>
                 <div class="h-40 rounded-2xl overflow-hidden border border-white/10">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d3101.446864197415!2d-62.9866!3d-40.8122!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses!2sar!4v1710000000000" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3004.567!2d-62.99!3d-40.81!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDDCsDQ4JzM2LjAiUyA2MsKwNTknMjQuMCJX!5e0!3m2!1ses!2sar!4v1700000000000" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                 </div>
             </div>
         </div>
