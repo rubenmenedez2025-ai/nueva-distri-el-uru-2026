@@ -336,4 +336,82 @@
                                 `<button onclick="add(${p.id},1)" class="w-full bg-orange-600 py-5 rounded-2xl font-black text-[10px] uppercase text-white shadow-xl hover:bg-orange-500 active:bg-white active:text-orange-600 transition-all">Agregar al pedido</button>` :
                                 `<div class="flex items-center bg-orange-600 rounded-2xl p-1 shadow-2xl">
                                     <button onclick="add(${p.id},-1)" class="w-14 h-12 flex items-center justify-center text-white text-2xl font-black">－</button>
-               
+                                    <span class="flex-1 text-center font-black text-white text-base">${qty}</span>
+                                    <button onclick="add(${p.id},1)" class="w-14 h-12 flex items-center justify-center text-white text-2xl font-black">＋</button>
+                                </div>`
+                            }
+                        </div>
+                    </div>`;
+            }).join('');
+        }
+
+        window.add = (id, n) => { 
+            cart[id] = Math.max(0, (cart[id] || 0) + n); 
+            if (cart[id] === 0) delete cart[id]; 
+            
+            // EFECTO VISUAL BURST (Punto 2)
+            const cartBtn = document.getElementById('count');
+            cartBtn.classList.remove('bump');
+            void cartBtn.offsetWidth; // Trigger reflow
+            cartBtn.classList.add('bump');
+            
+            update(); render();
+        };
+
+        function update() {
+            let t = 0, c = 0, html = '';
+            Object.entries(cart).forEach(([id, q]) => {
+                const p = data[id]; t += p.pre * q; c += q;
+                html += `
+                <div class="flex items-center gap-5 bg-white/5 p-4 rounded-3xl text-white border border-white/5">
+                    <img src="${p.img}" class="w-12 h-12 object-contain bg-black rounded-xl p-1">
+                    <div class="flex-1 leading-tight"><h4 class="font-black text-[10px] uppercase truncate w-32">${p.nom}</h4><p class="text-orange-500 font-black italic">$${(p.pre * q).toLocaleString()}</p></div>
+                    <div class="flex items-center gap-3">
+                        <span class="text-xs font-black bg-orange-600/20 text-orange-500 px-3 py-1 rounded-lg">x${q}</span>
+                        <button onclick="add(${id},-${q})" class="text-red-500 hover:text-red-400"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>`;
+            });
+            document.getElementById('cart-items').innerHTML = html || '<div class="text-center py-20 opacity-20"><i class="fas fa-shopping-basket text-6xl mb-4"></i><p class="text-xs font-black uppercase tracking-widest">Carrito Vacío</p></div>';
+            document.getElementById('total').innerText = t.toLocaleString();
+            document.getElementById('count').innerText = c;
+            const perc = Math.min(100, (t / MIN_COMPRA) * 100);
+            if(document.getElementById('min-purchase-fill')) document.getElementById('min-purchase-fill').style.width = perc + '%';
+            const btnW = document.getElementById('btn-whatsapp');
+            const minTxt = document.getElementById('min-text');
+            if (t < MIN_COMPRA) {
+                btnW.className = "w-full bg-gray-800 text-gray-500 py-6 rounded-3xl font-black text-xl pointer-events-none opacity-50";
+                minTxt.innerHTML = `Faltan <span class="text-white">$${(MIN_COMPRA - t).toLocaleString()}</span> para el pedido mínimo`;
+            } else {
+                btnW.className = "w-full bg-green-600 text-white py-6 rounded-3xl font-black text-xl active:scale-95 transition-all shadow-[0_10px_30px_rgba(22,163,74,0.4)] animate-pulse";
+                minTxt.innerHTML = `<span class="text-green-500">✅ PEDIDO MÍNIMO ALCANZADO</span>`;
+            }
+        }
+
+        function toggleFav(id) { 
+            if (favoritos.includes(id)) favoritos = favoritos.filter(f => f !== id); 
+            else favoritos.push(id); 
+            localStorage.setItem('uru_favs', JSON.stringify(favoritos)); 
+            render(); 
+        }
+
+        function verFavoritos() { 
+            soloFavs = !soloFavs; 
+            document.getElementById('btn-favs').classList.toggle('text-red-500', soloFavs); 
+            render(); 
+        }
+
+        function enviarPedido() {
+            const n = document.getElementById('user-name').value;
+            const a = document.getElementById('user-address').value;
+            if (!n || !a) return alert("Por favor, completa los datos de entrega.");
+            confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 }, colors: ['#ff6b00', '#ffffff', '#ff9e00'] });
+            let m = "*NUEVO PEDIDO - DISTRI EL URU*%0A👤 *Comercio:* " + n + "%0A📍 *Dirección:* " + a + "%0A%0A";
+            Object.entries(cart).forEach(([id, q]) => m += "🔸 *" + q + "* x " + data[id].nom + "%0A");
+            m += "%0A💰 *TOTAL: $" + document.getElementById('total').innerText + "*";
+            setTimeout(() => window.open("https://wa.me/5492920248292?text=" + m), 800);
+        }
+        window.onscroll = () => { document.getElementById('go-up').style.display = window.scrollY > 800 ? 'block' : 'none'; };
+    </script>
+</body>
+</html>
