@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DISTRIBUIDORA EL URU | Elite System 2026</title>
+    <title>DISTRIBUIDORA EL URU | Elite Management 2026</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -113,7 +113,6 @@
             background: var(--primary);
             color: white;
             border-color: var(--primary);
-            box-shadow: 0 5px 15px rgba(255, 107, 0, 0.3);
         }
 
         .progress-fill {
@@ -128,7 +127,7 @@
 <body class="dark-mode">
 
     <div id="zoom-overlay" onclick="closeZoom()" class="fixed inset-0 z-[1000] bg-black/90 hidden backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out">
-        <img id="zoom-img" src="" class="max-w-full max-h-[85vh] rounded-xl shadow-2xl scale-95 transition-transform duration-300">
+        <img id="zoom-img" src="" class="max-w-full max-h-[85vh] rounded-xl shadow-2xl transition-transform duration-300">
     </div>
 
     <div class="bg-black py-2 overflow-hidden border-b border-white/10">
@@ -141,7 +140,7 @@
     </div>
 
     <div id="status-delivery" class="py-2 text-center font-bold text-[10px] uppercase tracking-widest text-white transition-colors duration-700 bg-gray-800">
-        <span id="status-label italic"><i class="fas fa-sync fa-spin mr-2"></i>Sincronizando con base de datos...</span>
+        <span id="status-label"><i class="fas fa-sync fa-spin mr-2"></i>Conectando con Servidor...</span>
     </div>
 
     <nav class="sticky top-0 z-[100] glass-nav px-4 py-3">
@@ -155,10 +154,10 @@
             </div>
 
             <div class="flex items-center gap-2">
-                <button onclick="toggleTheme()" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400 border border-white/5 hover:bg-white/10">
+                <button onclick="toggleTheme()" class="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-gray-400 border border-white/5">
                     <i id="theme-icon" class="fas fa-moon"></i>
                 </button>
-                <button onclick="openCart()" class="relative bg-primary text-white h-10 px-4 rounded-xl font-black flex items-center gap-2 shadow-lg active:scale-95 transition-transform">
+                <button onclick="openCart()" class="relative bg-primary text-white h-10 px-4 rounded-xl font-black flex items-center gap-2 shadow-lg">
                     <i class="fas fa-shopping-basket"></i>
                     <span id="cart-counter" class="bg-black/20 px-1.5 rounded text-sm">0</span>
                 </button>
@@ -179,20 +178,20 @@
         <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             <div class="col-span-full py-20 text-center">
                 <div class="inline-block w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-                <p class="mt-4 text-xs font-bold uppercase opacity-50 tracking-widest">Cargando Catálogo...</p>
+                <p class="mt-4 text-xs font-bold uppercase opacity-50 tracking-widest">Cargando Precios...</p>
             </div>
         </div>
     </main>
 
-    <div id="cart-modal" class="fixed inset-0 z-[1000] hidden bg-black/70 backdrop-blur-sm transition-opacity duration-300">
+    <div id="cart-modal" class="fixed inset-0 z-[1000] hidden bg-black/70 backdrop-blur-sm">
         <div id="cart-sidebar" class="fixed top-0 right-0 h-full w-full max-w-md bg-[var(--bg-card)] flex flex-col translate-x-full transition-transform duration-500 border-l border-white/10">
             <div class="p-6 border-b border-white/5 flex justify-between items-center bg-white/5">
                 <h2 class="text-xl font-black uppercase text-primary italic">Tu Pedido</h2>
-                <button onclick="closeCart()" class="text-2xl p-2 hover:rotate-90 transition-transform">&times;</button>
+                <button onclick="closeCart()" class="text-2xl p-2">&times;</button>
             </div>
 
             <div class="p-6 bg-black/10 border-b border-white/5">
-                <div class="flex justify-between mb-2 items-end">
+                <div class="flex justify-between mb-2">
                     <span class="text-[10px] font-black uppercase opacity-60">Progreso Mínimo</span>
                     <span id="progress-percent" class="font-black text-primary text-sm">0%</span>
                 </div>
@@ -210,16 +209,16 @@
                     <input type="text" id="user-store-address" oninput="persistUserData()" placeholder="Dirección de Entrega" class="w-full p-3 rounded-xl bg-white/5 border border-white/10 text-sm font-bold focus:border-primary outline-none">
                 </div>
                 
-                <div class="flex justify-between items-center py-2">
-                    <span class="text-[10px] font-black uppercase opacity-40">Total a Pagar</span>
+                <div class="flex justify-between items-center">
+                    <span class="text-[10px] font-black uppercase opacity-40">Total</span>
                     <span class="text-3xl font-black italic text-primary">$<span id="cart-total-display">0</span></span>
                 </div>
 
                 <div class="grid grid-cols-5 gap-2">
-                    <button onclick="clearCart()" title="Vaciar Carrito" class="col-span-1 bg-white/5 hover:bg-red-500/20 text-gray-500 hover:text-red-500 rounded-xl transition-all">
+                    <button onclick="clearCart()" class="col-span-1 bg-white/5 hover:bg-red-500/20 text-gray-500 hover:text-red-500 rounded-xl transition-all">
                         <i class="fas fa-trash-alt"></i>
                     </button>
-                    <button id="btn-checkout" onclick="executeCheckout()" class="col-span-4 py-4 rounded-xl bg-gray-800 text-gray-500 font-black uppercase tracking-widest shadow-lg transition-all disabled:cursor-not-allowed">
+                    <button id="btn-checkout" onclick="executeCheckout()" class="col-span-4 py-4 rounded-xl bg-gray-800 text-gray-500 font-black uppercase tracking-widest">
                         Pedido Incompleto
                     </button>
                 </div>
@@ -242,7 +241,6 @@
             theme: localStorage.getItem('uru_theme') || 'dark-mode'
         };
 
-        // --- Inicialización ---
         window.addEventListener('DOMContentLoaded', async () => {
             applyTheme();
             updateDeliveryStatus();
@@ -250,53 +248,62 @@
             loadPersistedUser();
         });
 
-        // --- Motor de Datos ---
         async function fetchSheetData() {
             try {
-                // El parámetro cb evita que Google nos de datos viejos de su cache
-                const response = await fetch(`${APP_CONFIG.sheet_url}&cb=${Date.now()}`);
-                if (!response.ok) throw new Error("Fallo de red");
-                
+                // El timestamp evita que el navegador cargue datos viejos
+                const response = await fetch(`${APP_CONFIG.sheet_url}&t=${new Date().getTime()}`);
                 const data = await response.text();
-                // Separamos por saltos de línea y filtramos filas vacías
-                const rows = data.split(/\r?\n/).slice(1);
                 
-                state.products = rows.map((row, index) => {
-                    const col = row.split('\t');
-                    if (!col[0] || col[0].trim() === "") return null;
+                // Dividir filas con cuidado (soporta diferentes formatos de salto de línea)
+                const rows = data.split(/\r?\n/);
+                const cleanProducts = [];
 
-                    // Limpieza agresiva de precios ($ 1.200,50 -> 1200.50)
-                    let cleanPrice = col[1]?.toString()
-                        .replace(/[^\d,.]/g, '')
-                        .replace(/\./g, '')
-                        .replace(',', '.') || "0";
+                // Empezamos desde la fila 1 (saltamos el encabezado)
+                for (let i = 1; i < rows.length; i++) {
+                    const cols = rows[i].split('\t');
+                    
+                    // Solo procesamos si hay nombre y precio
+                    if (cols[0] && cols[1] && cols[0].trim() !== "") {
+                        
+                        // Limpieza de precio robusta
+                        let priceRaw = cols[1].toString().replace(/[^\d,.]/g, '');
+                        if (priceRaw.includes(',') && priceRaw.includes('.')) {
+                            priceRaw = priceRaw.replace(/\./g, '').replace(',', '.');
+                        } else if (priceRaw.includes(',')) {
+                            priceRaw = priceRaw.replace(',', '.');
+                        }
+                        
+                        cleanProducts.push({
+                            id: `p_${i}`,
+                            name: cols[0].trim(),
+                            price: parseFloat(priceRaw) || 0,
+                            category: (cols[2] || 'GENERAL').trim().toUpperCase(),
+                            image: (cols[3] || '').trim() || APP_CONFIG.default_img
+                        });
+                    }
+                }
 
-                    return {
-                        id: `prod_${index}`,
-                        name: col[0].trim(),
-                        price: parseFloat(cleanPrice) || 0,
-                        category: (col[2] || 'GENERAL').trim().toUpperCase(),
-                        image: col[3]?.trim() || APP_CONFIG.default_img
-                    };
-                }).filter(p => p !== null && p.price > 0);
+                state.products = cleanProducts;
 
-                if (state.products.length === 0) throw new Error("Sin datos");
+                if (state.products.length > 0) {
+                    buildCategories();
+                    renderProducts();
+                    document.getElementById('status-label').innerHTML = `<i class="fas fa-check-circle text-green-500 mr-2"></i>Catálogo Sincronizado`;
+                } else {
+                    throw new Error("No se detectaron productos");
+                }
 
-                buildCategories();
-                renderProducts();
-                document.getElementById('status-label').innerHTML = `<i class="fas fa-check-circle mr-2 text-green-500"></i>Precios Sincronizados`;
             } catch (e) {
-                console.error("Master Error:", e);
+                console.error("Error cargando base de datos:", e);
                 document.getElementById('products-grid').innerHTML = `
                     <div class="col-span-full py-20 text-center">
-                        <i class="fas fa-exclamation-triangle text-3xl text-orange-500 mb-4"></i>
-                        <p class="font-bold opacity-50">ERROR AL CARGAR CATÁLOGO</p>
-                        <button onclick="location.reload()" class="mt-4 px-6 py-2 bg-primary rounded-full text-white font-bold">Reintentar</button>
+                        <p class="font-bold text-orange-500">No se pudo cargar la base de datos.</p>
+                        <p class="text-xs opacity-50 mt-2">Verifica que el Google Sheet esté publicado como TSV.</p>
+                        <button onclick="location.reload()" class="mt-6 px-8 py-3 bg-primary text-white rounded-full font-bold">REINTENTAR</button>
                     </div>`;
             }
         }
 
-        // --- Lógica de Interfaz ---
         function buildCategories() {
             const cats = ['TODOS', ...new Set(state.products.map(p => p.category))];
             document.getElementById('category-container').innerHTML = cats.map(c => `
@@ -314,17 +321,12 @@
                 return mCat && mSearch;
             });
 
-            if (filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full py-20 text-center opacity-40 font-bold uppercase tracking-widest text-sm">No hay productos que coincidan</div>`;
-                return;
-            }
-
             grid.innerHTML = filtered.map(p => {
                 const qty = state.cart[p.id] || 0;
                 return `
-                    <div class="card-uru p-3 ${qty > 0 ? 'ring-2 ring-primary bg-primary/[0.03]' : ''}">
-                        <div class="img-wrapper cursor-zoom-in" onclick="openZoom('${p.image}')">
-                            <img src="${p.image}" onerror="this.src='${APP_CONFIG.default_img}'" loading="lazy">
+                    <div class="card-uru p-3 ${qty > 0 ? 'ring-2 ring-primary' : ''}">
+                        <div class="img-wrapper" onclick="openZoom('${p.image}')">
+                            <img src="${p.image}" onerror="this.src='${APP_CONFIG.default_img}'">
                         </div>
                         <div class="px-1 flex-1 mt-2">
                             <span class="text-[7px] font-black text-primary uppercase tracking-tighter">${p.category}</span>
@@ -335,9 +337,9 @@
                             ${qty === 0 ? 
                                 `<button onclick="updateCart('${p.id}', 1)" class="w-full py-3 rounded-xl bg-primary text-white font-black text-[10px] uppercase shadow-md active:scale-95 transition-all">Agregar</button>` :
                                 `<div class="flex items-center bg-white/5 rounded-xl border border-white/10 overflow-hidden">
-                                    <button onclick="updateCart('${p.id}', -1)" class="w-10 h-10 flex items-center justify-center hover:bg-white/5 text-primary font-bold">-</button>
+                                    <button onclick="updateCart('${p.id}', -1)" class="w-10 h-10 flex items-center justify-center">-</button>
                                     <span class="flex-1 text-center font-black text-sm">${qty}</span>
-                                    <button onclick="updateCart('${p.id}', 1)" class="w-10 h-10 flex items-center justify-center hover:bg-white/5 text-primary font-bold">+</button>
+                                    <button onclick="updateCart('${p.id}', 1)" class="w-10 h-10 flex items-center justify-center">+</button>
                                 </div>`
                             }
                         </div>
@@ -346,7 +348,6 @@
             }).join('');
         }
 
-        // --- Carrito ---
         function updateCart(id, delta) {
             state.cart[id] = (state.cart[id] || 0) + delta;
             if (state.cart[id] <= 0) delete state.cart[id];
@@ -354,42 +355,25 @@
             renderProducts();
         }
 
-        function clearCart() {
-            if(confirm('¿Deseas vaciar todo el pedido actual?')) {
-                state.cart = {};
-                syncUI();
-                renderProducts();
-                closeCart();
-            }
-        }
-
         function syncUI() {
             let total = 0, count = 0;
             const container = document.getElementById('cart-items-container');
             const cartEntries = Object.entries(state.cart);
             
-            if (cartEntries.length === 0) {
-                container.innerHTML = `<div class="py-20 text-center opacity-20 font-bold uppercase text-xs italic">Carrito Vacío</div>`;
-            } else {
-                container.innerHTML = cartEntries.map(([id, qty]) => {
-                    const p = state.products.find(x => x.id === id);
-                    if (!p) return '';
-                    total += (p.price * qty); count += qty;
-                    return `
-                        <div class="flex gap-3 bg-white/5 p-3 rounded-xl items-center border border-white/5">
-                            <img src="${p.image}" class="w-10 h-10 rounded-lg bg-white p-0.5 object-contain">
-                            <div class="flex-1 min-w-0">
-                                <p class="text-[9px] font-bold uppercase truncate">${p.name}</p>
-                                <p class="text-primary font-black text-sm">$${(p.price * qty).toLocaleString('es-AR')}</p>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button onclick="updateCart('${id}', -1)" class="w-7 h-7 rounded-lg bg-white/10 text-xs">-</button>
-                                <span class="font-black text-xs w-4 text-center">${qty}</span>
-                                <button onclick="updateCart('${id}', 1)" class="w-7 h-7 rounded-lg bg-white/10 text-xs">+</button>
-                            </div>
-                        </div>`;
-                }).join('');
-            }
+            container.innerHTML = cartEntries.map(([id, qty]) => {
+                const p = state.products.find(x => x.id === id);
+                if (!p) return '';
+                total += (p.price * qty); count += qty;
+                return `
+                    <div class="flex gap-3 bg-white/5 p-3 rounded-xl items-center border border-white/5">
+                        <img src="${p.image}" class="w-10 h-10 rounded-lg bg-white p-0.5 object-contain">
+                        <div class="flex-1 min-w-0">
+                            <p class="text-[9px] font-bold uppercase truncate">${p.name}</p>
+                            <p class="text-primary font-black text-sm">$${(p.price * qty).toLocaleString('es-AR')}</p>
+                        </div>
+                        <div class="font-black text-xs px-2">${qty}</div>
+                    </div>`;
+            }).join('');
 
             document.getElementById('cart-total-display').innerText = total.toLocaleString('es-AR');
             document.getElementById('cart-counter').innerText = count;
@@ -405,7 +389,7 @@
                 btn.disabled = false;
                 btn.className = "col-span-4 py-4 rounded-xl bg-green-600 text-white font-black uppercase tracking-widest cursor-pointer shadow-lg animate-pulse";
                 btn.innerText = "Enviar WhatsApp";
-                msg.innerHTML = `<span class="text-green-500">✅ MÍNIMO ALCANZADO</span>`;
+                msg.innerHTML = `<span class="text-green-500">Mínimo Alcanzado</span>`;
             } else {
                 btn.disabled = true;
                 btn.className = "col-span-4 py-4 rounded-xl bg-gray-800 text-gray-500 font-black uppercase tracking-widest cursor-not-allowed";
@@ -414,98 +398,61 @@
             }
         }
 
-        // --- Checkout ---
         function executeCheckout() {
             const store = document.getElementById('user-store-name').value.trim();
             const address = document.getElementById('user-store-address').value.trim();
-            
-            if (!store || !address) {
-                alert("Por favor, ingresa el nombre de tu comercio y la dirección.");
-                return;
-            }
+            if (!store || !address) return alert("Completa los datos de entrega.");
 
             let msg = `*PEDIDO EL URU 2026*\n`;
             msg += `*Comercio:* ${store.toUpperCase()}\n`;
-            msg += `*📍 Dir:* ${address}\n`;
+            msg += `*Dirección:* ${address}\n`;
             msg += `--------------------------------\n`;
-            
             Object.entries(state.cart).forEach(([id, qty]) => {
                 const p = state.products.find(x => x.id === id);
                 msg += `• ${qty}x ${p.name}\n`;
             });
-            
             msg += `--------------------------------\n`;
-            msg += `*TOTAL ESTIMADO: $${document.getElementById('cart-total-display').innerText}*`;
-            
+            msg += `*TOTAL: $${document.getElementById('cart-total-display').innerText}*`;
             window.open(`https://wa.me/${APP_CONFIG.whatsapp_number}?text=${encodeURIComponent(msg)}`);
         }
 
-        // --- Utilidades de Sistema ---
+        function clearCart() {
+            if(confirm('¿Vaciar carrito?')) { state.cart = {}; syncUI(); renderProducts(); closeCart(); }
+        }
+
         function updateDeliveryStatus() {
             const now = new Date();
             const h = now.getHours();
-            const m = now.getMinutes();
+            const isOpen = (h < 12 || (h === 12 && now.getMinutes() <= 30));
             const statusEl = document.getElementById('status-delivery');
             const label = document.getElementById('status-label');
-            const isOpen = (h < 12 || (h === 12 && m <= 30));
-
             if (isOpen) {
                 statusEl.className = "py-2 text-center font-bold text-[10px] uppercase tracking-widest text-white bg-green-600";
-                label.innerText = "🟢 ABIERTO: Reparto hoy hasta 12:30hs";
+                label.innerText = "🟢 Reparto hoy hasta 12:30hs";
             } else {
                 statusEl.className = "py-2 text-center font-bold text-[10px] uppercase tracking-widest text-white bg-orange-600";
-                label.innerText = "🕒 CERRADO: Pedidos para reparto de mañana";
+                label.innerText = "🕒 Reparto para mañana";
             }
         }
 
-        function setFilterCategory(c) { 
-            state.currentCategory = c; 
-            buildCategories(); 
-            renderProducts(); 
-        }
-
-        function openCart() { 
-            document.getElementById('cart-modal').classList.remove('hidden');
-            setTimeout(() => document.getElementById('cart-sidebar').style.transform = 'translateX(0)', 10);
-        }
-
-        function closeCart() {
-            document.getElementById('cart-sidebar').style.transform = 'translateX(100%)';
-            setTimeout(() => document.getElementById('cart-modal').classList.add('hidden'), 500);
-        }
-
         function toggleTheme() {
-            state.theme = (state.theme === 'dark-mode' ? 'light-mode' : 'dark-mode');
+            state.theme = state.theme === 'dark-mode' ? 'light-mode' : 'dark-mode';
             localStorage.setItem('uru_theme', state.theme);
             applyTheme();
         }
 
         function applyTheme() {
             document.body.className = state.theme;
-            document.getElementById('theme-icon').className = (state.theme === 'dark-mode' ? 'fas fa-moon' : 'fas fa-sun');
+            document.getElementById('theme-icon').className = state.theme === 'dark-mode' ? 'fas fa-moon' : 'fas fa-sun';
         }
 
-        function persistUserData() {
-            localStorage.setItem('uru_store', document.getElementById('user-store-name').value);
-            localStorage.setItem('uru_address', document.getElementById('user-store-address').value);
-        }
-
-        function loadPersistedUser() {
-            document.getElementById('user-store-name').value = localStorage.getItem('uru_store') || '';
-            document.getElementById('user-store-address').value = localStorage.getItem('uru_address') || '';
-        }
-
-        function openZoom(src) {
-            const zImg = document.getElementById('zoom-img');
-            zImg.src = src;
-            document.getElementById('zoom-overlay').classList.remove('hidden');
-            setTimeout(() => zImg.classList.remove('scale-95'), 10);
-        }
-
-        function closeZoom() { 
-            document.getElementById('zoom-img').classList.add('scale-95');
-            setTimeout(() => document.getElementById('zoom-overlay').classList.add('hidden'), 200);
-        }
+        function setFilterCategory(c) { state.currentCategory = c; buildCategories(); renderProducts(); }
+        function openCart() { document.getElementById('cart-modal').classList.remove('hidden'); setTimeout(() => document.getElementById('cart-sidebar').style.transform = 'translateX(0)', 10); }
+        function closeCart() { document.getElementById('cart-sidebar').style.transform = 'translateX(100%)'; setTimeout(() => document.getElementById('cart-modal').classList.add('hidden'), 500); }
+        function openZoom(src) { document.getElementById('zoom-img').src = src; document.getElementById('zoom-overlay').classList.remove('hidden'); }
+        function closeZoom() { document.getElementById('zoom-overlay').classList.add('hidden'); }
+        function persistUserData() { localStorage.setItem('uru_store', document.getElementById('user-store-name').value); localStorage.setItem('uru_address', document.getElementById('user-store-address').value); }
+        function loadPersistedUser() { document.getElementById('user-store-name').value = localStorage.getItem('uru_store') || ''; document.getElementById('user-store-address').value = localStorage.getItem('uru_address') || ''; }
     </script>
 </body>
 </html>
