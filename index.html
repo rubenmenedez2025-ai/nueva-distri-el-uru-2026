@@ -285,7 +285,19 @@
                     © 2026 DISTRIBUIDORA EL URU - TODOS LOS DERECHOS RESERVADOS
                 </p>
             </div>
+        </div><div id="panel-despacho" style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 999; padding: 20px; align-items: center; justify-content: center; flex-direction: column;">
+    <div class="max-w-2xl w-full bg-[#111] p-8 rounded-[2.5rem] border border-orange-500/30 shadow-2xl">
+        <h2 class="text-2xl font-black text-orange-500 mb-2 italic uppercase">Facturador de WhatsApp</h2>
+        <p class="text-gray-400 mb-6 text-[10px] font-bold uppercase tracking-widest">Pegá el pedido de Palermo u otros acá:</p>
+        
+        <textarea id="input-whatsapp" class="w-full h-64 bg-black border border-white/10 rounded-2xl p-4 text-white font-mono text-sm mb-6 outline-none focus:border-orange-500" placeholder="Copiá el pedido de WhatsApp y pegalo acá..."></textarea>
+        
+        <div class="flex gap-4">
+            <button onclick="procesarYFacturar()" class="flex-1 bg-orange-600 text-white py-4 rounded-2xl font-black uppercase hover:bg-orange-500 transition-colors">Generar Ticket</button>
+            <button onclick="document.getElementById('panel-despacho').style.display='none'" class="bg-white/10 text-white px-8 rounded-2xl font-black uppercase hover:bg-white/20">Cerrar</button>
         </div>
+    </div>
+</div>
     </footer>
 
     <div id="cart" style="display:none;" class="fixed inset-0 bg-black/60 backdrop-blur-md z-[200] flex justify-end">
