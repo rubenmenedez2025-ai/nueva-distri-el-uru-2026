@@ -108,6 +108,7 @@
         .img-container { 
             background: var(--input-bg) !important; 
             border-radius: 1.5rem; overflow: hidden; border: 1px solid var(--border-color);
+            position: relative;
         }
 
         .price-tag { 
@@ -135,12 +136,21 @@
             align-items: center; justify-content: center; font-size: 1.2rem; transition: 0.3s;
         }
 
+        /* --- NUEVOS ESTILOS INTEGRADOS --- */
+        .qty-input {
+            background: transparent; border: none; color: white; width: 40px; text-align: center;
+            font-weight: 900; outline: none; -moz-appearance: textfield;
+        }
+        .qty-input::-webkit-outer-spin-button, .qty-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
         .skeleton {
             background: linear-gradient(90deg, var(--input-bg) 25%, var(--border-color) 50%, var(--input-bg) 75%);
             background-size: 200% 100%;
             animation: skeleton-loading 1.5s infinite;
         }
         @keyframes skeleton-loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        .img-loader { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: var(--input-bg); }
     </style>
 </head>
 <body>
@@ -220,8 +230,7 @@
     </div>
 
     <main id="catalogo" class="p-4 max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-24">
-        <div class="card-prod p-5 rounded-[2.5rem] flex flex-col opacity-50"><div class="img-container h-44 mb-5 skeleton"></div><div class="h-4 skeleton mb-2"></div><div class="h-8 skeleton"></div></div>
-    </main>
+        </main>
 
     <footer class="pt-20 pb-12 px-8 mt-16 bg-[var(--footer-bg)] border-t border-[var(--border-color)]">
         <div class="max-w-7xl mx-auto">
@@ -299,6 +308,11 @@
         let data = [], cart = {}, activeCat = 'TODOS', soloFavs = false;
         let favoritos = JSON.parse(localStorage.getItem('uru_favs')) || [];
 
+        // --- NOTIFICACIÓN TOAST ---
+        const Toast = Swal.mixin({
+            toast: true, position: 'bottom-start', showConfirmButton: false, timer: 1500, timerProgressBar: true
+        });
+
         function toggleTheme() {
             document.body.classList.toggle('light-mode');
             const isLight = document.body.classList.contains('light-mode');
@@ -343,8 +357,8 @@
                         img: (c[3]||'').trim(),
                         stock: parseInt(c[4]) || 0,
                         sugerido: (c[5]||'').trim(),
-                        pack_cantidad: parseInt(c[6]) || 0, // Nueva Columna G
-                        pack_precio: parseInt(c[7]) || 0    // Nueva Columna H
+                        pack_cantidad: parseInt(c[6]) || 0,
+                        pack_precio: parseInt(c[7]) || 0    
                     };
                 }).filter(p => p.nom !== "");
                 renderCats(); render();
@@ -381,41 +395,62 @@
                         
                         <span class="absolute top-16 left-6 text-[8px] bg-black/10 text-orange-500 px-2 py-1 rounded-md font-black uppercase">${p.cat}</span>
                         <button onclick="toggleFav(${p.id})" class="absolute top-6 left-6 z-10 text-xl ${favoritos.includes(p.id) ? 'text-red-600' : 'text-gray-400'}"><i class="fas fa-heart"></i></button>
+                        
                         <div class="img-container h-44 mb-5 flex items-center justify-center p-5">
-                            <img src="${p.img}" class="max-h-full object-contain" onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'">
+                            <div class="img-loader skeleton" id="loader-${p.id}"></div>
+                            <img src="${p.img}" class="max-h-full object-contain" 
+                                 onload="document.getElementById('loader-${p.id}').style.display='none'"
+                                 onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg';document.getElementById('loader-${p.id}').style.display='none'">
                         </div>
+
                         <h3 class="text-[11px] font-black uppercase h-8 text-[var(--text-muted)] italic leading-tight">${p.nom}</h3>
-                        
                         <p class="price-tag mt-3 italic">${agotado ? 'SIN STOCK' : '$' + p.pre.toLocaleString()}</p>
-                        
                         ${tienePack && !agotado ? `<p class="text-[9px] text-green-500 font-bold uppercase mt-1">Llevando ${p.pack_cantidad}u. pagás $${p.pack_precio.toLocaleString()} c/u</p>` : ''}
 
                         <div class="mt-5">
                             ${agotado ? `<button disabled class="w-full bg-gray-300 py-5 rounded-2xl font-black text-[10px] text-gray-500">Agotado</button>` :
                             (qty === 0 ? `<button onclick="add(${p.id},1)" class="w-full bg-orange-600 py-5 rounded-2xl font-black text-[10px] text-white">Agregar</button>` :
                             `<div class="flex items-center bg-orange-600 rounded-2xl p-1 shadow-2xl">
-                                <button onclick="add(${p.id},-1)" class="w-14 h-12 text-white text-2xl font-black">－</button>
-                                <span class="flex-1 text-center font-black text-white">${qty}</span>
-                                <button onclick="add(${p.id},1)" class="w-14 h-12 text-white text-2xl font-black">＋</button>
+                                <button onclick="add(${p.id},-1)" class="w-12 h-12 text-white text-2xl font-black">－</button>
+                                <input type="number" value="${qty}" class="qty-input flex-1" 
+                                       onchange="setQty(${p.id}, this.value)" 
+                                       onclick="this.select()">
+                                <button onclick="add(${p.id},1)" class="w-12 h-12 text-white text-2xl font-black">＋</button>
                             </div>`)}
                         </div>
                     </div>`;
             }).join('');
         }
 
+        // --- FUNCIÓN PARA CANTIDAD MANUAL ---
+        window.setQty = (id, val) => {
+            const p = data[id];
+            let n = parseInt(val) || 0;
+            if (n > p.stock) {
+                n = p.stock;
+                Swal.fire('Stock Máximo', `Solo hay ${p.stock} unidades.`, 'warning');
+            }
+            if (n <= 0) delete cart[id];
+            else cart[id] = n;
+            update(); render();
+        };
+
         window.add = (id, n) => { 
             const p = data[id];
+            const current = cart[id] || 0;
             
-            if (n > 0 && (cart[id] || 0) >= p.stock) {
+            if (n > 0 && current >= p.stock) {
                 Swal.fire({ title: 'Stock Limitado', text: 'No hay más unidades disponibles.', icon: 'warning', confirmButtonColor: '#ff6b00' });
                 return;
             }
 
-            cart[id] = Math.max(0, (cart[id] || 0) + n); 
-            if (cart[id] === 0) delete cart[id]; 
-            
-            if (n > 0 && cart[id] === 1 && p.sugerido) {
-                verificarSugerencia(p.sugerido);
+            cart[id] = Math.max(0, current + n); 
+            if (cart[id] === 0) {
+                delete cart[id];
+            } else if (n > 0) {
+                // Notificación Toast al agregar
+                Toast.fire({ icon: 'success', title: `Agregado: ${p.nom}` });
+                if (cart[id] === 1 && p.sugerido) verificarSugerencia(p.sugerido);
             }
 
             update(); render();
@@ -449,10 +484,10 @@
 
             if (totalMinutos >= cierreMinutos) {
                 if(textoCierre) textoCierre.innerHTML = "⚠️ Cierre alcanzado. Tu pedido se entregará MAÑANA";
-                btnW.dataset.entrega = "MAÑANA";
+                if(btnW) btnW.dataset.entrega = "MAÑANA";
             } else {
                 if(textoCierre) textoCierre.innerHTML = "Hacé tu pedido ahora y recibilo hoy";
-                btnW.dataset.entrega = "HOY";
+                if(btnW) btnW.dataset.entrega = "HOY";
             }
         }
 
@@ -464,8 +499,6 @@
             let t = 0, c = 0, html = '';
             Object.entries(cart).forEach(([id, q]) => {
                 const p = data[id]; 
-                
-                // Lógica de Descuento por Pack
                 let precioAplicado = p.pre;
                 let tieneDescuento = false;
                 if (p.pack_cantidad > 0 && q >= p.pack_cantidad) {
@@ -500,19 +533,24 @@
             document.getElementById('count').innerText = c;
             
             const perc = Math.min(100, (t / MIN_COMPRA) * 100);
-            document.getElementById('min-purchase-fill').style.width = perc + '%';
+            const fill = document.getElementById('min-purchase-fill');
+            if(fill) fill.style.width = perc + '%';
             
             const btnW = document.getElementById('btn-whatsapp');
             const minTxt = document.getElementById('min-text');
             
             if (t < MIN_COMPRA) {
-                btnW.disabled = true;
-                btnW.className = "w-full bg-gray-400 text-white py-4 rounded-2xl font-black text-lg opacity-50 cursor-not-allowed";
-                minTxt.innerHTML = `Faltan <span class="text-orange-600">$${(MIN_COMPRA - t).toLocaleString()}</span> para el mínimo`;
+                if(btnW) {
+                    btnW.disabled = true;
+                    btnW.className = "w-full bg-gray-400 text-white py-4 rounded-2xl font-black text-lg opacity-50 cursor-not-allowed";
+                }
+                if(minTxt) minTxt.innerHTML = `Faltan <span class="text-orange-600">$${(MIN_COMPRA - t).toLocaleString()}</span> para el mínimo`;
             } else {
-                btnW.disabled = false;
-                btnW.className = "w-full bg-green-600 text-white py-4 rounded-2xl font-black text-lg animate-pulse active:scale-95 transition-all shadow-xl";
-                minTxt.innerHTML = `<span class="text-green-500">✅ PEDIDO MÍNIMO ALCANZADO</span>`;
+                if(btnW) {
+                    btnW.disabled = false;
+                    btnW.className = "w-full bg-green-600 text-white py-4 rounded-2xl font-black text-lg animate-pulse active:scale-95 transition-all shadow-xl";
+                }
+                if(minTxt) minTxt.innerHTML = `<span class="text-green-500">✅ PEDIDO MÍNIMO ALCANZADO</span>`;
             }
         }
 
@@ -550,13 +588,16 @@
             m += "------------------------------%0A";
             m += "💰 *TOTAL: $" + document.getElementById('total').innerText + "*%0A%0A";
             m += "🏦 *DATOS PAGO:*%0A";
-            m += "Alias: EL.URU.DISTRI%0A";
-            m += "*(Por favor, enviá el comprobante)*";
+            m += "Alias: mati.2026";
+            m += "*(Al Transferir, enviár el comprobante por favor muchas gracias)*";
 
             setTimeout(() => window.open("https://wa.me/5492920248292?text=" + m), 800);
         }
 
-        window.onscroll = () => { document.getElementById('go-up').style.display = window.scrollY > 800 ? 'block' : 'none'; };
+        window.onscroll = () => { 
+            const up = document.getElementById('go-up');
+            if(up) up.style.display = window.scrollY > 800 ? 'block' : 'none'; 
+        };
     </script>
 </body>
 </html>
