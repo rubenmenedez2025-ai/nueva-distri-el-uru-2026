@@ -41,7 +41,14 @@
             overflow-x: hidden; 
         }
         
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        /* CORRECCIÓN SCROLL CATEGORÍAS */
+        .no-scrollbar::-webkit-scrollbar { height: 4px; }
+        .no-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .no-scrollbar::-webkit-scrollbar-thumb { background: #ff6b00; border-radius: 10px; }
+        
+        @media (max-width: 768px) {
+            .no-scrollbar::-webkit-scrollbar { display: none; }
+        }
 
         /* Marquee */
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
@@ -302,6 +309,16 @@
             if(localStorage.getItem('uru_theme') === 'light') toggleTheme();
             document.getElementById('user-name').value = localStorage.getItem('uru_name') || '';
             document.getElementById('user-address').value = localStorage.getItem('uru_address') || '';
+            
+            // Habilitar scroll horizontal con rueda de mouse en PC
+            const catScroll = document.getElementById('category-filters');
+            catScroll.addEventListener('wheel', (e) => {
+                if (e.deltaY !== 0) {
+                    e.preventDefault();
+                    catScroll.scrollLeft += e.deltaY;
+                }
+            });
+
             update(); load();
         };
 
