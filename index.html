@@ -64,7 +64,6 @@
             box-shadow: 0 15px 35px rgba(255, 107, 0, 0.15); 
         }
         
-        /* Estilo Agotado */
         .card-prod.agotado {
             filter: grayscale(1);
             opacity: 0.6;
@@ -321,7 +320,7 @@
             });
 
             update(); load();
-            setInterval(verificarHorarioCierre, 60000); // Revisar cada minuto
+            setInterval(verificarHorarioCierre, 60000); 
         };
 
         function saveUserData() {
@@ -342,8 +341,10 @@
                         pre: parseInt((c[1]||'').replace(/\D/g,'')) || 0, 
                         cat: (c[2]||'VARIOS').trim().toUpperCase(), 
                         img: (c[3]||'').trim(),
-                        stock: parseInt(c[4]) || 0,     // Nueva Columna E
-                        sugerido: (c[5]||'').trim()    // Nueva Columna F
+                        stock: parseInt(c[4]) || 0,
+                        sugerido: (c[5]||'').trim(),
+                        pack_cantidad: parseInt(c[6]) || 0, // Nueva Columna G
+                        pack_precio: parseInt(c[7]) || 0    // Nueva Columna H
                     };
                 }).filter(p => p.nom !== "");
                 renderCats(); render();
@@ -367,9 +368,10 @@
 
             document.getElementById('catalogo').innerHTML = filtered.map(p => {
                 const qty = cart[p.id] || 0;
-                const agotado = p.stock <= 0; // Ahora usa la columna Stock
+                const agotado = p.stock <= 0;
                 const esOferta = !agotado && p.pre.toString().endsWith('99');
                 const esNuevo = !agotado && p.pre.toString().endsWith('1');
+                const tienePack = p.pack_cantidad > 0;
                 
                 return `
                     <div class="card-prod p-5 rounded-[2.5rem] flex flex-col relative ${qty > 0 ? 'ring-2 ring-orange-500' : ''} ${agotado ? 'agotado' : ''}">
@@ -383,7 +385,11 @@
                             <img src="${p.img}" class="max-h-full object-contain" onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'">
                         </div>
                         <h3 class="text-[11px] font-black uppercase h-8 text-[var(--text-muted)] italic leading-tight">${p.nom}</h3>
+                        
                         <p class="price-tag mt-3 italic">${agotado ? 'SIN STOCK' : '$' + p.pre.toLocaleString()}</p>
+                        
+                        ${tienePack && !agotado ? `<p class="text-[9px] text-green-500 font-bold uppercase mt-1">Llevando ${p.pack_cantidad}u. pagás $${p.pack_precio.toLocaleString()} c/u</p>` : ''}
+
                         <div class="mt-5">
                             ${agotado ? `<button disabled class="w-full bg-gray-300 py-5 rounded-2xl font-black text-[10px] text-gray-500">Agotado</button>` :
                             (qty === 0 ? `<button onclick="add(${p.id},1)" class="w-full bg-orange-600 py-5 rounded-2xl font-black text-[10px] text-white">Agregar</button>` :
@@ -400,16 +406,14 @@
         window.add = (id, n) => { 
             const p = data[id];
             
-            // Validación de Stock al sumar
             if (n > 0 && (cart[id] || 0) >= p.stock) {
-                Swal.fire({ title: 'Stock Limitado', text: 'No hay más unidades disponibles de este producto.', icon: 'warning', confirmButtonColor: '#ff6b00' });
+                Swal.fire({ title: 'Stock Limitado', text: 'No hay más unidades disponibles.', icon: 'warning', confirmButtonColor: '#ff6b00' });
                 return;
             }
 
             cart[id] = Math.max(0, (cart[id] || 0) + n); 
             if (cart[id] === 0) delete cart[id]; 
             
-            // Disparar Sugerencia si se agrega por primera vez
             if (n > 0 && cart[id] === 1 && p.sugerido) {
                 verificarSugerencia(p.sugerido);
             }
@@ -430,19 +434,15 @@
                     cancelButtonText: 'No, gracias',
                     confirmButtonColor: '#ff6b00'
                 }).then((result) => {
-                    if (result.isConfirmed) {
-                        add(sug.id, 1);
-                    }
+                    if (result.isConfirmed) { add(sug.id, 1); }
                 });
             }
         }
 
         function verificarHorarioCierre() {
             const ahora = new Date();
-            const hora = ahora.getHours();
-            const min = ahora.getMinutes();
-            const totalMinutos = (hora * 60) + min;
-            const cierreMinutos = (12 * 60) + 30; // 12:30hs
+            const totalMinutos = (ahora.getHours() * 60) + ahora.getMinutes();
+            const cierreMinutos = (12 * 60) + 30; 
 
             const btnW = document.getElementById('btn-whatsapp');
             const textoCierre = document.getElementById('cierre-texto');
@@ -463,15 +463,31 @@
         function update() {
             let t = 0, c = 0, html = '';
             Object.entries(cart).forEach(([id, q]) => {
-                const p = data[id]; t += p.pre * q; c += q;
+                const p = data[id]; 
+                
+                // Lógica de Descuento por Pack
+                let precioAplicado = p.pre;
+                let tieneDescuento = false;
+                if (p.pack_cantidad > 0 && q >= p.pack_cantidad) {
+                    precioAplicado = p.pack_precio;
+                    tieneDescuento = true;
+                }
+
+                const subtotal = precioAplicado * q;
+                t += subtotal; 
+                c += q;
+
                 html += `
                 <div class="flex items-center gap-3 bg-[var(--input-bg)] p-3 rounded-2xl border border-[var(--border-color)] mb-2">
                     <div class="w-16 h-16 bg-white rounded-xl p-1 flex items-center justify-center shrink-0">
                          <img src="${p.img}" class="max-w-full max-h-full object-contain">
                     </div>
                     <div class="flex-1 min-w-0">
-                        <h4 class="font-bold text-xs uppercase truncate mb-1 text-[var(--text-main)]">${p.nom}</h4>
-                        <p class="text-orange-500 font-black text-base">$${(p.pre * q).toLocaleString()}</p>
+                        <h4 class="font-bold text-[10px] uppercase truncate text-[var(--text-muted)]">${p.nom}</h4>
+                        <p class="text-orange-500 font-black text-base">
+                            $${subtotal.toLocaleString()}
+                            ${tieneDescuento ? '<span class="text-[8px] bg-green-600 text-white px-1 rounded ml-1">PRECIO PACK</span>' : ''}
+                        </p>
                     </div>
                     <div class="flex flex-col items-end shrink-0">
                         <span class="text-xs font-black bg-orange-600 text-white px-2 py-0.5 rounded-md">x${q}</span>
@@ -524,7 +540,12 @@
             m += "🕒 *Entrega:* " + entrega + "%0A%0A";
             m += "------------------------------%0A";
             
-            Object.entries(cart).forEach(([id, q]) => m += "🔸 *" + q + "* x " + data[id].nom + "%0A");
+            Object.entries(cart).forEach(([id, q]) => {
+                const p = data[id];
+                let pre = p.pre;
+                if (p.pack_cantidad > 0 && q >= p.pack_cantidad) pre = p.pack_precio;
+                m += "🔸 *" + q + "* x " + p.nom + " ($" + pre.toLocaleString() + " c/u)%0A";
+            });
             
             m += "------------------------------%0A";
             m += "💰 *TOTAL: $" + document.getElementById('total').innerText + "*%0A%0A";
