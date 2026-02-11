@@ -141,6 +141,12 @@
             animation: skeleton-loading 1.5s infinite;
         }
         @keyframes skeleton-loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        @media print {
+            body * { visibility: hidden; }
+            #modal-carga, #modal-carga * { visibility: visible; }
+            #modal-carga { position: absolute; left: 0; top: 0; width: 100%; }
+        }
     </style>
 </head>
 <body>
@@ -165,7 +171,10 @@
     <nav class="bg-white/5 backdrop-blur-2xl sticky top-0 z-50 p-4 border-b border-[var(--border-color)]">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-12 h-12 rounded-2xl border border-orange-500 shadow-lg shadow-orange-500/20">
+                <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" 
+                     onmousedown="startPress()" onmouseup="cancelPress()" 
+                     ontouchstart="startPress()" ontouchend="cancelPress()"
+                     class="w-12 h-12 rounded-2xl border border-orange-500 shadow-lg shadow-orange-500/20 cursor-pointer">
                 <div class="block"> 
                     <h1 class="text-lg md:text-2xl font-black italic text-orange-500 uppercase leading-none tracking-tighter">Distribuidora El Uru</h1>
                     <span class="text-[9px] text-gray-500 font-bold uppercase tracking-[0.2em]">Viedma y Patagones</span>
@@ -223,40 +232,6 @@
         <div class="card-prod p-5 rounded-[2.5rem] flex flex-col opacity-50"><div class="img-container h-44 mb-5 skeleton"></div><div class="h-4 skeleton mb-2"></div><div class="h-8 skeleton"></div></div>
     </main>
 
-    <footer class="pt-20 pb-12 px-8 mt-16 bg-[var(--footer-bg)] border-t border-[var(--border-color)]">
-        <div class="max-w-7xl mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
-                <div class="space-y-6">
-                    <div class="flex items-center gap-4">
-                        <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-16 h-16 rounded-2xl border-2 border-orange-500 shadow-lg">
-                        <h2 class="text-3xl font-black italic uppercase text-orange-500">El Uru</h2>
-                    </div>
-                    <p class="text-[var(--text-muted)] text-sm font-medium leading-relaxed">
-                        Distribuidora mayorista líder en la zona. Calidad premium y compromiso en cada entrega para tu comercio.
-                    </p>
-                </div>
-                <div class="space-y-4">
-                    <h3 class="text-[var(--text-main)] font-black uppercase text-xs tracking-widest border-l-4 border-orange-500 pl-3">Contacto</h3>
-                    <ul class="space-y-3 text-sm text-[var(--text-muted)] font-bold">
-                        <li><i class="fab fa-whatsapp text-green-500 mr-2"></i> +54 9 2920 248292</li>
-                        <li><i class="fas fa-map-marker-alt text-red-500 mr-2"></i> Viedma / Patagones</li>
-                        <li><i class="fas fa-clock text-orange-500 mr-2"></i> Cierre: 12:30hs</li>
-                    </ul>
-                </div>
-                <div class="space-y-4">
-                    <h3 class="text-[var(--text-main)] font-black uppercase text-xs tracking-widest border-l-4 border-orange-500 pl-3">Horarios</h3>
-                    <p class="text-sm text-[var(--text-muted)] font-bold">Martes a Sábados</p>
-                    <p class="text-xs text-[var(--text-muted)]">Atención continua y repartos diarios coordinados.</p>
-                </div>
-            </div>
-            <div class="pt-8 border-t border-[var(--border-color)] text-center">
-                <p class="text-[9px] font-black uppercase tracking-[0.3em] text-[var(--text-muted)]">
-                    © 2026 DISTRIBUIDORA EL URU - TODOS LOS DERECHOS RESERVADOS
-                </p>
-            </div>
-        </div>
-    </footer>
-
     <div id="cart" style="display:none;" class="fixed inset-0 bg-black/60 backdrop-blur-md z-[200] flex justify-end">
         <div class="bg-[var(--bg-main)] w-full max-w-md h-full flex flex-col shadow-2xl border-l border-[var(--border-color)]">
             <div class="p-5 border-b border-[var(--border-color)] flex justify-between items-center">
@@ -293,11 +268,30 @@
         </div>
     </div>
 
+    <div id="modal-carga" style="display:none;" class="fixed inset-0 bg-black/90 backdrop-blur-xl z-[300] flex items-center justify-center p-4">
+        <div class="bg-[var(--bg-main)] w-full max-w-2xl rounded-[2.5rem] border border-orange-500/30 overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="p-6 border-b border-orange-500/20 flex justify-between items-center bg-orange-600/10">
+                <div>
+                    <h2 class="text-xl font-black text-orange-500 uppercase italic">Planilla de Carga</h2>
+                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Resumen de bultos para el camión</p>
+                </div>
+                <button onclick="document.getElementById('modal-carga').style.display='none'" class="text-3xl text-gray-500">×</button>
+            </div>
+            <div id="lista-carga-content" class="p-6 overflow-y-auto"></div>
+            <div class="p-4 bg-orange-600">
+                <button onclick="window.print()" class="w-full text-white font-black uppercase text-sm">
+                    <i class="fas fa-print mr-2"></i> Imprimir o Guardar PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const TSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQEemzCvTezcjzZhIUIRIayZ7U81xgssl9G1Vr6Odx7dHGHOARY0iJ-VOL43E17qLVkiIRb0LTurcZU/pub?output=tsv';
         const MIN_COMPRA = 25000;
         let data = [], cart = {}, activeCat = 'TODOS', soloFavs = false;
         let favoritos = JSON.parse(localStorage.getItem('uru_favs')) || [];
+        let pressTimer;
 
         function toggleTheme() {
             document.body.classList.toggle('light-mode');
@@ -310,23 +304,9 @@
             if(localStorage.getItem('uru_theme') === 'light') toggleTheme();
             document.getElementById('user-name').value = localStorage.getItem('uru_name') || '';
             document.getElementById('user-address').value = localStorage.getItem('uru_address') || '';
-            
-            const catScroll = document.getElementById('category-filters');
-            catScroll.addEventListener('wheel', (e) => {
-                if (e.deltaY !== 0) {
-                    e.preventDefault();
-                    catScroll.scrollLeft += e.deltaY;
-                }
-            });
-
             update(); load();
             setInterval(verificarHorarioCierre, 60000); 
         };
-
-        function saveUserData() {
-            localStorage.setItem('uru_name', document.getElementById('user-name').value);
-            localStorage.setItem('uru_address', document.getElementById('user-address').value);
-        }
 
         async function load() {
             try {
@@ -343,13 +323,43 @@
                         img: (c[3]||'').trim(),
                         stock: parseInt(c[4]) || 0,
                         sugerido: (c[5]||'').trim(),
-                        pack_cantidad: parseInt(c[6]) || 0, // Nueva Columna G
-                        pack_precio: parseInt(c[7]) || 0    // Nueva Columna H
+                        pack_cantidad: parseInt(c[6]) || 0,
+                        pack_precio: parseInt(c[7]) || 0 
                     };
                 }).filter(p => p.nom !== "");
                 renderCats(); render();
                 verificarHorarioCierre();
             } catch (e) { console.error(e); }
+        }
+
+        // Lógica de Pulsación Larga para Administrador
+        function startPress() { pressTimer = window.setTimeout(generarListaCarga, 2000); }
+        function cancelPress() { clearTimeout(pressTimer); }
+
+        function generarListaCarga() {
+            if (Object.keys(cart).length === 0) return Swal.fire('Carrito Vacío', 'No hay productos para cargar.', 'info');
+            
+            let html = `<table class="w-full text-left border-collapse">
+                <thead><tr class="text-orange-500 text-[10px] uppercase border-b border-white/10">
+                    <th class="py-2">Producto</th><th class="py-2 text-center">Unid.</th><th class="py-2 text-center">Carga</th>
+                </tr></thead><tbody class="text-sm">`;
+
+            Object.entries(cart).forEach(([id, q]) => {
+                const p = data[id];
+                const packs = p.pack_cantidad > 0 ? Math.floor(q / p.pack_cantidad) : 0;
+                const sueltos = p.pack_cantidad > 0 ? q % p.pack_cantidad : q;
+                html += `<tr class="border-b border-white/5">
+                    <td class="py-3 font-bold uppercase text-[11px]">${p.nom}</td>
+                    <td class="py-3 text-center font-black text-orange-500">${q}</td>
+                    <td class="py-3 text-center">
+                        ${packs > 0 ? `<span class="bg-green-600 text-white px-2 py-1 rounded text-[10px]">${packs} PACKS</span>` : ''}
+                        ${sueltos > 0 ? `<span class="bg-gray-700 text-white px-2 py-1 rounded text-[10px] ml-1">${sueltos} UN.</span>` : ''}
+                    </td>
+                </tr>`;
+            });
+            html += `</tbody></table>`;
+            document.getElementById('lista-carga-content').innerHTML = html;
+            document.getElementById('modal-carga').style.display = 'flex';
         }
 
         function renderCats() {
@@ -371,53 +381,33 @@
                 const agotado = p.stock <= 0;
                 const esOferta = !agotado && p.pre.toString().endsWith('99');
                 const esNuevo = !agotado && p.pre.toString().endsWith('1');
-                const tienePack = p.pack_cantidad > 0;
                 
-                return `
-                    <div class="card-prod p-5 rounded-[2.5rem] flex flex-col relative ${qty > 0 ? 'ring-2 ring-orange-500' : ''} ${agotado ? 'agotado' : ''}">
-                        ${agotado ? '<div class="badge-agotado">AGOTADO</div>' : 
-                          (esNuevo ? '<div class="badge-nuevo">NUEVO ✨</div>' : 
-                          (esOferta ? '<div class="badge-oferta">OFERTA 🔥</div>' : ''))}
-                        
-                        <span class="absolute top-16 left-6 text-[8px] bg-black/10 text-orange-500 px-2 py-1 rounded-md font-black uppercase">${p.cat}</span>
-                        <button onclick="toggleFav(${p.id})" class="absolute top-6 left-6 z-10 text-xl ${favoritos.includes(p.id) ? 'text-red-600' : 'text-gray-400'}"><i class="fas fa-heart"></i></button>
-                        <div class="img-container h-44 mb-5 flex items-center justify-center p-5">
-                            <img src="${p.img}" class="max-h-full object-contain" onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'">
-                        </div>
-                        <h3 class="text-[11px] font-black uppercase h-8 text-[var(--text-muted)] italic leading-tight">${p.nom}</h3>
-                        
-                        <p class="price-tag mt-3 italic">${agotado ? 'SIN STOCK' : '$' + p.pre.toLocaleString()}</p>
-                        
-                        ${tienePack && !agotado ? `<p class="text-[9px] text-green-500 font-bold uppercase mt-1">Llevando ${p.pack_cantidad}u. pagás $${p.pack_precio.toLocaleString()} c/u</p>` : ''}
-
-                        <div class="mt-5">
-                            ${agotado ? `<button disabled class="w-full bg-gray-300 py-5 rounded-2xl font-black text-[10px] text-gray-500">Agotado</button>` :
-                            (qty === 0 ? `<button onclick="add(${p.id},1)" class="w-full bg-orange-600 py-5 rounded-2xl font-black text-[10px] text-white">Agregar</button>` :
-                            `<div class="flex items-center bg-orange-600 rounded-2xl p-1 shadow-2xl">
-                                <button onclick="add(${p.id},-1)" class="w-14 h-12 text-white text-2xl font-black">－</button>
-                                <span class="flex-1 text-center font-black text-white">${qty}</span>
-                                <button onclick="add(${p.id},1)" class="w-14 h-12 text-white text-2xl font-black">＋</button>
-                            </div>`)}
-                        </div>
-                    </div>`;
+                return `<div class="card-prod p-5 rounded-[2.5rem] flex flex-col relative ${qty > 0 ? 'ring-2 ring-orange-500' : ''} ${agotado ? 'agotado' : ''}">
+                    ${agotado ? '<div class="badge-agotado">AGOTADO</div>' : (esNuevo ? '<div class="badge-nuevo">NUEVO ✨</div>' : (esOferta ? '<div class="badge-oferta">OFERTA 🔥</div>' : ''))}
+                    <button onclick="toggleFav(${p.id})" class="absolute top-6 left-6 z-10 text-xl ${favoritos.includes(p.id) ? 'text-red-600' : 'text-gray-400'}"><i class="fas fa-heart"></i></button>
+                    <div class="img-container h-44 mb-5 flex items-center justify-center p-5"><img src="${p.img}" class="max-h-full object-contain" onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'"></div>
+                    <h3 class="text-[11px] font-black uppercase h-8 text-[var(--text-muted)] italic leading-tight">${p.nom}</h3>
+                    <p class="price-tag mt-3 italic">${agotado ? 'SIN STOCK' : '$' + p.pre.toLocaleString()}</p>
+                    ${p.pack_cantidad > 0 && !agotado ? `<p class="text-[9px] text-green-500 font-bold uppercase mt-1">Llevando ${p.pack_cantidad}u. pagás $${p.pack_precio.toLocaleString()} c/u</p>` : ''}
+                    <div class="mt-5">
+                        ${agotado ? `<button disabled class="w-full bg-gray-300 py-5 rounded-2xl font-black text-[10px] text-gray-500">Agotado</button>` :
+                        (qty === 0 ? `<button onclick="add(${p.id},1)" class="w-full bg-orange-600 py-5 rounded-2xl font-black text-[10px] text-white">Agregar</button>` :
+                        `<div class="flex items-center bg-orange-600 rounded-2xl p-1 shadow-2xl">
+                            <button onclick="add(${p.id},-1)" class="w-14 h-12 text-white text-2xl font-black">－</button>
+                            <span class="flex-1 text-center font-black text-white">${qty}</span>
+                            <button onclick="add(${p.id},1)" class="w-14 h-12 text-white text-2xl font-black">＋</button>
+                        </div>`)}
+                    </div>
+                </div>`;
             }).join('');
         }
 
         window.add = (id, n) => { 
             const p = data[id];
-            
-            if (n > 0 && (cart[id] || 0) >= p.stock) {
-                Swal.fire({ title: 'Stock Limitado', text: 'No hay más unidades disponibles.', icon: 'warning', confirmButtonColor: '#ff6b00' });
-                return;
-            }
-
+            if (n > 0 && (cart[id] || 0) >= p.stock) return Swal.fire('Stock Limitado', 'No hay más unidades.', 'warning');
             cart[id] = Math.max(0, (cart[id] || 0) + n); 
             if (cart[id] === 0) delete cart[id]; 
-            
-            if (n > 0 && cart[id] === 1 && p.sugerido) {
-                verificarSugerencia(p.sugerido);
-            }
-
+            if (n > 0 && cart[id] === 1 && p.sugerido) verificarSugerencia(p.sugerido);
             update(); render();
         };
 
@@ -425,137 +415,63 @@
             const sug = data.find(p => p.nom === nombreSugerido);
             if (sug && sug.stock > 0 && !cart[sug.id]) {
                 Swal.fire({
-                    title: '¡No te olvides!',
-                    text: `¿Querés sumar ${nombreSugerido} a tu pedido?`,
-                    imageUrl: sug.img,
-                    imageHeight: 100,
-                    showCancelButton: true,
-                    confirmButtonText: '¡Sí, sumar!',
-                    cancelButtonText: 'No, gracias',
-                    confirmButtonColor: '#ff6b00'
-                }).then((result) => {
-                    if (result.isConfirmed) { add(sug.id, 1); }
-                });
+                    title: '¡No te olvides!', text: `¿Querés sumar ${nombreSugerido}?`, imageUrl: sug.img, imageHeight: 100,
+                    showCancelButton: true, confirmButtonText: '¡Sí!', confirmButtonColor: '#ff6b00'
+                }).then(r => { if (r.isConfirmed) add(sug.id, 1); });
             }
-        }
-
-        function verificarHorarioCierre() {
-            const ahora = new Date();
-            const totalMinutos = (ahora.getHours() * 60) + ahora.getMinutes();
-            const cierreMinutos = (12 * 60) + 30; 
-
-            const btnW = document.getElementById('btn-whatsapp');
-            const textoCierre = document.getElementById('cierre-texto');
-
-            if (totalMinutos >= cierreMinutos) {
-                if(textoCierre) textoCierre.innerHTML = "⚠️ Cierre alcanzado. Tu pedido se entregará MAÑANA";
-                btnW.dataset.entrega = "MAÑANA";
-            } else {
-                if(textoCierre) textoCierre.innerHTML = "Hacé tu pedido ahora y recibilo hoy";
-                btnW.dataset.entrega = "HOY";
-            }
-        }
-
-        function vaciarCarrito() {
-            if (confirm('¿Vaciar carrito?')) { cart = {}; update(); render(); }
         }
 
         function update() {
             let t = 0, c = 0, html = '';
             Object.entries(cart).forEach(([id, q]) => {
                 const p = data[id]; 
-                
-                // Lógica de Descuento por Pack
-                let precioAplicado = p.pre;
-                let tieneDescuento = false;
-                if (p.pack_cantidad > 0 && q >= p.pack_cantidad) {
-                    precioAplicado = p.pack_precio;
-                    tieneDescuento = true;
-                }
-
-                const subtotal = precioAplicado * q;
-                t += subtotal; 
-                c += q;
-
-                html += `
-                <div class="flex items-center gap-3 bg-[var(--input-bg)] p-3 rounded-2xl border border-[var(--border-color)] mb-2">
-                    <div class="w-16 h-16 bg-white rounded-xl p-1 flex items-center justify-center shrink-0">
-                         <img src="${p.img}" class="max-w-full max-h-full object-contain">
-                    </div>
+                let pre = (p.pack_cantidad > 0 && q >= p.pack_cantidad) ? p.pack_precio : p.pre;
+                const sub = pre * q; t += sub; c += q;
+                html += `<div class="flex items-center gap-3 bg-[var(--input-bg)] p-3 rounded-2xl border border-[var(--border-color)] mb-2">
+                    <div class="w-16 h-16 bg-white rounded-xl p-1 flex items-center justify-center shrink-0"><img src="${p.img}" class="max-h-full object-contain"></div>
                     <div class="flex-1 min-w-0">
                         <h4 class="font-bold text-[10px] uppercase truncate text-[var(--text-muted)]">${p.nom}</h4>
-                        <p class="text-orange-500 font-black text-base">
-                            $${subtotal.toLocaleString()}
-                            ${tieneDescuento ? '<span class="text-[8px] bg-green-600 text-white px-1 rounded ml-1">PRECIO PACK</span>' : ''}
-                        </p>
+                        <p class="text-orange-500 font-black text-base">$${sub.toLocaleString()} ${pre === p.pack_precio ? '<span class="text-[8px] bg-green-600 text-white px-1 rounded ml-1">PACK</span>' : ''}</p>
                     </div>
-                    <div class="flex flex-col items-end shrink-0">
-                        <span class="text-xs font-black bg-orange-600 text-white px-2 py-0.5 rounded-md">x${q}</span>
-                        <button onclick="add(${id},-${q})" class="text-red-500 text-sm p-1"><i class="fas fa-trash-alt"></i></button>
-                    </div>
+                    <div class="flex flex-col items-end shrink-0"><span class="text-xs font-black bg-orange-600 text-white px-2 py-0.5 rounded-md">x${q}</span></div>
                 </div>`;
             });
             document.getElementById('cart-items').innerHTML = html || '<div class="text-center py-20 opacity-20"><p>Carrito Vacío</p></div>';
             document.getElementById('total').innerText = t.toLocaleString();
             document.getElementById('count').innerText = c;
-            
             const perc = Math.min(100, (t / MIN_COMPRA) * 100);
             document.getElementById('min-purchase-fill').style.width = perc + '%';
-            
             const btnW = document.getElementById('btn-whatsapp');
-            const minTxt = document.getElementById('min-text');
-            
-            if (t < MIN_COMPRA) {
-                btnW.disabled = true;
-                btnW.className = "w-full bg-gray-400 text-white py-4 rounded-2xl font-black text-lg opacity-50 cursor-not-allowed";
-                minTxt.innerHTML = `Faltan <span class="text-orange-600">$${(MIN_COMPRA - t).toLocaleString()}</span> para el mínimo`;
-            } else {
-                btnW.disabled = false;
-                btnW.className = "w-full bg-green-600 text-white py-4 rounded-2xl font-black text-lg animate-pulse active:scale-95 transition-all shadow-xl";
-                minTxt.innerHTML = `<span class="text-green-500">✅ PEDIDO MÍNIMO ALCANZADO</span>`;
-            }
+            btnW.disabled = t < MIN_COMPRA;
+            btnW.className = t < MIN_COMPRA ? "w-full bg-gray-400 text-white py-4 rounded-2xl font-black text-lg opacity-50" : "w-full bg-green-600 text-white py-4 rounded-2xl font-black text-lg animate-pulse";
+            document.getElementById('min-text').innerHTML = t < MIN_COMPRA ? `Faltan <span class="text-orange-600">$${(MIN_COMPRA - t).toLocaleString()}</span>` : `<span class="text-green-500">✅ MÍNIMO ALCANZADO</span>`;
         }
 
-        function toggleFav(id) { 
-            if (favoritos.includes(id)) favoritos = favoritos.filter(f => f !== id); 
-            else favoritos.push(id); 
-            localStorage.setItem('uru_favs', JSON.stringify(favoritos)); 
-            render(); 
+        function verificarHorarioCierre() {
+            const h = new Date().getHours(), m = new Date().getMinutes();
+            const esCierre = (h * 60 + m) >= (12 * 60 + 30);
+            document.getElementById('cierre-texto').innerHTML = esCierre ? "⚠️ Entrega MAÑANA" : "Hacé tu pedido ahora y recibilo hoy";
+            document.getElementById('btn-whatsapp').dataset.entrega = esCierre ? "MAÑANA" : "HOY";
         }
-
-        function verFavoritos() { soloFavs = !soloFavs; document.getElementById('btn-favs').classList.toggle('text-red-500', soloFavs); render(); }
 
         function enviarPedido() {
-            const n = document.getElementById('user-name').value;
-            const a = document.getElementById('user-address').value;
-            const entrega = document.getElementById('btn-whatsapp').dataset.entrega || "HOY";
-
-            if (!n || !a) return Swal.fire('Faltan Datos', 'Por favor completá nombre y dirección.', 'warning');
-            
+            const n = document.getElementById('user-name').value, a = document.getElementById('user-address').value;
+            if (!n || !a) return Swal.fire('Faltan Datos', 'Completá nombre y dirección.', 'warning');
             confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
-
-            let m = "*NUEVO PEDIDO - EL URU*%0A";
-            m += "👤 *Comercio:* " + n + "%0A";
-            m += "📍 *Dirección:* " + a + "%0A";
-            m += "🕒 *Entrega:* " + entrega + "%0A%0A";
-            m += "------------------------------%0A";
-            
+            let m = `*NUEVO PEDIDO - EL URU*%0A👤 *Comercio:* ${n}%0A📍 *Dirección:* ${a}%0A🕒 *Entrega:* ${document.getElementById('btn-whatsapp').dataset.entrega}%0A%0A`;
             Object.entries(cart).forEach(([id, q]) => {
                 const p = data[id];
-                let pre = p.pre;
-                if (p.pack_cantidad > 0 && q >= p.pack_cantidad) pre = p.pack_precio;
-                m += "🔸 *" + q + "* x " + p.nom + " ($" + pre.toLocaleString() + " c/u)%0A";
+                let pre = (p.pack_cantidad > 0 && q >= p.pack_cantidad) ? p.pack_precio : p.pre;
+                m += `🔸 *${q}* x ${p.nom} ($${pre.toLocaleString()} c/u)%0A`;
             });
-            
-            m += "------------------------------%0A";
-            m += "💰 *TOTAL: $" + document.getElementById('total').innerText + "*%0A%0A";
-            m += "🏦 *DATOS PAGO:*%0A";
-            m += "Alias: EL.URU.DISTRI%0A";
-            m += "*(Por favor, enviá el comprobante)*";
-
+            m += `%0A💰 *TOTAL: $${document.getElementById('total').innerText}*%0A🏦 Alias: EL.URU.DISTRI`;
             setTimeout(() => window.open("https://wa.me/5492920248292?text=" + m), 800);
         }
 
+        function toggleFav(id) { if (favoritos.includes(id)) favoritos = favoritos.filter(f => f !== id); else favoritos.push(id); localStorage.setItem('uru_favs', JSON.stringify(favoritos)); render(); }
+        function verFavoritos() { soloFavs = !soloFavs; document.getElementById('btn-favs').classList.toggle('text-red-500', soloFavs); render(); }
+        function saveUserData() { localStorage.setItem('uru_name', document.getElementById('user-name').value); localStorage.setItem('uru_address', document.getElementById('user-address').value); }
+        function vaciarCarrito() { if (confirm('¿Vaciar?')) { cart = {}; update(); render(); } }
         window.onscroll = () => { document.getElementById('go-up').style.display = window.scrollY > 800 ? 'block' : 'none'; };
     </script>
 </body>
