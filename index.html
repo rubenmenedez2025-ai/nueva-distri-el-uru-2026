@@ -309,8 +309,8 @@
                     <span class="text-orange-500 text-3xl font-black italic">$<span id="total">0</span></span>
                 </div>
                 
-                <button id="btn-whatsapp" onclick="enviarPedido()" class="w-full bg-orange-600 text-white py-4 rounded-2xl font-black text-lg active:scale-95 transition-all shadow-xl">
-                    ENVIAR POR WHATSAPP
+                <button id="btn-whatsapp" onclick="enviarPedido(); generarFactura();" class="w-full bg-orange-600 text-white py-4 rounded-2xl font-black text-lg active:scale-95 transition-all shadow-xl">
+                    ENVIAR Y FACTURAR
                 </button>
                 <button onclick="vaciarCarrito()" class="w-full text-red-500 text-[10px] font-black uppercase tracking-widest py-1">
                     <i class="fas fa-trash-alt mr-2"></i> Vaciar carrito
@@ -629,7 +629,97 @@
             window.open("https://wa.me/5492920248292?text=" + m);
         }
 
-        /* FUNCIONES DE LOGÍSTICA INTEGRADAS */
+        /* FUNCIÓN DE FACTURACIÓN (GENERACIÓN DE TICKET) */
+        function generarFactura() {
+            const nombre = document.getElementById('user-name').value;
+            const direccion = document.getElementById('user-address').value;
+            const total = document.getElementById('total').innerText;
+            const fecha = new Date().toLocaleDateString();
+
+            if (!nombre || Object.keys(cart).length === 0) return;
+
+            let itemsHtml = '';
+            Object.entries(cart).forEach(([id, q]) => {
+                const p = data[id];
+                let precio = p.pre;
+                if (p.pack_cantidad > 0 && q >= p.pack_cantidad) precio = p.pack_precio;
+                itemsHtml += `
+                    <tr>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;">${q} x ${p.nom}</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right; font-size: 13px;">$${precio.toLocaleString()}</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right; font-size: 13px; font-weight: bold;">$${(precio * q).toLocaleString()}</td>
+                    </tr>
+                `;
+            });
+
+            const ventanaImpresion = window.open('', '', 'height=600,width=800');
+            ventanaImpresion.document.write(`
+                <html>
+                <head>
+                    <title>Factura - ${nombre}</title>
+                    <style>
+                        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; color: #333; line-height: 1.6; }
+                        .header { text-align: center; border-bottom: 3px solid #ff6b00; padding-bottom: 20px; margin-bottom: 30px; }
+                        .header h1 { margin: 0; color: #ff6b00; font-style: italic; text-transform: uppercase; letter-spacing: -1px; }
+                        .info { margin-bottom: 30px; display: flex; justify-content: space-between; font-size: 14px; }
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+                        th { background: #f8f8f8; padding: 12px; text-align: left; font-size: 12px; text-transform: uppercase; color: #666; }
+                        .total-box { background: #fdf2e9; padding: 20px; border-radius: 10px; text-align: right; }
+                        .total-box span { display: block; }
+                        .total-label { font-size: 14px; font-weight: bold; color: #888; text-transform: uppercase; }
+                        .total-value { font-size: 32px; font-weight: 900; color: #ff6b00; }
+                        .footer { margin-top: 50px; text-align: center; font-size: 11px; color: #aaa; border-top: 1px solid #eee; padding-top: 20px; }
+                        @media print { .no-print { display: none; } }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>Distribuidora El Uru</h1>
+                        <p>Viedma y Patagones | Pedidos: +54 9 2920 248292</p>
+                    </div>
+                    <div class="info">
+                        <div>
+                            <p><strong>CLIENTE:</strong> ${nombre.toUpperCase()}</p>
+                            <p><strong>DIRECCIÓN:</strong> ${direccion}</p>
+                        </div>
+                        <div style="text-align: right;">
+                            <p><strong>FECHA:</strong> ${fecha}</p>
+                            <p><strong>TICKET ID:</strong> #UR-${Date.now().toString().slice(-6)}</p>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Descripción del Producto</th>
+                                <th style="text-align: right;">Unitario</th>
+                                <th style="text-align: right;">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${itemsHtml}
+                        </tbody>
+                    </table>
+                    <div class="total-box">
+                        <span class="total-label">Total Neto a Pagar</span>
+                        <span class="total-value">$${total}</span>
+                    </div>
+                    <div class="footer">
+                        <p>Este documento es un comprobante de preventa para control interno y logística.</p>
+                        <p>¡Gracias por confiar en Distribuidora El Uru!</p>
+                    </div>
+                    <script>
+                        setTimeout(() => { 
+                            window.print(); 
+                            window.close(); 
+                        }, 800);
+                    <\/script>
+                </body>
+                </html>
+            `);
+            ventanaImpresion.document.close();
+        }
+
+        /* FUNCIONES DE LOGÍSTICA */
         function abrirLogistica() {
             const hoy = new Date();
             document.getElementById('fecha-logistica').innerText = hoy.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
