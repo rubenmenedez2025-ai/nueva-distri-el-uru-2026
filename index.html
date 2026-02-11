@@ -19,6 +19,7 @@
             --text-muted: #888;
             --border-color: rgba(255, 255, 255, 0.05);
             --input-bg: #151515;
+            --footer-bg: #050505;
         }
 
         body.light-mode {
@@ -28,6 +29,7 @@
             --text-muted: #4b5563;
             --border-color: rgba(0, 0, 0, 0.1);
             --input-bg: #ffffff;
+            --footer-bg: #e5e7eb;
         }
 
         body { 
@@ -58,20 +60,17 @@
             box-shadow: 0 15px 35px rgba(255, 107, 0, 0.15); 
         }
         
-        /* Skeleton Loading */
-        .skeleton {
-            background: linear-gradient(90deg, var(--input-bg) 25%, var(--border-color) 50%, var(--input-bg) 75%);
-            background-size: 200% 100%;
-            animation: skeleton-loading 1.5s infinite;
-        }
-        @keyframes skeleton-loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
         /* Badges */
         .badge-oferta {
             position: absolute; top: 15px; right: -10px; background: #ff0000; color: white;
             font-weight: 900; font-size: 10px; padding: 5px 15px; transform: rotate(15deg);
             box-shadow: 0 5px 15px rgba(255,0,0,0.4); z-index: 20; border-radius: 5px;
             animation: pulse-red 2s infinite;
+        }
+        .badge-nuevo {
+            position: absolute; top: 15px; right: -10px; background: #0066ff; color: white;
+            font-weight: 900; font-size: 10px; padding: 5px 15px; transform: rotate(15deg);
+            box-shadow: 0 5px 15px rgba(0,102,255,0.4); z-index: 20; border-radius: 5px;
         }
         .badge-agotado {
             position: absolute; top: 15px; right: -10px; background: #333; color: #888;
@@ -99,27 +98,23 @@
             100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
         }
 
-        /* Imagen con Fondo Gradiente */
         .img-container { 
             background: var(--input-bg) !important; 
             border-radius: 1.5rem; overflow: hidden; border: 1px solid var(--border-color);
         }
 
-        /* Precios */
         .price-tag { 
             color: #ff6b00;
             font-weight: 900 !important; font-size: 1.7rem;
             filter: drop-shadow(0 0 1px rgba(255, 107, 0, 0.2));
         }
 
-        /* Info Pills */
         .info-pill {
             background: var(--input-bg); border: 1px solid var(--border-color);
             padding: 12px 20px; border-radius: 100px; display: flex; align-items: center;
             gap: 10px; font-size: 11px; font-weight: 800; text-transform: uppercase;
             color: var(--text-muted); white-space: nowrap;
         }
-        .info-pill span { color: var(--text-main); }
 
         .cat-active { background-color: #ff6b00 !important; color: white !important; }
         .cat-badge { background: rgba(0,0,0,0.1); padding: 2px 8px; border-radius: 6px; margin-left: 8px; font-size: 10px; }
@@ -127,12 +122,18 @@
 
         #go-up { display: none; position: fixed; bottom: 24px; right: 24px; z-index: 90; background: #ff6b00; color: white; width: 50px; height: 50px; border-radius: 50%; }
         
-        /* Switch Mode Button */
         .mode-toggle {
             width: 45px; height: 45px; border-radius: 15px; background: var(--input-bg);
             border: 1px solid var(--border-color); color: #ff6b00; display: flex;
             align-items: center; justify-content: center; font-size: 1.2rem; transition: 0.3s;
         }
+
+        .skeleton {
+            background: linear-gradient(90deg, var(--input-bg) 25%, var(--border-color) 50%, var(--input-bg) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+        }
+        @keyframes skeleton-loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
     </style>
 </head>
 <body>
@@ -154,7 +155,7 @@
         </div>
     </div>
 
-    <nav class="bg-white/10 backdrop-blur-2xl sticky top-0 z-50 p-4 border-b border-white/5">
+    <nav class="bg-white/5 backdrop-blur-2xl sticky top-0 z-50 p-4 border-b border-[var(--border-color)]">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-12 h-12 rounded-2xl border border-orange-500 shadow-lg shadow-orange-500/20">
@@ -168,7 +169,6 @@
                 <button onclick="toggleTheme()" class="mode-toggle">
                     <i id="theme-icon" class="fas fa-moon"></i>
                 </button>
-
                 <button onclick="document.getElementById('cart').style.display='flex'" class="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-4 md:px-6 py-3 rounded-2xl font-black shadow-xl flex items-center gap-3 text-xs active:scale-95 transition-all">
                     <div class="relative">
                         <i class="fas fa-shopping-basket text-base"></i>
@@ -217,14 +217,36 @@
         <div class="card-prod p-5 rounded-[2.5rem] flex flex-col opacity-50"><div class="img-container h-44 mb-5 skeleton"></div><div class="h-4 skeleton mb-2"></div><div class="h-8 skeleton"></div></div>
     </main>
 
-    <footer class="pt-20 pb-24 px-8 mt-16 border-t border-[var(--border-color)]">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-16">
-            <div class="space-y-6">
-                <div class="flex items-center gap-4">
-                    <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-16 h-16 rounded-2xl border-2 border-orange-500">
-                    <h2 class="text-3xl font-black italic uppercase text-orange-500">El Uru</h2>
+    <footer class="pt-20 pb-12 px-8 mt-16 bg-[var(--footer-bg)] border-t border-[var(--border-color)]">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+                <div class="space-y-6">
+                    <div class="flex items-center gap-4">
+                        <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-16 h-16 rounded-2xl border-2 border-orange-500 shadow-lg">
+                        <h2 class="text-3xl font-black italic uppercase text-orange-500">El Uru</h2>
+                    </div>
+                    <p class="text-[var(--text-muted)] text-sm font-medium leading-relaxed">
+                        Distribuidora mayorista líder en la zona. Calidad premium y compromiso en cada entrega para tu comercio.
+                    </p>
                 </div>
-                <p class="text-[var(--text-muted)] text-sm font-medium leading-relaxed">Distribuidora mayorista de confianza en Viedma y Patagones.</p>
+                <div class="space-y-4">
+                    <h3 class="text-[var(--text-main)] font-black uppercase text-xs tracking-widest border-l-4 border-orange-500 pl-3">Contacto</h3>
+                    <ul class="space-y-3 text-sm text-[var(--text-muted)] font-bold">
+                        <li><i class="fab fa-whatsapp text-green-500 mr-2"></i> +54 9 2920 248292</li>
+                        <li><i class="fas fa-map-marker-alt text-red-500 mr-2"></i> Viedma / Patagones</li>
+                        <li><i class="fas fa-clock text-orange-500 mr-2"></i> Cierre: 12:30hs</li>
+                    </ul>
+                </div>
+                <div class="space-y-4">
+                    <h3 class="text-[var(--text-main)] font-black uppercase text-xs tracking-widest border-l-4 border-orange-500 pl-3">Horarios</h3>
+                    <p class="text-sm text-[var(--text-muted)] font-bold">Lunes a Sábados</p>
+                    <p class="text-xs text-[var(--text-muted)]">Atención continua y repartos diarios coordinados.</p>
+                </div>
+            </div>
+            <div class="pt-8 border-t border-[var(--border-color)] text-center">
+                <p class="text-[9px] font-black uppercase tracking-[0.3em] text-[var(--text-muted)]">
+                    © 2026 DISTRIBUIDORA EL URU - TODOS LOS DERECHOS RESERVADOS
+                </p>
             </div>
         </div>
     </footer>
@@ -271,7 +293,6 @@
         let data = [], cart = {}, activeCat = 'TODOS', soloFavs = false;
         let favoritos = JSON.parse(localStorage.getItem('uru_favs')) || [];
 
-        // Lógica de Modo Claro/Oscuro
         function toggleTheme() {
             document.body.classList.toggle('light-mode');
             const isLight = document.body.classList.contains('light-mode');
@@ -322,12 +343,19 @@
                 const qty = cart[p.id] || 0;
                 const agotado = p.pre === 0;
                 const esOferta = !agotado && p.pre.toString().endsWith('99');
+                const esNuevo = !agotado && p.pre.toString().endsWith('1');
+                
                 return `
                     <div class="card-prod p-5 rounded-[2.5rem] flex flex-col relative ${qty > 0 ? 'ring-2 ring-orange-500' : ''} ${agotado ? 'grayscale opacity-60' : ''}">
-                        ${agotado ? '<div class="badge-agotado">AGOTADO</div>' : (esOferta ? '<div class="badge-oferta">OFERTA 🔥</div>' : '')}
+                        ${agotado ? '<div class="badge-agotado">AGOTADO</div>' : 
+                          (esNuevo ? '<div class="badge-nuevo">NUEVO ✨</div>' : 
+                          (esOferta ? '<div class="badge-oferta">OFERTA 🔥</div>' : ''))}
+                        
                         <span class="absolute top-16 left-6 text-[8px] bg-black/10 text-orange-500 px-2 py-1 rounded-md font-black uppercase">${p.cat}</span>
                         <button onclick="toggleFav(${p.id})" class="absolute top-6 left-6 z-10 text-xl ${favoritos.includes(p.id) ? 'text-red-600' : 'text-gray-400'}"><i class="fas fa-heart"></i></button>
-                        <div class="img-container h-44 mb-5 flex items-center justify-center p-5"><img src="${p.img}" class="max-h-full object-contain" onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'"></div>
+                        <div class="img-container h-44 mb-5 flex items-center justify-center p-5">
+                            <img src="${p.img}" class="max-h-full object-contain" onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'">
+                        </div>
                         <h3 class="text-[11px] font-black uppercase h-8 text-[var(--text-muted)] italic leading-tight">${p.nom}</h3>
                         <p class="price-tag mt-3 italic">${agotado ? 'SIN STOCK' : '$' + p.pre.toLocaleString()}</p>
                         <div class="mt-5">
