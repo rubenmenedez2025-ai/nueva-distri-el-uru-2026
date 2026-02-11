@@ -167,15 +167,7 @@
             body * { display: none !important; }
             #modal-logistica, #modal-logistica * { display: block !important; }
             .no-print { display: none !important; }
-        }/* Nuevo estilo para el panel de facturación */
-#panel-despacho {
-    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); 
-    z-index: 500; padding: 20px; overflow-y: auto; align-items: center; justify-content: center;
-}
-@media print {
-    body > *:not(#printable-area) { display: none !important; }
-    #printable-area { display: block !important; }
-}
+        }
     </style>
 </head>
 <body>
@@ -196,8 +188,7 @@
             <span>🔥 PRECIOS MAYORISTAS ACTUALIZADOS 2026 🔥</span>
         </div>
     </div>
-
-    <nav class="bg-white/5 backdrop-blur-2xl sticky top-0 z-50 p-4 border-b border-[var(--border-color)]">
+<nav class="bg-white/5 backdrop-blur-2xl sticky top-0 z-50 p-4 border-b border-[var(--border-color)]">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-12 h-12 rounded-2xl border border-orange-500 shadow-lg shadow-orange-500/20">
@@ -208,9 +199,15 @@
             </div>
             
             <div class="flex items-center gap-2">
+                <button onclick="document.getElementById('panel-despacho').style.display='flex'" class="bg-blue-600 hover:bg-blue-500 text-white px-4 md:px-5 py-3 rounded-2xl font-black shadow-xl flex items-center gap-2 text-xs active:scale-95 transition-all">
+                    <i class="fas fa-file-invoice text-base"></i>
+                    <span class="uppercase tracking-widest hidden sm:inline">Facturar</span>
+                </button>
+
                 <button onclick="toggleTheme()" class="mode-toggle">
                     <i id="theme-icon" class="fas fa-moon"></i>
                 </button>
+
                 <button onclick="document.getElementById('cart').style.display='flex'" class="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-4 md:px-6 py-3 rounded-2xl font-black shadow-xl flex items-center gap-3 text-xs active:scale-95 transition-all">
                     <div class="relative">
                         <i class="fas fa-shopping-basket text-base"></i>
@@ -710,21 +707,7 @@
                     <div class="total-box">
                         <span class="total-label">Total Neto a Pagar</span>
                         <span class="total-value">$${total}</span>
-                    </div><div id="panel-despacho" style="display:none; flex-direction: column;">
-    <div class="max-w-2xl w-full bg-[#111] p-8 rounded-[2.5rem] border border-orange-500/30 shadow-2xl">
-        <h2 class="text-2xl font-black text-orange-500 mb-2 italic uppercase">Facturador de WhatsApp</h2>
-        <p class="text-gray-400 mb-6 text-xs font-bold uppercase tracking-widest">Pegá el pedido aquí para imprimir</p>
-        <textarea id="input-whatsapp" class="w-full h-64 bg-black border border-white/10 rounded-2xl p-4 text-white font-mono text-sm mb-6 outline-none focus:border-orange-500" placeholder="Ej: NUEVO PEDIDO - EL URU..."></textarea>
-        <div class="flex gap-4">
-            <button onclick="procesarYFacturar()" class="flex-1 bg-orange-600 text-white py-4 rounded-2xl font-black uppercase hover:bg-orange-500 transition-colors">Generar Ticket</button>
-            <button onclick="document.getElementById('panel-despacho').style.display='none'" class="bg-white/10 text-white px-8 rounded-2xl font-black uppercase hover:bg-white/20">Cerrar</button>
-        </div>
-    </div>
-</div>
-
-<button onclick="document.getElementById('panel-despacho').style.display='flex'" class="fixed bottom-32 right-6 bg-blue-600 text-white w-12 h-12 rounded-full shadow-2xl z-[90] flex items-center justify-center hover:scale-110 transition-transform">
-    <i class="fas fa-file-invoice"></i>
-</button>
+                    </div>
                     <div class="footer">
                         <p>Este documento es un comprobante de preventa para control interno y logística.</p>
                         <p>¡Gracias por confiar en Distribuidora El Uru!</p>
@@ -791,65 +774,7 @@
 
         function cerrarLogistica() {
             document.getElementById('modal-logistica').style.display = 'none';
-        }function procesarYFacturar() {
-    const texto = document.getElementById('input-whatsapp').value;
-    if(!texto) return Swal.fire('Error', 'El campo está vacío', 'error');
-
-    // Extraemos datos del pedido de WhatsApp
-    const comercio = texto.match(/Comercio:\s*(.*)/)?.[1] || "Cliente El Uru";
-    const direccion = texto.match(/Dirección:\s*(.*)/)?.[1] || "-";
-    const fechaEntrega = texto.match(/Entrega:\s*(.*)/)?.[1] || "No especificada";
-    const total = texto.match(/TOTAL:\s*\$(.*)/)?.[1] || "0";
-    
-    // Filtramos las líneas que contienen los productos (buscamos el emoji o el formato 'x')
-    const lineas = texto.split('\n').filter(l => l.includes('🔸') || (l.includes(' x ') && l.includes('$')));
-    
-    let itemsHtml = '';
-    lineas.forEach(l => {
-        const item = l.replace('🔸', '').trim();
-        itemsHtml += `
-            <tr>
-                <td style="padding:10px; border-bottom:1px solid #eee; font-size:14px;">${item}</td>
-            </tr>`;
-    });
-
-    // Crear ventana de impresión profesional
-    const v = window.open('', '', 'height=800,width=700');
-    v.document.write(`
-        <html>
-        <head><title>Factura - Distribuidora El Uru</title></head>
-        <body style="font-family: 'Courier New', Courier, monospace; padding: 30px; color: #000;">
-            <div style="text-align:center; border-bottom:2px dashed #000; padding-bottom:15px; margin-bottom:20px;">
-                <h1 style="margin:0; font-size:24px;">DISTRIBUIDORA EL URU</h1>
-                <p style="margin:5px 0;">Viedma - Río Negro</p>
-                <p style="margin:0; font-size:12px;">Comprobante de Preventa</p>
-            </div>
-            <div style="margin-bottom:20px; font-size:14px;">
-                <p><strong>CLIENTE:</strong> ${comercio.toUpperCase()}</p>
-                <p><strong>DIRECCIÓN:</strong> ${direccion}</p>
-                <p><strong>ENTREGA:</strong> ${fechaEntrega}</p>
-                <p><strong>FECHA EMISIÓN:</strong> ${new Date().toLocaleDateString()}</p>
-            </div>
-            <table width="100%" cellspacing="0" style="margin-bottom:20px;">
-                <thead>
-                    <tr style="border-bottom:1px solid #000;">
-                        <th align="left" style="padding:10px 0;">DESCRIPCIÓN</th>
-                    </tr>
-                </thead>
-                <tbody>${itemsHtml}</tbody>
-            </table>
-            <div style="text-align:right; border-top:2px solid #000; padding-top:10px;">
-                <p style="font-size:20px; font-weight:bold;">TOTAL A PAGAR: $${total}</p>
-            </div>
-            <div style="text-align:center; margin-top:40px; font-size:10px;">
-                <p>*** Gracias por su compra ***</p>
-            </div>
-            <script>setTimeout(() => { window.print(); window.close(); }, 500);<\/script>
-        </body>
-        </html>
-    `);
-    v.document.close();
-}
+        }
     </script>
 </body>
 </html>
