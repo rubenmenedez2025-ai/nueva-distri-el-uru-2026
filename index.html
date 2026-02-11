@@ -4,15 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <title>DISTRI EL URU | Web</title>
+    <title>DISTRI EL URU | Premium</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         
-        body.dark-mode { background-color: #080808; color: #e0e0e0; }
-        body { font-family: 'Inter', sans-serif; transition: background 0.4s ease; scroll-behavior: smooth; overflow-x: hidden; }
+        /* Variables de Color Dinámicas */
+        :root {
+            --bg-main: #080808;
+            --bg-card: linear-gradient(145deg, #161616, #0c0c0c);
+            --text-main: #e0e0e0;
+            --text-muted: #888;
+            --border-color: rgba(255, 255, 255, 0.05);
+            --input-bg: #151515;
+        }
+
+        body.light-mode {
+            --bg-main: #f3f4f6;
+            --bg-card: linear-gradient(145deg, #ffffff, #f9fafb);
+            --text-main: #111827;
+            --text-muted: #4b5563;
+            --border-color: rgba(0, 0, 0, 0.1);
+            --input-bg: #ffffff;
+        }
+
+        body { 
+            background-color: var(--bg-main); 
+            color: var(--text-main); 
+            font-family: 'Inter', sans-serif; 
+            transition: all 0.4s ease; 
+            scroll-behavior: smooth; 
+            overflow-x: hidden; 
+        }
         
         .no-scrollbar::-webkit-scrollbar { display: none; }
 
@@ -23,49 +48,35 @@
         /* Card de Producto */
         .card-prod { 
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-            background: linear-gradient(145deg, #161616, #0c0c0c) !important; 
-            border: 1px solid rgba(255, 107, 0, 0.1) !important; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            background: var(--bg-card) !important; 
+            border: 1px solid var(--border-color) !important; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         .card-prod:hover { 
             transform: translateY(-8px); 
             border-color: #ff6b00 !important; 
-            box-shadow: 0 15px 35px rgba(255, 107, 0, 0.2); 
+            box-shadow: 0 15px 35px rgba(255, 107, 0, 0.15); 
         }
         
-        /* Badge Oferta */
+        /* Skeleton Loading */
+        .skeleton {
+            background: linear-gradient(90deg, var(--input-bg) 25%, var(--border-color) 50%, var(--input-bg) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+        }
+        @keyframes skeleton-loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        /* Badges */
         .badge-oferta {
-            position: absolute;
-            top: 15px;
-            right: -10px;
-            background: #ff0000;
-            color: white;
-            font-weight: 900;
-            font-size: 10px;
-            padding: 5px 15px;
-            transform: rotate(15deg);
-            box-shadow: 0 5px 15px rgba(255,0,0,0.4);
-            z-index: 20;
-            border-radius: 5px;
-            letter-spacing: 1px;
+            position: absolute; top: 15px; right: -10px; background: #ff0000; color: white;
+            font-weight: 900; font-size: 10px; padding: 5px 15px; transform: rotate(15deg);
+            box-shadow: 0 5px 15px rgba(255,0,0,0.4); z-index: 20; border-radius: 5px;
             animation: pulse-red 2s infinite;
         }
-
-        /* Badge Agotado */
         .badge-agotado {
-            position: absolute;
-            top: 15px;
-            right: -10px;
-            background: #333;
-            color: #888;
-            font-weight: 900;
-            font-size: 10px;
-            padding: 5px 15px;
-            transform: rotate(15deg);
-            z-index: 20;
-            border-radius: 5px;
-            letter-spacing: 1px;
-            border: 1px solid #555;
+            position: absolute; top: 15px; right: -10px; background: #333; color: #888;
+            font-weight: 900; font-size: 10px; padding: 5px 15px; transform: rotate(15deg);
+            z-index: 20; border-radius: 5px; border: 1px solid #555;
         }
 
         @keyframes pulse-red {
@@ -74,71 +85,61 @@
             100% { transform: rotate(15deg) scale(1); }
         }
 
-        /* Efecto Burst en Carrito */
-        @keyframes cart-bump {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.5); color: #fff; }
-            100% { transform: scale(1); }
+        /* Botón WhatsApp Flotante */
+        .btn-whatsapp-float {
+            position: fixed; bottom: 24px; left: 24px; width: 60px; height: 60px;
+            background-color: #25d366; color: #fff; border-radius: 50px; text-align: center;
+            font-size: 35px; box-shadow: 2px 2px 10px rgba(0,0,0,0.3); z-index: 100;
+            display: flex; align-items: center; justify-content: center;
+            animation: pulse-green 2s infinite;
         }
-        .bump { animation: cart-bump 0.4s ease-out; }
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
 
         /* Imagen con Fondo Gradiente */
         .img-container { 
-            background: radial-gradient(circle, #222 0%, #000 70%) !important; 
-            border-radius: 1.5rem; 
-            overflow: hidden; 
-            border: 1px solid rgba(255,255,255,0.05);
+            background: var(--input-bg) !important; 
+            border-radius: 1.5rem; overflow: hidden; border: 1px solid var(--border-color);
         }
 
-        /* Precios Impactantes */
+        /* Precios */
         .price-tag { 
-            color: #ffffff; 
-            background: linear-gradient(90deg, #ff6b00, #ff9e00);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 8px rgba(255, 107, 0, 0.5));
-            font-weight: 900 !important; 
-            font-size: 1.7rem;
-            letter-spacing: -1px;
+            color: #ff6b00;
+            font-weight: 900 !important; font-size: 1.7rem;
+            filter: drop-shadow(0 0 1px rgba(255, 107, 0, 0.2));
         }
 
-        /* Barra de Info Sutil */
+        /* Info Pills */
         .info-pill {
-            background: #111;
-            border: 1px solid rgba(255,255,255,0.05);
-            padding: 12px 20px;
-            border-radius: 100px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 11px;
-            font-weight: 800;
-            text-transform: uppercase;
-            color: #888;
-            white-space: nowrap;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            background: var(--input-bg); border: 1px solid var(--border-color);
+            padding: 12px 20px; border-radius: 100px; display: flex; align-items: center;
+            gap: 10px; font-size: 11px; font-weight: 800; text-transform: uppercase;
+            color: var(--text-muted); white-space: nowrap;
         }
-        .info-pill i { font-size: 14px; }
-        .info-pill span { color: #fff; }
+        .info-pill span { color: var(--text-main); }
 
-        /* Categorías y Contadores */
         .cat-active { background-color: #ff6b00 !important; color: white !important; }
-        .cat-badge {
-            background: rgba(0,0,0,0.4);
-            padding: 2px 8px;
-            border-radius: 6px;
-            margin-left: 8px;
-            font-size: 10px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
+        .cat-badge { background: rgba(0,0,0,0.1); padding: 2px 8px; border-radius: 6px; margin-left: 8px; font-size: 10px; }
+        body:not(.light-mode) .cat-badge { background: rgba(255,255,255,0.1); }
 
-        /* Footer Premium */
-        .footer-premium { background: #0f0f0f; border-top: 1px solid #ff6b0033; }
+        #go-up { display: none; position: fixed; bottom: 24px; right: 24px; z-index: 90; background: #ff6b00; color: white; width: 50px; height: 50px; border-radius: 50%; }
         
-        #go-up { display: none; position: fixed; bottom: 100px; right: 24px; z-index: 90; background: #ff6b00; color: white; width: 45px; height: 45px; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        /* Switch Mode Button */
+        .mode-toggle {
+            width: 45px; height: 45px; border-radius: 15px; background: var(--input-bg);
+            border: 1px solid var(--border-color); color: #ff6b00; display: flex;
+            align-items: center; justify-content: center; font-size: 1.2rem; transition: 0.3s;
+        }
     </style>
 </head>
-<body class="dark-mode">
+<body>
+
+    <a href="https://wa.me/5492920248292" target="_blank" class="btn-whatsapp-float">
+        <i class="fab fa-whatsapp"></i>
+    </a>
 
     <button id="go-up" onclick="window.scrollTo(0,0)"><i class="fas fa-chevron-up"></i></button>
 
@@ -153,51 +154,46 @@
         </div>
     </div>
 
-    <nav class="bg-black/90 backdrop-blur-2xl sticky top-0 z-50 p-4 border-b border-white/5">
+    <nav class="bg-white/10 backdrop-blur-2xl sticky top-0 z-50 p-4 border-b border-white/5">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-12 h-12 rounded-2xl border border-orange-500 shadow-lg shadow-orange-500/20">
-                <div>
+                <div class="hidden xs:block">
                     <h1 class="text-2xl font-black italic text-orange-500 uppercase leading-none tracking-tighter">El Uru</h1>
-                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-[0.2em]">WEB</span>
+                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-[0.2em]">Premium System</span>
                 </div>
             </div>
-            <button onclick="document.getElementById('cart').style.display='flex'" class="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-6 py-3 rounded-2xl font-black shadow-xl flex items-center gap-3 text-xs active:scale-95 transition-all">
-                <div class="relative">
-                    <i class="fas fa-shopping-basket text-base"></i>
-                    <span id="count" class="absolute -top-3 -right-3 bg-white text-orange-600 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold">0</span>
-                </div>
-                <span class="uppercase tracking-widest">Pedido</span>
-            </button>
+            
+            <div class="flex items-center gap-2">
+                <button onclick="toggleTheme()" class="mode-toggle">
+                    <i id="theme-icon" class="fas fa-moon"></i>
+                </button>
+
+                <button onclick="document.getElementById('cart').style.display='flex'" class="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-4 md:px-6 py-3 rounded-2xl font-black shadow-xl flex items-center gap-3 text-xs active:scale-95 transition-all">
+                    <div class="relative">
+                        <i class="fas fa-shopping-basket text-base"></i>
+                        <span id="count" class="absolute -top-3 -right-3 bg-white text-orange-600 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold">0</span>
+                    </div>
+                    <span class="uppercase tracking-widest hidden sm:inline">Pedido</span>
+                </button>
+            </div>
         </div>
     </nav>
 
     <section class="px-4 max-w-7xl mx-auto mt-6">
         <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2 mb-6">
-            <div class="info-pill shrink-0">
-                <i class="fas fa-check-circle text-green-500"></i>
-                <div>Envios <span>Sin Cargo</span></div>
-            </div>
-            <div class="info-pill shrink-0">
-                <i class="fas fa-bolt text-orange-500"></i>
-                <div>Ofertas <span>Flash 2026</span></div>
-            </div>
-            <div class="info-pill shrink-0">
-                <i class="fas fa-boxes text-blue-500"></i>
-                <div>Stock <span>Mayorista</span></div>
-            </div>
-             <div class="info-pill shrink-0">
-                <i class="fas fa-map-marker-alt text-red-500"></i>
-                <div>Viedma <span>& Patagones</span></div>
-            </div>
+            <div class="info-pill shrink-0"><i class="fas fa-check-circle text-green-500"></i><div>Reparto <span>Sin Cargo</span></div></div>
+            <div class="info-pill shrink-0"><i class="fas fa-bolt text-orange-500"></i><div>Ofertas <span>Flash 2026</span></div></div>
+            <div class="info-pill shrink-0"><i class="fas fa-boxes text-blue-500"></i><div>Stock <span>Mayorista</span></div></div>
+            <div class="info-pill shrink-0"><i class="fas fa-map-marker-alt text-red-500"></i><div>Viedma <span>& Patagones</span></div></div>
         </div>
 
-        <div class="bg-gradient-to-r from-orange-600 to-red-600 rounded-[2.5rem] p-6 flex flex-col md:flex-row items-center justify-between shadow-2xl shadow-orange-900/40 mb-8 border border-white/10">
-            <div class="flex items-center gap-6">
-                <div class="text-5xl md:text-7xl font-black text-white italic opacity-40 select-none">12:30</div>
-                <div class="text-center md:text-left">
-                    <h2 class="text-2xl md:text-4xl font-black text-white uppercase italic leading-none tracking-tighter">Cierre de Pedidos</h2>
-                    <p class="text-white/90 font-bold uppercase text-[10px] mt-1 tracking-widest">Hacé tu pedido ahora y recibilo hoy</p>
+        <div class="bg-gradient-to-r from-orange-600 to-red-600 rounded-[2.5rem] p-6 flex flex-col md:flex-row items-center justify-between shadow-2xl mb-8 border border-white/10">
+            <div class="flex items-center gap-6 text-white">
+                <div class="text-5xl md:text-7xl font-black italic opacity-40 select-none">12:30</div>
+                <div>
+                    <h2 class="text-2xl md:text-4xl font-black uppercase italic leading-none tracking-tighter">Cierre de Pedidos</h2>
+                    <p class="font-bold uppercase text-[10px] mt-1 tracking-widest">Hacé tu pedido ahora y recibilo hoy</p>
                 </div>
             </div>
         </div>
@@ -206,10 +202,10 @@
     <div class="p-4 max-w-5xl mx-auto space-y-6">
         <div class="relative flex gap-3">
             <div class="relative flex-1">
-                <input type="text" id="search" onkeyup="render()" placeholder="¿Qué estás buscando hoy?" class="w-full p-6 pl-14 rounded-3xl bg-[#151515] text-white font-bold border border-white/5 outline-none focus:ring-2 focus:ring-orange-500 transition-all">
+                <input type="text" id="search" onkeyup="render()" placeholder="¿Qué estás buscando hoy?" class="w-full p-6 pl-14 rounded-3xl bg-[var(--input-bg)] text-[var(--text-main)] font-bold border border-[var(--border-color)] outline-none focus:ring-2 focus:ring-orange-500">
                 <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 text-orange-500 text-xl"></i>
             </div>
-            <button onclick="verFavoritos()" id="btn-favs" class="bg-[#151515] px-6 rounded-3xl text-gray-500 border border-white/5 hover:text-red-500 transition-all">
+            <button onclick="verFavoritos()" id="btn-favs" class="bg-[var(--input-bg)] px-6 rounded-3xl text-gray-500 border border-[var(--border-color)] hover:text-red-500 transition-all">
                 <i class="fas fa-heart text-2xl"></i>
             </button>
         </div>
@@ -217,69 +213,52 @@
     </div>
 
     <main id="catalogo" class="p-4 max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-24">
+        <div class="card-prod p-5 rounded-[2.5rem] flex flex-col opacity-50"><div class="img-container h-44 mb-5 skeleton"></div><div class="h-4 skeleton mb-2"></div><div class="h-8 skeleton"></div></div>
+        <div class="card-prod p-5 rounded-[2.5rem] flex flex-col opacity-50"><div class="img-container h-44 mb-5 skeleton"></div><div class="h-4 skeleton mb-2"></div><div class="h-8 skeleton"></div></div>
     </main>
 
-    <footer class="footer-premium pt-20 pb-24 px-8 mt-16">
+    <footer class="pt-20 pb-24 px-8 mt-16 border-t border-[var(--border-color)]">
         <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-16">
             <div class="space-y-6">
                 <div class="flex items-center gap-4">
                     <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-16 h-16 rounded-2xl border-2 border-orange-500">
                     <h2 class="text-3xl font-black italic uppercase text-orange-500">El Uru</h2>
                 </div>
-                <p class="text-gray-500 text-sm font-medium leading-relaxed max-w-xs">Distribuidora mayorista de confianza en Viedma y Patagones.</p>
-                <div class="flex gap-4">
-                    <a href="#" class="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-orange-500 border border-white/10"><i class="fab fa-instagram text-2xl"></i></a>
-                    <a href="#" class="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-orange-500 border border-white/10"><i class="fab fa-facebook-f text-2xl"></i></a>
-                </div>
-            </div>
-            <div class="space-y-8">
-                <h3 class="text-white font-black uppercase text-xs tracking-[0.4em] border-l-4 border-orange-500 pl-4">Información VIP</h3>
-                <ul class="space-y-5 text-sm text-gray-400 font-bold uppercase">
-                    <li><i class="fas fa-truck-loading text-orange-500 mr-3"></i> Envio Sin Cargo</li>
-                    <li><i class="fas fa-hourglass-half text-orange-500 mr-3"></i> Cierre: 12:30hs</li>
-                    <li><i class="fas fa-map-marked-alt text-orange-500 mr-3"></i> Viedma y Patagones</li>
-                </ul>
-            </div>
-            <div class="space-y-6">
-                <h3 class="text-white font-black uppercase text-xs tracking-[0.4em] border-l-4 border-orange-500 pl-4">Viedma Rio Negro</h3>
-                <div class="h-48 rounded-[2rem] overflow-hidden border border-white/10 opacity-70">
-                    <iframe src="http://googleusercontent.com/maps.google.com/9" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-                </div>
+                <p class="text-[var(--text-muted)] text-sm font-medium leading-relaxed">Distribuidora mayorista de confianza en Viedma y Patagones.</p>
             </div>
         </div>
     </footer>
 
-    <div id="cart" style="display:none;" class="fixed inset-0 bg-black/95 backdrop-blur-2xl z-[200] flex justify-end">
-        <div class="bg-[#0c0c0c] w-full max-w-md h-full flex flex-col shadow-2xl border-l border-white/5">
-            
-            <div class="p-5 border-b border-white/5 flex justify-between items-center bg-black">
+    <div id="cart" style="display:none;" class="fixed inset-0 bg-black/60 backdrop-blur-md z-[200] flex justify-end">
+        <div class="bg-[var(--bg-main)] w-full max-w-md h-full flex flex-col shadow-2xl border-l border-[var(--border-color)]">
+            <div class="p-5 border-b border-[var(--border-color)] flex justify-between items-center">
                 <div>
                     <h2 class="text-2xl font-black uppercase italic text-orange-500">Mi Carrito</h2>
-                    <p class="text-[10px] text-gray-500 font-black uppercase mt-1 tracking-widest">Mínimo: $25.000</p>
+                    <p class="text-[10px] text-[var(--text-muted)] font-black uppercase tracking-widest">Mínimo: $25.000</p>
                 </div>
-                <button onclick="document.getElementById('cart').style.display='none'" class="text-4xl text-gray-700 hover:text-white">×</button>
+                <button onclick="document.getElementById('cart').style.display='none'" class="text-4xl text-gray-500 hover:text-orange-500">×</button>
             </div>
 
-            <div id="cart-items" class="flex-1 overflow-y-auto p-4 space-y-3 bg-black/40"></div>
+            <div id="cart-items" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
 
-            <div class="p-5 bg-[#0a0a0a] border-t border-white/10 space-y-3">
-                <div id="min-warning" class="bg-white/5 p-3 rounded-2xl border border-white/5">
-                    <p id="min-text" class="text-[10px] font-black uppercase text-center mb-2 text-gray-400"></p>
-                    <div class="h-1.5 bg-white/5 rounded-full overflow-hidden"><div id="min-purchase-fill" class="h-full bg-orange-600 transition-all duration-700"></div></div>
+            <div class="p-5 bg-[var(--input-bg)] border-t border-[var(--border-color)] space-y-3">
+                <div id="min-warning" class="bg-black/5 p-3 rounded-2xl border border-[var(--border-color)]">
+                    <p id="min-text" class="text-[10px] font-black uppercase text-center mb-2 text-[var(--text-muted)]"></p>
+                    <div class="h-1.5 bg-gray-300 rounded-full overflow-hidden"><div id="min-purchase-fill" class="h-full bg-orange-600 transition-all duration-700"></div></div>
                 </div>
                 
-                <input type="text" id="user-name" oninput="saveUserData()" placeholder="Nombre del Comercio" class="w-full p-3 rounded-xl bg-[#1a1a1a] text-white font-bold border border-white/10 outline-none focus:border-orange-500 text-sm">
-                <input type="text" id="user-address" oninput="saveUserData()" placeholder="Dirección de Entrega" class="w-full p-3 rounded-xl bg-[#1a1a1a] text-white font-bold border border-white/10 outline-none focus:border-orange-500 text-sm">
+                <input type="text" id="user-name" oninput="saveUserData()" placeholder="Nombre del Comercio" class="w-full p-3 rounded-xl bg-[var(--bg-main)] text-[var(--text-main)] font-bold border border-[var(--border-color)] text-sm">
+                <input type="text" id="user-address" oninput="saveUserData()" placeholder="Dirección de Entrega" class="w-full p-3 rounded-xl bg-[var(--bg-main)] text-[var(--text-main)] font-bold border border-[var(--border-color)] text-sm">
                 
                 <div class="flex justify-between items-center px-1">
-                    <span class="text-gray-500 font-black uppercase text-xs">Total:</span>
+                    <span class="text-[var(--text-muted)] font-black uppercase text-xs">Total:</span>
                     <span class="text-orange-500 text-3xl font-black italic">$<span id="total">0</span></span>
                 </div>
                 
                 <button id="btn-whatsapp" onclick="enviarPedido()" class="w-full bg-orange-600 text-white py-4 rounded-2xl font-black text-lg active:scale-95 transition-all shadow-xl">
                     ENVIAR POR WHATSAPP
                 </button>
-                <button onclick="vaciarCarrito()" class="w-full text-red-500 text-[10px] font-black uppercase tracking-widest hover:text-red-400 transition-colors py-1">
+                <button onclick="vaciarCarrito()" class="w-full text-red-500 text-[10px] font-black uppercase tracking-widest py-1">
                     <i class="fas fa-trash-alt mr-2"></i> Vaciar carrito
                 </button>
             </div>
@@ -292,11 +271,19 @@
         let data = [], cart = {}, activeCat = 'TODOS', soloFavs = false;
         let favoritos = JSON.parse(localStorage.getItem('uru_favs')) || [];
 
+        // Lógica de Modo Claro/Oscuro
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('uru_theme', isLight ? 'light' : 'dark');
+            document.getElementById('theme-icon').className = isLight ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
         window.onload = () => {
+            if(localStorage.getItem('uru_theme') === 'light') toggleTheme();
             document.getElementById('user-name').value = localStorage.getItem('uru_name') || '';
             document.getElementById('user-address').value = localStorage.getItem('uru_address') || '';
-            update();
-            load();
+            update(); load();
         };
 
         function saveUserData() {
@@ -322,7 +309,7 @@
             const cats = ['TODOS', ...uniqueCats];
             document.getElementById('category-filters').innerHTML = cats.map(c => {
                 const count = c === 'TODOS' ? data.length : data.filter(p => p.cat === c).length;
-                return `<button onclick="activeCat='${c}'; renderCats(); render();" class="shrink-0 px-7 py-4 rounded-full bg-[#151515] text-[10px] font-black uppercase text-gray-500 transition-all flex items-center shadow-lg ${activeCat === c ? 'cat-active' : ''}">${c} <span class="cat-badge">${count}</span></button>`;
+                return `<button onclick="activeCat='${c}'; renderCats(); render();" class="shrink-0 px-7 py-4 rounded-full bg-[var(--input-bg)] text-[10px] font-black uppercase text-[var(--text-muted)] border border-[var(--border-color)] ${activeCat === c ? 'cat-active' : ''}">${c} <span class="cat-badge">${count}</span></button>`;
             }).join('');
         }
 
@@ -335,35 +322,22 @@
                 const qty = cart[p.id] || 0;
                 const agotado = p.pre === 0;
                 const esOferta = !agotado && p.pre.toString().endsWith('99');
-                const claseAgotado = agotado ? 'grayscale opacity-60' : '';
-
                 return `
-                    <div class="card-prod p-5 rounded-[2.5rem] flex flex-col relative ${qty > 0 ? 'ring-2 ring-orange-500' : ''} ${claseAgotado}">
+                    <div class="card-prod p-5 rounded-[2.5rem] flex flex-col relative ${qty > 0 ? 'ring-2 ring-orange-500' : ''} ${agotado ? 'grayscale opacity-60' : ''}">
                         ${agotado ? '<div class="badge-agotado">AGOTADO</div>' : (esOferta ? '<div class="badge-oferta">OFERTA 🔥</div>' : '')}
-                        
-                        <button onclick="toggleFav(${p.id})" class="absolute top-6 left-6 z-10 text-xl ${favoritos.includes(p.id) ? 'text-red-600' : 'text-gray-800'}" ${agotado ? 'disabled' : ''}>
-                            <i class="fas fa-heart"></i>
-                        </button>
-                        
-                        <div class="img-container h-44 mb-5 flex items-center justify-center p-5">
-                            <img src="${p.img}" class="max-h-full object-contain" onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'">
-                        </div>
-                        
-                        <h3 class="text-[11px] font-black uppercase h-8 overflow-hidden text-gray-400 italic leading-tight">${p.nom}</h3>
+                        <span class="absolute top-16 left-6 text-[8px] bg-black/10 text-orange-500 px-2 py-1 rounded-md font-black uppercase">${p.cat}</span>
+                        <button onclick="toggleFav(${p.id})" class="absolute top-6 left-6 z-10 text-xl ${favoritos.includes(p.id) ? 'text-red-600' : 'text-gray-400'}"><i class="fas fa-heart"></i></button>
+                        <div class="img-container h-44 mb-5 flex items-center justify-center p-5"><img src="${p.img}" class="max-h-full object-contain" onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'"></div>
+                        <h3 class="text-[11px] font-black uppercase h-8 text-[var(--text-muted)] italic leading-tight">${p.nom}</h3>
                         <p class="price-tag mt-3 italic">${agotado ? 'SIN STOCK' : '$' + p.pre.toLocaleString()}</p>
-                        
                         <div class="mt-5">
-                            ${agotado ? 
-                                `<button disabled class="w-full bg-gray-800 py-5 rounded-2xl font-black text-[10px] uppercase text-gray-500 cursor-not-allowed">No Disponible</button>` :
-                                (qty === 0 ? 
-                                    `<button onclick="add(${p.id},1)" class="w-full bg-orange-600 py-5 rounded-2xl font-black text-[10px] uppercase text-white shadow-xl hover:bg-orange-500 active:bg-white active:text-orange-600 transition-all">Agregar al pedido</button>` :
-                                    `<div class="flex items-center bg-orange-600 rounded-2xl p-1 shadow-2xl">
-                                        <button onclick="add(${p.id},-1)" class="w-14 h-12 flex items-center justify-center text-white text-2xl font-black">－</button>
-                                        <span class="flex-1 text-center font-black text-white text-base">${qty}</span>
-                                        <button onclick="add(${p.id},1)" class="w-14 h-12 flex items-center justify-center text-white text-2xl font-black">＋</button>
-                                    </div>`
-                                )
-                            }
+                            ${agotado ? `<button disabled class="w-full bg-gray-300 py-5 rounded-2xl font-black text-[10px] text-gray-500">No Disponible</button>` :
+                            (qty === 0 ? `<button onclick="add(${p.id},1)" class="w-full bg-orange-600 py-5 rounded-2xl font-black text-[10px] text-white">Agregar</button>` :
+                            `<div class="flex items-center bg-orange-600 rounded-2xl p-1 shadow-2xl">
+                                <button onclick="add(${p.id},-1)" class="w-14 h-12 text-white text-2xl font-black">－</button>
+                                <span class="flex-1 text-center font-black text-white">${qty}</span>
+                                <button onclick="add(${p.id},1)" class="w-14 h-12 text-white text-2xl font-black">＋</button>
+                            </div>`)}
                         </div>
                     </div>`;
             }).join('');
@@ -372,57 +346,44 @@
         window.add = (id, n) => { 
             cart[id] = Math.max(0, (cart[id] || 0) + n); 
             if (cart[id] === 0) delete cart[id]; 
-            
-            const cartBtn = document.getElementById('count');
-            cartBtn.classList.remove('bump');
-            void cartBtn.offsetWidth; 
-            cartBtn.classList.add('bump');
-            
             update(); render();
         };
 
         function vaciarCarrito() {
-            if (Object.keys(cart).length === 0) return;
-            if (confirm('¿Estás seguro de que quieres eliminar todos los productos del carrito?')) {
-                cart = {};
-                update();
-                render();
-            }
+            if (confirm('¿Vaciar carrito?')) { cart = {}; update(); render(); }
         }
 
         function update() {
             let t = 0, c = 0, html = '';
             Object.entries(cart).forEach(([id, q]) => {
                 const p = data[id]; t += p.pre * q; c += q;
-                // MEJORA VISUAL DEL PRODUCTO EN CARRITO: MÁS CLARO Y GRANDE
                 html += `
-                <div class="flex items-center gap-3 bg-[#222] p-3 rounded-2xl text-white border border-white/10 shadow-md mb-2 shrink-0">
-                    <div class="w-16 h-16 bg-white rounded-xl p-1 flex items-center justify-center shrink-0 border border-white/10">
-                         <img src="${p.img}" class="max-w-full max-h-full object-contain" onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'">
+                <div class="flex items-center gap-3 bg-[var(--input-bg)] p-3 rounded-2xl border border-[var(--border-color)] mb-2">
+                    <div class="w-16 h-16 bg-white rounded-xl p-1 flex items-center justify-center shrink-0">
+                         <img src="${p.img}" class="max-w-full max-h-full object-contain">
                     </div>
                     <div class="flex-1 min-w-0">
-                        <h4 class="font-bold text-xs text-white uppercase truncate leading-tight mb-1">${p.nom}</h4>
+                        <h4 class="font-bold text-xs uppercase truncate mb-1 text-[var(--text-main)]">${p.nom}</h4>
                         <p class="text-orange-500 font-black text-base">$${(p.pre * q).toLocaleString()}</p>
-                        <div class="text-[9px] text-gray-400 font-bold uppercase">$${p.pre.toLocaleString()} c/u</div>
                     </div>
-                    <div class="flex flex-col items-end gap-2 shrink-0 pl-2">
+                    <div class="flex flex-col items-end shrink-0">
                         <span class="text-xs font-black bg-orange-600 text-white px-2 py-0.5 rounded-md">x${q}</span>
-                        <button onclick="add(${id},-${q})" class="text-red-500 hover:text-red-400 text-sm p-1"><i class="fas fa-trash-alt"></i></button>
+                        <button onclick="add(${id},-${q})" class="text-red-500 text-sm p-1"><i class="fas fa-trash-alt"></i></button>
                     </div>
                 </div>`;
             });
-            document.getElementById('cart-items').innerHTML = html || '<div class="text-center py-20 opacity-20"><i class="fas fa-shopping-basket text-6xl mb-4"></i><p class="text-xs font-black uppercase tracking-widest">Carrito Vacío</p></div>';
+            document.getElementById('cart-items').innerHTML = html || '<div class="text-center py-20 opacity-20"><p>Carrito Vacío</p></div>';
             document.getElementById('total').innerText = t.toLocaleString();
             document.getElementById('count').innerText = c;
             const perc = Math.min(100, (t / MIN_COMPRA) * 100);
-            if(document.getElementById('min-purchase-fill')) document.getElementById('min-purchase-fill').style.width = perc + '%';
+            document.getElementById('min-purchase-fill').style.width = perc + '%';
             const btnW = document.getElementById('btn-whatsapp');
             const minTxt = document.getElementById('min-text');
             if (t < MIN_COMPRA) {
-                btnW.className = "w-full bg-gray-800 text-gray-500 py-4 rounded-2xl font-black text-lg pointer-events-none opacity-50";
-                minTxt.innerHTML = `Faltan <span class="text-white">$${(MIN_COMPRA - t).toLocaleString()}</span> para el pedido mínimo`;
+                btnW.className = "w-full bg-gray-400 text-white py-4 rounded-2xl font-black text-lg pointer-events-none opacity-50";
+                minTxt.innerHTML = `Faltan <span class="text-orange-600">$${(MIN_COMPRA - t).toLocaleString()}</span> para el mínimo`;
             } else {
-                btnW.className = "w-full bg-green-600 text-white py-4 rounded-2xl font-black text-lg active:scale-95 transition-all shadow-[0_10px_30px_rgba(22,163,74,0.4)] animate-pulse";
+                btnW.className = "w-full bg-green-600 text-white py-4 rounded-2xl font-black text-lg animate-pulse";
                 minTxt.innerHTML = `<span class="text-green-500">✅ PEDIDO MÍNIMO ALCANZADO</span>`;
             }
         }
@@ -434,18 +395,14 @@
             render(); 
         }
 
-        function verFavoritos() { 
-            soloFavs = !soloFavs; 
-            document.getElementById('btn-favs').classList.toggle('text-red-500', soloFavs); 
-            render(); 
-        }
+        function verFavoritos() { soloFavs = !soloFavs; document.getElementById('btn-favs').classList.toggle('text-red-500', soloFavs); render(); }
 
         function enviarPedido() {
             const n = document.getElementById('user-name').value;
             const a = document.getElementById('user-address').value;
-            if (!n || !a) return alert("Por favor, completa los datos de entrega.");
-            confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 }, colors: ['#ff6b00', '#ffffff', '#ff9e00'] });
-            let m = "*NUEVO PEDIDO - DISTRI EL URU*%0A👤 *Comercio:* " + n + "%0A📍 *Dirección:* " + a + "%0A%0A";
+            if (!n || !a) return alert("Completa tus datos de entrega.");
+            confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
+            let m = "*NUEVO PEDIDO - EL URU*%0A👤 *Comercio:* " + n + "%0A📍 *Dirección:* " + a + "%0A%0A";
             Object.entries(cart).forEach(([id, q]) => m += "🔸 *" + q + "* x " + data[id].nom + "%0A");
             m += "%0A💰 *TOTAL: $" + document.getElementById('total').innerText + "*";
             setTimeout(() => window.open("https://wa.me/5492920248292?text=" + m), 800);
