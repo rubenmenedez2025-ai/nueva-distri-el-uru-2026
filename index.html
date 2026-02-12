@@ -189,35 +189,145 @@
         </div>
     </div>
 <nav class="bg-white/5 backdrop-blur-2xl sticky top-0 z-50 p-4 border-b border-[var(--border-color)]">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-12 h-12 rounded-2xl border border-orange-500 shadow-lg shadow-orange-500/20">
-                <div class="block"> 
-                    <h1 class="text-lg md:text-2xl font-black italic text-orange-500 uppercase leading-none tracking-tighter">Distribuidora El Uru</h1>
-                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-[0.2em]">Viedma y Patagones</span>
-                </div>
-            </div>
-            
-            <div class="flex items-center gap-2">
-                <button onclick="document.getElementById('panel-despacho').style.display='flex'" class="bg-blue-600 hover:bg-blue-500 text-white px-4 md:px-5 py-3 rounded-2xl font-black shadow-xl flex items-center gap-2 text-xs active:scale-95 transition-all">
-                    <i class="fas fa-file-invoice text-base"></i>
-                    <span class="uppercase tracking-widest hidden sm:inline">Facturar</span>
-                </button>
-
-                <button onclick="toggleTheme()" class="mode-toggle">
-                    <i id="theme-icon" class="fas fa-moon"></i>
-                </button>
-
-                <button onclick="document.getElementById('cart').style.display='flex'" class="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-4 md:px-6 py-3 rounded-2xl font-black shadow-xl flex items-center gap-3 text-xs active:scale-95 transition-all">
-                    <div class="relative">
-                        <i class="fas fa-shopping-basket text-base"></i>
-                        <span id="count" class="absolute -top-3 -right-3 bg-white text-orange-600 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold">0</span>
-                    </div>
-                    <span class="uppercase tracking-widest hidden sm:inline">Pedido</span>
-                </button>
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+        
+        <div class="flex items-center gap-3">
+            <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-12 h-12 rounded-2xl border border-orange-500 shadow-lg shadow-orange-500/20">
+            <div class="block"> 
+                <h1 class="text-lg md:text-2xl font-black italic text-orange-500 uppercase leading-none tracking-tighter">Distribuidora El Uru</h1>
+                <span class="text-[9px] text-gray-500 font-bold uppercase tracking-[0.2em]">Viedma y Patagones</span>
             </div>
         </div>
-    </nav>
+        
+        <div class="flex items-center gap-2">
+            
+            <button id="boton-admin" onclick="document.getElementById('panel-despacho').style.display='flex'" style="display:none;" class="bg-blue-600 hover:bg-blue-500 text-white px-4 md:px-5 py-3 rounded-2xl font-black shadow-xl flex items-center gap-2 text-xs active:scale-95 transition-all">
+                <i class="fas fa-file-invoice text-base"></i>
+                <span class="uppercase tracking-widest hidden sm:inline">Facturar</span>
+            </button>
+
+            <button ondblclick="accesoAdmin()" onclick="toggleTheme()" class="mode-toggle">
+                <i id="theme-icon" class="fas fa-moon"></i>
+            </button>
+
+            <button onclick="document.getElementById('cart').style.display='flex'" class="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-4 md:px-6 py-3 rounded-2xl font-black shadow-xl flex items-center gap-3 text-xs active:scale-95 transition-all">
+                <div class="relative">
+                    <i class="fas fa-shopping-basket text-base"></i>
+                    <span id="count" class="absolute -top-3 -right-3 bg-white text-orange-600 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold">0</span>
+                </div>
+                <span class="uppercase tracking-widest hidden sm:inline">Pedido</span>
+            </button>
+
+        </div>
+    </div>
+<nav class="bg-white/5 backdrop-blur-2xl sticky top-0 z-50 p-4 border-b border-[var(--border-color)]">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-12 h-12 rounded-2xl border border-orange-500">
+            <div class="block"> 
+                <h1 class="text-lg md:text-2xl font-black italic text-orange-500 uppercase leading-none tracking-tighter">Distribuidora El Uru</h1>
+                <span class="text-[9px] text-gray-500 font-bold uppercase tracking-[0.2em]">Viedma y Patagones</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <button id="boton-admin" onclick="document.getElementById('panel-despacho').style.display='flex'" style="display:none;" class="bg-blue-600 text-white px-4 py-3 rounded-2xl font-black shadow-xl flex items-center gap-2 text-xs">
+                <i class="fas fa-file-invoice"></i>
+                <span class="hidden sm:inline">FACTURAR</span>
+            </button>
+            <button ondblclick="accesoAdmin()" onclick="toggleTheme()" class="mode-toggle">
+                <i id="theme-icon" class="fas fa-moon"></i>
+            </button>
+            <button onclick="document.getElementById('cart').style.display='flex'" class="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-4 py-3 rounded-2xl font-black flex items-center gap-3 text-xs">
+                <div class="relative">
+                    <i class="fas fa-shopping-basket"></i>
+                    <span id="count" class="absolute -top-3 -right-3 bg-white text-orange-600 w-5 h-5 rounded-full flex items-center justify-center text-[10px]">0</span>
+                </div>
+                <span class="hidden sm:inline uppercase">Pedido</span>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<div id="panel-despacho" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:9999; align-items:center; justify-content:center; padding:20px;">
+    <div class="bg-[#111] p-6 rounded-[2rem] border border-orange-500 w-full max-w-xl">
+        <h2 class="text-orange-500 font-black mb-4 uppercase italic">Facturador WhatsApp</h2>
+        <textarea id="input-whatsapp" class="w-full h-64 bg-black border border-white/10 rounded-xl p-4 text-white text-sm mb-4" placeholder="Pegá el pedido de WhatsApp acá..."></textarea>
+        <div class="flex gap-2">
+            <button onclick="procesarYFacturar()" class="flex-1 bg-orange-600 text-white py-4 rounded-xl font-black uppercase"><button onclick="ejecutarFactura()" class="flex-1 bg-orange-600 text-white py-4 rounded-xl font-black uppercase shadow-lg active:scale-95 transition-all">
+    Generar Ticket
+</button>
+        </div>
+    </div>
+</div>
+
+<script>
+function accesoAdmin() {
+    Swal.fire({
+        title: 'Acceso Admin',
+        input: 'password',
+        confirmButtonText: 'Entrar',
+        confirmButtonColor: '#2563eb'
+    }).then((result) => {
+        if (result.value === 'uru2026') { 
+            document.getElementById('boton-admin').style.display = 'flex';
+            Swal.fire('Habilitado', '', 'success');
+        }
+    });
+}
+
+function procesarYFacturar() {
+    const texto = document.getElementById('input-whatsapp').value;
+    if(!texto) return Swal.fire('Error', 'Pegá el pedido primero', 'error');
+
+    const comercio = texto.match(/Comercio:\s*(.*)/)?.[1] || "Cliente El Uru";
+    const direccion = texto.match(/Dirección:\s*(.*)/)?.[1] || "-";
+    const total = texto.match(/TOTAL:\s*\$(.*)/)?.[1] || "0";
+    const lineas = texto.split('\n').filter(l => l.includes('🔸') || l.includes('🔥') || (l.includes(' x ') && l.includes('$')));
+    
+    let itemsHtml = '';
+    lineas.forEach(l => {
+        itemsHtml += `<tr><td style="padding:8px 0; border-bottom:1px dashed #ccc; font-family: monospace;">${l.replace(/[🔸🔥]/g, '').trim()}</td></tr>`;
+    });
+
+    // CREAMOS EL CONTENIDO DEL TICKET
+    const ticketHtml = `
+        <div id="ticket-imprimir" style="background:white; color:black; padding:20px; font-family:monospace; width:100%; max-width:400px; margin:0 auto; text-align:left;">
+            <div style="text-align:center; border-bottom:2px solid #000; margin-bottom:10px; padding-bottom:10px;">
+                <h2 style="margin:0;">EL URU DISTRIBUIDORA</h2>
+                <p style="margin:0; font-size:12px;">Viedma y Patagones</p>
+            </div>
+            <p style="font-size:12px; margin:5px 0;"><strong>CLIENTE:</strong> ${comercio}</p>
+            <p style="font-size:12px; margin:5px 0;"><strong>DIR:</strong> ${direccion}</p>
+            <p style="font-size:12px; margin:5px 0;"><strong>FECHA:</strong> ${new Date().toLocaleDateString()}</p>
+            <table width="100%" style="margin:10px 0; border-collapse:collapse;">${itemsHtml}</table>
+            <h2 style="text-align:right; margin-top:10px; border-top:2px solid #000;">TOTAL: $${total}</h2>
+            <p style="text-align:center; font-size:10px; margin-top:20px;">*** COMPROBANTE NO VÁLIDO COMO FACTURA ***</p>
+        </div>
+    `;
+
+    // MOSTRAR PREVISUALIZACIÓN ANTES DE IMPRIMIR
+    Swal.fire({
+        title: 'Previsualización del Ticket',
+        html: ticketHtml,
+        showCancelButton: true,
+        confirmButtonText: 'Imprimir / Guardar PDF',
+        cancelButtonText: 'Corregir',
+        confirmButtonColor: '#2563eb',
+        width: '450px'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const v = window.open('', '_blank');
+            v.document.write(`<html><head><title>Ticket_${comercio.replace(/\s+/g, '_')}</title></head><body style="margin:0;">${ticketHtml}</body></html>`);
+            v.document.close();
+            
+            // Pequeño delay para asegurar que el contenido cargue antes de pedir el PDF
+            setTimeout(() => {
+                v.print();
+            }, 500);
+        }
+    });
+}
+</script>
 
     <section class="px-4 max-w-7xl mx-auto mt-6">
         <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2 mb-6">
@@ -399,29 +509,39 @@
             localStorage.setItem('uru_address', document.getElementById('user-address').value);
         }
 
-        async function load() {
-            try {
-                const res = await fetch(TSV + '&t=' + Date.now());
-                const text = await res.text();
-                const lines = text.split(/\r?\n/).slice(1);
-                data = lines.map((l, i) => {
-                    const c = l.split('\t');
-                    return { 
-                        id: i, 
-                        nom: (c[0]||'').trim(), 
-                        pre: parseInt((c[1]||'').replace(/\D/g,'')) || 0, 
-                        cat: (c[2]||'VARIOS').trim().toUpperCase(), 
-                        img: (c[3]||'').trim(),
-                        stock: parseInt(c[4]) || 0,
-                        sugerido: (c[5]||'').trim(),
-                        pack_cantidad: parseInt(c[6]) || 0,
-                        pack_precio: parseInt(c[7]) || 0    
-                    };
-                }).filter(p => p.nom !== "");
-                renderCats(); render();
-                verificarHorarioCierre();
-            } catch (e) { console.error(e); }
-        }
+        // --- EMPEZÁ A BORRAR DESDE ACÁ ---// --- TERMINÁ DE BORRAR EN ESTA LLAVE ---async function load() {
+    try {
+        const res = await fetch(TSV + '&t=' + Date.now());
+        const text = await res.text();
+        const lines = text.split(/\r?\n/).slice(1);
+        
+        data = lines.map((l, i) => {
+            const c = l.split('\t');
+            
+            // LIMPIEZA: Quitamos símbolos pero mantenemos el número real
+            const precioRaw = (c[1] || '').replace(/[$\s]/g, '').replace(',', '.');
+            const precioFinal = Math.floor(Number(precioRaw)) || 0;
+
+            return { 
+                id: i, 
+                nom: (c[0]||'').trim(), 
+                pre: precioFinal, 
+                cat: (c[2]||'VARIOS').trim().toUpperCase(), 
+                img: (c[3]||'').trim(),
+                stock: precioFinal > 0 ? 999 : 0,
+                sugerido: (c[5]||'').trim(),
+                pack_cantidad: parseInt(c[6]) || 0,
+                pack_precio: parseInt(c[7]) || 0    
+            };
+        }).filter(p => p.nom !== "");
+
+        renderCats(); 
+        render();
+        verificarHorarioCierre();
+    } catch (e) { 
+        console.error("Error cargando productos:", e); 
+    }
+}
 
         function renderCats() {
             const uniqueCats = [...new Set(data.map(p => p.cat))];
@@ -433,63 +553,72 @@
         }
 
         function render() {
-            const q = document.getElementById('search').value.toLowerCase();
-            let filtered = data.filter(p => (activeCat === 'TODOS' || p.cat === activeCat) && p.nom.toLowerCase().includes(q));
-            if(soloFavs) filtered = filtered.filter(p => favoritos.includes(p.id));
+    const q = document.getElementById('search').value.toLowerCase();
+    let filtered = data.filter(p => (activeCat === 'TODOS' || p.cat === activeCat) && p.nom.toLowerCase().includes(q));
+    if(soloFavs) filtered = filtered.filter(p => favoritos.includes(p.id));
 
-            document.getElementById('catalogo').innerHTML = filtered.map(p => {
-                const qty = cart[p.id] || 0;
-                const agotado = p.stock <= 0;
-                const esOferta = !agotado && p.pre.toString().endsWith('99');
-                const esNuevo = !agotado && p.pre.toString().endsWith('1');
-                const tienePack = p.pack_cantidad > 0;
+    document.getElementById('catalogo').innerHTML = filtered.map(p => {
+        const qty = cart[p.id] || 0;
+        
+        // REGLA DE ORO: Si el precio es 0, está agotado
+        const agotado = p.pre <= 0;
+        
+        const tienePack = p.pack_cantidad > 0;
+        const esOferta = !agotado && p.pre.toString().endsWith('99');
+        const esNuevo = !agotado && p.pre.toString().endsWith('1');
+
+        return `
+            <div class="product-card relative bg-[var(--card-bg)] p-6 rounded-[2.5rem] border border-[var(--border-color)] transition-all ${agotado ? 'opacity-70' : ''}">
                 
-                return `
-                    <div class="card-prod p-5 rounded-[2.5rem] flex flex-col relative ${qty > 0 ? 'ring-2 ring-orange-500' : ''} ${agotado ? 'agotado' : ''}">
-                        ${agotado ? '<div class="badge-agotado">AGOTADO</div>' : 
-                          (esNuevo ? '<div class="badge-nuevo">NUEVO ✨</div>' : 
-                          (esOferta ? '<div class="badge-oferta">OFERTA 🔥</div>' : ''))}
-                        
-                        <span class="absolute top-16 left-6 text-[8px] bg-black/10 text-orange-500 px-2 py-1 rounded-md font-black uppercase">${p.cat}</span>
-                        <button onclick="toggleFav(${p.id})" class="absolute top-6 left-6 z-10 text-xl ${favoritos.includes(p.id) ? 'text-red-600' : 'text-gray-400'}"><i class="fas fa-heart"></i></button>
-                        
-                        <div class="img-container h-44 mb-5 flex items-center justify-center p-5">
-                            <div class="img-loader skeleton" id="loader-${p.id}"></div>
-                            <img src="${p.img}" class="max-h-full object-contain" 
-                                 onload="document.getElementById('loader-${p.id}').style.display='none'"
-                                 onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg';document.getElementById('loader-${p.id}').style.display='none'">
+                ${agotado ? '<div class="absolute top-6 right-6 z-10 bg-red-600 text-white text-[10px] font-black px-3 py-1 rounded-lg">AGOTADO</div>' : ''}
+                ${esOferta ? '<div class="absolute top-6 right-6 z-10 bg-orange-500 text-white text-[10px] font-black px-3 py-1 rounded-lg">OFERTA</div>' : ''}
+                ${esNuevo ? '<div class="absolute top-6 right-6 z-10 bg-blue-500 text-white text-[10px] font-black px-3 py-1 rounded-lg">NUEVO</div>' : ''}
+
+                <span class="absolute top-16 left-6 text-[8px] bg-black/10 text-orange-500 px-2 py-1 rounded-md font-black uppercase">${p.cat}</span>
+                <button onclick="toggleFav(${p.id})" class="absolute top-6 left-6 z-10 text-xl ${favoritos.includes(p.id) ? 'text-red-600' : 'text-gray-400'}">
+                    <i class="fas fa-heart"></i>
+                </button>
+                
+                <div class="img-container h-44 mb-5 flex items-center justify-center p-5">
+                    <div class="img-loader skeleton" id="loader-${p.id}"></div>
+                    <img src="${p.img}" class="max-h-full object-contain ${agotado ? 'grayscale' : ''}" 
+                         onload="document.getElementById('loader-${p.id}').style.display='none'"
+                         onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg';document.getElementById('loader-${p.id}').style.display='none'">
+                </div>
+
+                <h3 class="text-[11px] font-black uppercase h-8 text-[var(--text-muted)] italic leading-tight">${p.nom}</h3>
+                <p class="price-tag mt-3 italic">${agotado ? 'CONSULTAR' : '$' + p.pre.toLocaleString()}</p>
+                
+                ${tienePack && !agotado ? `<p class="text-[9px] text-green-500 font-bold uppercase mt-1">Llevando ${p.pack_cantidad}u. pagás $${p.pack_precio.toLocaleString()} c/u</p>` : ''}
+
+                <div class="mt-5">
+                    ${agotado ? `
+                        <button disabled class="w-full bg-gray-200 py-5 rounded-2xl font-black text-[10px] text-gray-400 cursor-not-allowed uppercase">Próximamente</button>
+                    ` : (qty === 0 ? `
+                        <button onclick="add(${p.id},1)" class="w-full bg-orange-600 py-5 rounded-2xl font-black text-[10px] text-white shadow-lg active:scale-95 transition-all">AGREGAR</button>
+                    ` : `
+                        <div class="flex items-center bg-orange-600 rounded-2xl p-1 shadow-2xl">
+                            <button onclick="add(${p.id},-1)" class="w-12 h-12 text-white text-2xl font-black">－</button>
+                            <input type="number" value="${qty}" class="qty-input flex-1 bg-transparent text-white text-center font-black border-none focus:ring-0" 
+                                   onchange= window.setQty = (id, val) => {
+    let n = parseInt(val) || 0;
+    // Quitamos la validación de stock máximo porque ahora mandamos nosotros
+    if (n <= 0) {
+        delete cart[id];
+    } else {
+        cart[id] = n;
+    }
+    update(); 
+    render();
+};
+                                   onclick="this.select()">
+                            <button onclick="add(${p.id},1)" class="w-12 h-12 text-white text-2xl font-black">＋</button>
                         </div>
-
-                        <h3 class="text-[11px] font-black uppercase h-8 text-[var(--text-muted)] italic leading-tight">${p.nom}</h3>
-                        <p class="price-tag mt-3 italic">${agotado ? 'SIN STOCK' : '$' + p.pre.toLocaleString()}</p>
-                        ${tienePack && !agotado ? `<p class="text-[9px] text-green-500 font-bold uppercase mt-1">Llevando ${p.pack_cantidad}u. pagás $${p.pack_precio.toLocaleString()} c/u</p>` : ''}
-
-                        <div class="mt-5">
-                            ${agotado ? `<button disabled class="w-full bg-gray-300 py-5 rounded-2xl font-black text-[10px] text-gray-500">Agotado</button>` :
-                            (qty === 0 ? `<button onclick="add(${p.id},1)" class="w-full bg-orange-600 py-5 rounded-2xl font-black text-[10px] text-white">Agregar</button>` :
-                            `<div class="flex items-center bg-orange-600 rounded-2xl p-1 shadow-2xl">
-                                <button onclick="add(${p.id},-1)" class="w-12 h-12 text-white text-2xl font-black">－</button>
-                                <input type="number" value="${qty}" class="qty-input flex-1" 
-                                       onchange="setQty(${p.id}, this.value)" 
-                                       onclick="this.select()">
-                                <button onclick="add(${p.id},1)" class="w-12 h-12 text-white text-2xl font-black">＋</button>
-                            </div>`)}
-                        </div>
-                    </div>`;
-            }).join('');
-        }
-
-        window.setQty = (id, val) => {
-            const p = data[id];
-            let n = parseInt(val) || 0;
-            if (n > p.stock) {
-                n = p.stock;
-                Swal.fire('Stock Máximo', `Solo hay ${p.stock} unidades.`, 'warning');
-            }
-            if (n <= 0) delete cart[id];
-            else cart[id] = n;
-            update(); render();
-        };
+                    `)}
+                </div>
+            </div>`;
+    }).join('');
+}
 
         window.add = (id, n) => { 
             const p = data[id];
@@ -760,33 +889,118 @@
                     <tbody>
             `;
 
-            items.forEach(([id, qty]) => {
-                const prod = data[id];
-                tablaHTML += `
-                    <tr id="fila-log-${id}">
-                        <td class="font-bold border-l-4 border-orange-500 pl-4">
-                            <div class="text-white">${prod.nom}</div>
-                            <div class="text-[10px] text-gray-500">ID: ${id}</div>
-                        </td>
-                        <td class="text-center text-xs text-gray-400">${prod.cat}</td>
-                        <td class="text-center">
-                            <span class="bg-orange-500/20 text-orange-500 px-4 py-2 rounded-lg font-black text-2xl">${qty}</span>
-                        </td>
-                        <td class="text-center no-print">
-                            <input type="checkbox" onchange="document.getElementById('fila-log-${id}').classList.toggle('fila-check')" class="w-6 h-6 accent-orange-500">
-                        </td>
-                    </tr>
-                `;
-            });
+            items.
 
             tablaHTML += `</tbody></table>`;
             document.getElementById('cont-tabla-carga').innerHTML = tablaHTML;
             document.getElementById('modal-logistica').style.display = 'block';
-        }
+        }// Supongamos que 'prod' es el objeto que viene de tu Google Sheets
+const precioOriginal = String(prod.precio || ""); // Convertimos a texto por las dudas
+
+// LIMPIEZA TOTAL: Quitamos espacios, signos de $ y puntos de miles
+let precioLimpio = precioOriginal.replace(/[$\s.]/g, '').replace(',', '.');
+let numeroPrecio = parseFloat(precioLimpio);
+
+let displayPrecio = "";
+let estaAgotado = false;
+
+// VALIDACIÓN REAL
+if (precioOriginal.trim() === "" || isNaN(numeroPrecio) || numeroPrecio <= 0) {
+    // Si el precio está vacío en el Sheets, es AGOTADO
+    estaAgotado = true;
+    displayPrecio = '<span class="text-red-500 font-bold uppercase text-[10px]">Agotado</span>';
+} else {
+    // Si tiene precio, lo mostramos formateado
+    estaAgotado = false;
+    displayPrecio = `$${numeroPrecio.toLocaleString('es-AR')}`;
+}
 
         function cerrarLogistica() {
             document.getElementById('modal-logistica').style.display = 'none';
+        }function accesoAdmin() {
+    Swal.fire({
+        title: 'Acceso Administrador',
+        input: 'password',
+        inputPlaceholder: 'Ingresá tu clave',
+        showCancelButton: true,
+        confirmButtonColor: '#2563eb',
+        confirmButtonText: 'Entrar'
+    }).then((result) => {
+        // ACÁ PODÉS CAMBIAR '1234' POR LA CLAVE QUE VOS QUIERAS
+        if (result.value === 'uru2026') { 
+            document.getElementById('boton-admin').style.display = 'flex';
+            Swal.fire('¡Hola Uru!', 'Botón de facturación habilitado', 'success');
+        } else if (result.value) {
+            Swal.fire('Error', 'Clave incorrecta', 'error');
         }
-    </script>
+    });
+}
+<script>
+function ejecutarFactura() {
+    try {
+        const texto = document.getElementById('input-whatsapp').value;
+        if (!texto) {
+            alert("Por favor, pegá el pedido de WhatsApp primero.");
+            return;
+        }
+
+        // Extraer datos básicos
+        const comercioMatch = texto.match(/Comercio:\s*(.*)/);
+        const direccionMatch = texto.match(/Dirección:\s*(.*)/);
+        const totalMatch = texto.match(/TOTAL:\s*\$(.*)/);
+
+        const comercio = comercioMatch ? comercioMatch[1] : "Cliente El Uru";
+        const direccion = direccionMatch ? direccionMatch[1] : "-";
+        const total = totalMatch ? totalMatch[1] : "0";
+
+        // Filtrar productos
+        const lineas = texto.split('\n').filter(l => l.includes('🔸') || l.includes('🔥') || (l.includes(' x ') && l.includes('$')));
+        
+        let filas = "";
+        lineas.forEach(l => {
+            const limpio = l.replace(/[🔸🔥]/g, '').trim();
+            filas += `<tr><td style="padding:8px 0; border-bottom:1px dashed #ccc; font-family:monospace; font-size:14px;">${limpio}</td></tr>`;
+        });
+
+        // Crear el documento del ticket
+        const contenido = `
+            <html>
+            <head><title>Ticket - ${comercio}</title></head>
+            <body style="font-family:monospace; padding:20px; color:black; background:white;">
+                <div style="text-align:center; border-bottom:2px solid black; padding-bottom:10px; margin-bottom:10px;">
+                    <h2 style="margin:0;">EL URU DISTRIBUIDORA</h2>
+                    <p style="margin:0; font-size:12px;">Viedma y Patagones</p>
+                </div>
+                <p><strong>CLIENTE:</strong> ${comercio}</p>
+                <p><strong>DIRECCIÓN:</strong> ${direccion}</p>
+                <p><strong>FECHA:</strong> ${new Date().toLocaleDateString()}</p>
+                <table width="100%" cellspacing="0">${filas}</table>
+                <h2 style="text-align:right; border-top:2px solid black; margin-top:15px; padding-top:10px;">TOTAL: $${total}</h2>
+                <p style="text-align:center; font-size:10px; margin-top:30px;">*** COMPROBANTE DE PREVENTA ***</p>
+                <script>
+                    window.onload = function() {
+                        window.print();
+                        setTimeout(function() { window.close(); }, 500);
+                    }
+                <\/script>
+            </body>
+            </html>
+        `;
+
+        // Abrir e imprimir
+        const ventana = window.open('', '_blank');
+        if (ventana) {
+            ventana.document.write(contenido);
+            ventana.document.close();
+        } else {
+            alert("El navegador bloqueó la ventana emergente. Por favor, permití los pop-ups para esta página.");
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Hubo un error al generar el ticket. Revisá la consola.");
+    }
+}
+     </script>
+
 </body>
 </html>
