@@ -841,29 +841,31 @@ lineas.forEach(l => {
                     <tbody>
             `;
 
-            items.forEach(([id, qty]) => {
-                const prod = data[id];
-                tablaHTML += `
-                    <tr id="fila-log-${id}">
-                        <td class="font-bold border-l-4 border-orange-500 pl-4">
-                            <div class="text-white">${prod.nom}</div>
-                            <div class="text-[10px] text-gray-500">ID: ${id}</div>
-                        </td>
-                        <td class="text-center text-xs text-gray-400">${prod.cat}</td>
-                        <td class="text-center">
-                            <span class="bg-orange-500/20 text-orange-500 px-4 py-2 rounded-lg font-black text-2xl">${qty}</span>
-                        </td>
-                        <td class="text-center no-print">
-                            <input type="checkbox" onchange="document.getElementById('fila-log-${id}').classList.toggle('fila-check')" class="w-6 h-6 accent-orange-500">
-                        </td>
-                    </tr>
-                `;
-            });
+            items.
 
             tablaHTML += `</tbody></table>`;
             document.getElementById('cont-tabla-carga').innerHTML = tablaHTML;
             document.getElementById('modal-logistica').style.display = 'block';
-        }
+        }// Supongamos que 'prod' es el objeto que viene de tu Google Sheets
+const precioOriginal = String(prod.precio || ""); // Convertimos a texto por las dudas
+
+// LIMPIEZA TOTAL: Quitamos espacios, signos de $ y puntos de miles
+let precioLimpio = precioOriginal.replace(/[$\s.]/g, '').replace(',', '.');
+let numeroPrecio = parseFloat(precioLimpio);
+
+let displayPrecio = "";
+let estaAgotado = false;
+
+// VALIDACIÓN REAL
+if (precioOriginal.trim() === "" || isNaN(numeroPrecio) || numeroPrecio <= 0) {
+    // Si el precio está vacío en el Sheets, es AGOTADO
+    estaAgotado = true;
+    displayPrecio = '<span class="text-red-500 font-bold uppercase text-[10px]">Agotado</span>';
+} else {
+    // Si tiene precio, lo mostramos formateado
+    estaAgotado = false;
+    displayPrecio = `$${numeroPrecio.toLocaleString('es-AR')}`;
+}
 
         function cerrarLogistica() {
             document.getElementById('modal-logistica').style.display = 'none';
