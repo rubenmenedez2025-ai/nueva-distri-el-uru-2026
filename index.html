@@ -390,7 +390,41 @@ function procesarYFacturar() {
         
         <div class="flex gap-4">
             <button onclick="procesarYFacturar()" class="flex-1 bg-orange-600 text-white py-4 rounded-2xl font-black uppercase hover:bg-orange-500 transition-colors">Generar Ticket</button>
-            <button onclick="document.getElementById('panel-despacho').style.display='none'" class="bg-white/10 text-white px-8 rounded-2xl font-black uppercase hover:bg-white/20">Cerrar</button>
+            <button onclick="
+    const texto = document.getElementById('input-whatsapp').value;
+    if(!texto) { alert('Pegá el pedido'); return; }
+
+    const comercio = texto.match(/Comercio:\s*(.*)/)?.[1] || 'Cliente El Uru';
+    const direccion = texto.match(/Dirección:\s*(.*)/)?.[1] || '-';
+    const total = texto.match(/TOTAL:\s*\$(.*)/)?.[1] || '0';
+    const lineas = texto.split('\n').filter(l => l.includes('🔸') || l.includes('🔥') || (l.includes(' x ') && l.includes('$')));
+    
+    let itemsHtml = '';
+    lineas.forEach(l => {
+        itemsHtml += '<tr><td style=\'padding:8px 0; border-bottom:1px dashed #ccc; font-family:monospace;\'>' + l.replace(/[🔸🔥]/g, '').trim() + '</td></tr>';
+    });
+
+    const ticketHtml = `
+        <html><head><title>Ticket - ${comercio}</title></head>
+        <body style='font-family:monospace; padding:20px;'>
+            <div style='text-align:center; border-bottom:2px solid #000; margin-bottom:10px;'>
+                <h2 style='margin:0;'>EL URU DISTRIBUIDORA</h2>
+                <p style='margin:0; font-size:12px;'>Viedma y Patagones</p>
+            </div>
+            <p style='font-size:13px;'><strong>CLIENTE:</strong> ${comercio}</p>
+            <p style='font-size:13px;'><strong>DIRECCIÓN:</strong> ${direccion}</p>
+            <table width='100%'>${itemsHtml}</table>
+            <h2 style='text-align:right; border-top:2px solid #000;'>TOTAL: $${total}</h2>
+            <script>setTimeout(() => { window.print(); window.close(); }, 500);<\/script>
+        </body></html>
+    `;
+
+    const v = window.open('', '_blank');
+    v.document.write(ticketHtml);
+    v.document.close();
+" class="flex-1 bg-orange-600 text-white py-4 rounded-xl font-black uppercase shadow-lg active:scale-95 transition-all">
+    Generar Ticket
+</button>
         </div>
     </div>
 </div>
