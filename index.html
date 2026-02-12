@@ -480,18 +480,7 @@ lineas.forEach(l => {
             localStorage.setItem('uru_address', document.getElementById('user-address').value);
         }
 
-        // --- EMPEZÁ A BORRAR DESDE ACÁ ---
-async function load() {
-    try {
-        const res = await fetch(TSV + '&t=' + Date.now());
-        // ... todo lo que hay en el medio ...
-        renderCats(); 
-        render();
-        verificarHorarioCierre();
-    } catch (e) { 
-        console.error("Error cargando productos:", e); 
-    }
-} // --- TERMINÁ DE BORRAR EN ESTA LLAVE ---async function load() {
+        // --- EMPEZÁ A BORRAR DESDE ACÁ ---// --- TERMINÁ DE BORRAR EN ESTA LLAVE ---async function load() {
     try {
         const res = await fetch(TSV + '&t=' + Date.now());
         const text = await res.text();
