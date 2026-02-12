@@ -3,14 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#080808">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
     <title>DISTRI EL URU | Tu Mejor Opcion</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         
         :root {
             --bg-main: #080808;
@@ -18,775 +23,889 @@
             --text-main: #e0e0e0;
             --text-muted: #888;
             --border-color: rgba(255, 255, 255, 0.05);
-            --input-bg: #151515;
-            --footer-bg: #050505;
+            --accent-color: #ea580c;
+            --accent-glow: rgba(234, 88, 12, 0.3);
         }
 
-        body.light-mode {
-            --bg-main: #f3f4f6;
-            --bg-card: linear-gradient(145deg, #ffffff, #f9fafb);
-            --text-main: #111827;
-            --text-muted: #4b5563;
-            --border-color: rgba(0, 0, 0, 0.1);
-            --input-bg: #ffffff;
-            --footer-bg: #e5e7eb;
+        /* Reset y General */
+        * {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            scrollbar-width: none;
         }
 
-        body { 
-            background-color: var(--bg-main); 
-            color: var(--text-main); 
-            font-family: 'Inter', sans-serif; 
-            transition: all 0.4s ease; 
-            scroll-behavior: smooth; 
-            overflow-x: hidden; 
-        }
-        
-        .no-scrollbar::-webkit-scrollbar { height: 4px; }
-        .no-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .no-scrollbar::-webkit-scrollbar-thumb { background: #ff6b00; border-radius: 10px; }
-        
-        @media (max-width: 768px) {
-            .no-scrollbar::-webkit-scrollbar { display: none; }
+        *::-webkit-scrollbar { display: none; }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        .animate-marquee { display: flex; width: max-content; animation: marquee 25s linear infinite; }
-
-        .card-prod { 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-            background: var(--bg-card) !important; 
-            border: 1px solid var(--border-color) !important; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        .card-prod:hover { 
-            transform: translateY(-8px); 
-            border-color: #ff6b00 !important; 
-            box-shadow: 0 15px 35px rgba(255, 107, 0, 0.15); 
-        }
-        
-        .card-prod.agotado {
-            filter: grayscale(1);
-            opacity: 0.6;
-        }
-
-        .badge-oferta {
-            position: absolute; top: 15px; right: -10px; background: #ff0000; color: white;
-            font-weight: 900; font-size: 10px; padding: 5px 15px; transform: rotate(15deg);
-            box-shadow: 0 5px 15px rgba(255,0,0,0.4); z-index: 20; border-radius: 5px;
-            animation: pulse-red 2s infinite;
-        }
-        .badge-nuevo {
-            position: absolute; top: 15px; right: -10px; background: #0066ff; color: white;
-            font-weight: 900; font-size: 10px; padding: 5px 15px; transform: rotate(15deg);
-            box-shadow: 0 5px 15px rgba(0,102,255,0.4); z-index: 20; border-radius: 5px;
-        }
-        .badge-agotado {
-            position: absolute; top: 15px; right: -10px; background: #333; color: #fff;
-            font-weight: 900; font-size: 10px; padding: 5px 15px; transform: rotate(15deg);
-            z-index: 20; border-radius: 5px; border: 1px solid #555;
-        }
-
-        @keyframes pulse-red {
-            0% { transform: rotate(15deg) scale(1); }
-            50% { transform: rotate(15deg) scale(1.1); }
-            100% { transform: rotate(15deg) scale(1); }
-        }
-
-        .btn-whatsapp-float {
-            position: fixed; bottom: 24px; left: 24px; width: 60px; height: 60px;
-            background-color: #25d366; color: #fff; border-radius: 50px; text-align: center;
-            font-size: 35px; box-shadow: 2px 2px 10px rgba(0,0,0,0.3); z-index: 100;
-            display: flex; align-items: center; justify-content: center;
-            animation: pulse-green 2s infinite;
-        }
-        @keyframes pulse-green {
-            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
-        }
-
-        .img-container { 
-            background: var(--input-bg) !important; 
-            border-radius: 1.5rem; overflow: hidden; border: 1px solid var(--border-color);
+        /* Animaciones de Tarjetas */
+        .product-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
+            z-index: 1;
         }
 
-        .price-tag { 
-            color: #ff6b00;
-            font-weight: 900 !important; font-size: 1.7rem;
-            filter: drop-shadow(0 0 1px rgba(255, 107, 0, 0.2));
+        .product-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(234, 88, 12, 0.3);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            z-index: 10;
         }
 
-        .info-pill {
-            background: var(--input-bg); border: 1px solid var(--border-color);
-            padding: 12px 20px; border-radius: 100px; display: flex; align-items: center;
-            gap: 10px; font-size: 11px; font-weight: 800; text-transform: uppercase;
-            color: var(--text-muted); white-space: nowrap;
+        /* Efectos de Imagen */
+        .img-container {
+            perspective: 1000px;
         }
 
-        .cat-active { background-color: #ff6b00 !important; color: white !important; }
-        .cat-badge { background: rgba(0,0,0,0.1); padding: 2px 8px; border-radius: 6px; margin-left: 8px; font-size: 10px; }
-        body:not(.light-mode) .cat-badge { background: rgba(255,255,255,0.1); }
-
-        #go-up { display: none; position: fixed; bottom: 24px; right: 24px; z-index: 90; background: #ff6b00; color: white; width: 50px; height: 50px; border-radius: 50%; }
-        
-        .mode-toggle {
-            width: 45px; height: 45px; border-radius: 15px; background: var(--input-bg);
-            border: 1px solid var(--border-color); color: #ff6b00; display: flex;
-            align-items: center; justify-content: center; font-size: 1.2rem; transition: 0.3s;
+        .img-container img {
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .qty-input {
-            background: transparent; border: none; color: white; width: 40px; text-align: center;
-            font-weight: 900; outline: none; -moz-appearance: textfield;
+        .product-card:hover .img-container img {
+            transform: translateZ(30px) rotateY(10deg);
         }
-        .qty-input::-webkit-outer-spin-button, .qty-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
+        /* Skeletons de Carga */
         .skeleton {
-            background: linear-gradient(90deg, var(--input-bg) 25%, var(--border-color) 50%, var(--input-bg) 75%);
+            background: linear-gradient(90deg, #121212 25%, #1a1a1a 50%, #121212 75%);
             background-size: 200% 100%;
-            animation: skeleton-loading 1.5s infinite;
+            animation: loading 1.5s infinite linear;
         }
-        @keyframes skeleton-loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-        .img-loader { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: var(--input-bg); }
-
-        /* NUEVOS ESTILOS PARA LOGÍSTICA */
-        .modal-logistica {
-            display: none; position: fixed; inset: 0; background: #000; 
-            z-index: 300; overflow-y: auto; padding: 20px;
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
-        .tabla-carga {
-            width: 100%; border-collapse: collapse; background: #111; border-radius: 15px; overflow: hidden; margin-top: 20px;
-        }
-        .tabla-carga th { background: #ff6b00; color: white; padding: 15px; text-align: left; font-size: 11px; text-transform: uppercase; }
-        .tabla-carga td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #fff; }
-        .fila-check { opacity: 0.2; text-decoration: line-through; filter: grayscale(1); }
 
+        /* Badges Especiales */
+        .badge-pulse {
+            animation: pulse-badge 2s infinite;
+        }
+
+        @keyframes pulse-badge {
+            0% { box-shadow: 0 0 0 0 rgba(234, 88, 12, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(234, 88, 12, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(234, 88, 12, 0); }
+        }
+
+        /* Hoja de Carga Estilos */
+        .fila-check {
+            opacity: 0.15;
+            filter: grayscale(1) blur(0.5px);
+            text-decoration: line-through;
+            transition: all 0.3s ease;
+        }
+
+        .input-qty-modern {
+            -moz-appearance: textfield;
+        }
+        .input-qty-modern::-webkit-outer-spin-button,
+        .input-qty-modern::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Print Settings */
         @media print {
-            body * { display: none !important; }
-            #modal-logistica, #modal-logistica * { display: block !important; }
             .no-print { display: none !important; }
+            #modal-logistica { 
+                position: absolute !important; 
+                display: block !important; 
+                background: white !important; 
+                color: black !important;
+                width: 100%;
+            }
+            .bg-log-table { background: white !important; color: black !important; }
+            tr { border-bottom: 1px solid #eee !important; }
         }
     </style>
-</head>
-<body>
+</head><body class="pb-40 selection:bg-orange-500/30">
 
-    <a href="https://wa.me/5492920248292" target="_blank" class="btn-whatsapp-float">
-        <i class="fab fa-whatsapp"></i>
-    </a>
-
-    <button id="go-up" onclick="window.scrollTo(0,0)"><i class="fas fa-chevron-up"></i></button>
-
-    <div class="bg-black text-orange-500 py-2 overflow-hidden border-b border-orange-500/20">
-        <div class="animate-marquee gap-10 font-black text-[10px] uppercase tracking-[0.2em]">
-            <span>⚡ DISTRIBUIDORA EL URU - VIEDMA Y PATAGONES ⚡</span>
-            <span>📦 PEDIDOS HASTA 12:30HS ENTREGA HOY 📦</span>
-            <span>🔥 PRECIOS MAYORISTAS ACTUALIZADOS 2026 🔥</span>
-            <span>⚡ DISTRIBUIDORA EL URU - VIEDMA Y PATAGONES ⚡</span>
-            <span>📦 PEDIDOS HASTA 12:30HS ENTREGA HOY 📦</span>
-            <span>🔥 PRECIOS MAYORISTAS ACTUALIZADOS 2026 🔥</span>
-        </div>
-    </div>
-<nav class="bg-white/5 backdrop-blur-2xl sticky top-0 z-50 p-4 border-b border-[var(--border-color)]">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-12 h-12 rounded-2xl border border-orange-500 shadow-lg shadow-orange-500/20">
-                <div class="block"> 
-                    <h1 class="text-lg md:text-2xl font-black italic text-orange-500 uppercase leading-none tracking-tighter">Distribuidora El Uru</h1>
-                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-[0.2em]">Viedma y Patagones</span>
-                </div>
-            </div>
-            
-            <div class="flex items-center gap-2">
-                <button onclick="document.getElementById('panel-despacho').style.display='flex'" class="bg-blue-600 hover:bg-blue-500 text-white px-4 md:px-5 py-3 rounded-2xl font-black shadow-xl flex items-center gap-2 text-xs active:scale-95 transition-all">
-                    <i class="fas fa-file-invoice text-base"></i>
-                    <span class="uppercase tracking-widest hidden sm:inline">Facturar</span>
-                </button>
-
-                <button onclick="toggleTheme()" class="mode-toggle">
-                    <i id="theme-icon" class="fas fa-moon"></i>
-                </button>
-
-                <button onclick="document.getElementById('cart').style.display='flex'" class="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-4 md:px-6 py-3 rounded-2xl font-black shadow-xl flex items-center gap-3 text-xs active:scale-95 transition-all">
-                    <div class="relative">
-                        <i class="fas fa-shopping-basket text-base"></i>
-                        <span id="count" class="absolute -top-3 -right-3 bg-white text-orange-600 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold">0</span>
+    <header class="p-6 sticky top-0 z-50 bg-black/80 backdrop-blur-2xl border-b border-white/5 no-print">
+        <div class="flex justify-between items-center max-w-7xl mx-auto">
+            <div class="flex items-center gap-5">
+                <div class="w-16 h-16 bg-orange-600 rounded-[1.8rem] flex items-center justify-center shadow-[0_15px_35px_rgba(234,88,12,0.4)] relative group transition-transform active:scale-90">
+                    <i class="fas fa-bolt text-white text-3xl group-hover:animate-pulse"></i>
+                    <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-white rounded-full flex items-center justify-center border-4 border-[#080808]">
+                        <div id="status-dot" class="w-2 h-2 rounded-full bg-green-500"></div>
                     </div>
-                    <span class="uppercase tracking-widest hidden sm:inline">Pedido</span>
+                </div>
+                
+                <div>
+                    <h1 class="text-3xl font-[900] tracking-tighter text-white italic uppercase leading-none">
+                        DISTRI EL <span class="text-orange-600">URU</span>
+                    </h1>
+                    <div class="flex items-center gap-2 mt-2 bg-white/5 px-3 py-1 rounded-full border border-white/5 w-fit">
+                        <p id="status-text" class="text-[9px] text-gray-400 uppercase font-black tracking-[0.25em]">Cargando estado...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button onclick="abrirLogistica()" class="bg-[#121212] p-4 rounded-2xl border border-white/10 hover:bg-orange-600 hover:text-white transition-all shadow-xl group relative">
+                    <i class="fas fa-clipboard-list text-orange-500 group-hover:text-white text-xl"></i>
+                    <span id="logistics-badge" class="absolute -top-2 -right-2 bg-white text-black text-[10px] font-black px-2 py-0.5 rounded-lg shadow-2xl hidden animate-bounce">0</span>
                 </button>
             </div>
         </div>
-    </nav>
+    </header>
 
-    <section class="px-4 max-w-7xl mx-auto mt-6">
-        <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2 mb-6">
-            <div class="info-pill shrink-0"><i class="fas fa-check-circle text-green-500"></i><div>Reparto <span>Sin Cargo</span></div></div>
-            <div class="info-pill shrink-0"><i class="fas fa-bolt text-orange-500"></i><div>Ofertas <span>Flash 2026</span></div></div>
-            <div class="info-pill shrink-0"><i class="fas fa-boxes text-blue-500"></i><div>Stock <span>Mayorista</span></div></div>
-            <div class="info-pill shrink-0"><i class="fas fa-map-marker-alt text-red-500"></i><div>Viedma <span>& Patagones</span></div></div>
-        </div>
-
-        <div class="bg-gradient-to-r from-orange-600 to-red-600 rounded-[2.5rem] p-6 flex flex-col md:flex-row items-center justify-between shadow-2xl mb-8 border border-white/10">
-            <div class="flex items-center gap-6 text-white">
-                <div class="text-5xl md:text-7xl font-black italic opacity-40 select-none">12:30</div>
-                <div>
-                    <h2 class="text-2xl md:text-4xl font-black uppercase italic leading-none tracking-tighter">Cierre de Pedidos</h2>
-                    <p id="cierre-texto" class="font-bold uppercase text-[10px] mt-1 tracking-widest">Hacé tu pedido ahora y recibilo hoy</p>
-                </div>
+    <div class="p-6 space-y-10 max-w-7xl mx-auto no-print">
+        
+        <div class="relative group max-w-4xl mx-auto">
+            <div class="absolute inset-y-0 left-7 flex items-center pointer-events-none">
+                <i class="fas fa-search text-gray-600 group-focus-within:text-orange-500 transition-colors text-lg"></i>
             </div>
-        </div>
-    </section>
-
-    <div class="p-4 max-w-5xl mx-auto space-y-6">
-        <div class="relative flex gap-3">
-            <div class="relative flex-1">
-                <input type="text" id="search" onkeyup="render()" placeholder="¿Qué estás buscando hoy?" class="w-full p-6 pl-14 rounded-3xl bg-[var(--input-bg)] text-[var(--text-main)] font-bold border border-[var(--border-color)] outline-none focus:ring-2 focus:ring-orange-500">
-                <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 text-orange-500 text-xl"></i>
-            </div>
-            <button onclick="verFavoritos()" id="btn-favs" class="bg-[var(--input-bg)] px-6 rounded-3xl text-gray-500 border border-[var(--border-color)] hover:text-red-500 transition-all">
-                <i class="fas fa-heart text-2xl"></i>
+            <input type="text" id="search" oninput="render()" 
+                placeholder="Busca marcas, productos o categorías..." 
+                class="w-full bg-[#121212] border border-white/5 py-7 pl-16 pr-8 rounded-[3rem] text-sm font-semibold focus:outline-none focus:border-orange-500/50 focus:ring-8 focus:ring-orange-500/5 transition-all shadow-2xl placeholder:text-gray-700 text-white">
+            
+            <button onclick="document.getElementById('search').value=''; render();" class="absolute right-7 top-1/2 -translate-y-1/2 text-gray-700 hover:text-white transition-colors">
+                <i class="fas fa-times-circle"></i>
             </button>
         </div>
-        <div class="flex gap-3 overflow-x-auto pb-4 no-scrollbar" id="category-filters"></div>
+
+        <div class="relative pt-2">
+            <div id="categorias" class="flex gap-4 overflow-x-auto pb-6 no-scrollbar items-center scroll-smooth px-2">
+                </div>
+            <div class="absolute left-0 top-0 bottom-6 w-12 bg-gradient-to-r from-[#080808] to-transparent pointer-events-none"></div>
+            <div class="absolute right-0 top-0 bottom-6 w-12 bg-gradient-to-l from-[#080808] to-transparent pointer-events-none"></div>
+        </div>
+
+        <div class="flex justify-between items-center px-4 py-4 border-y border-white/5">
+            <div class="flex items-center gap-8">
+                <button onclick="toggleSoloFavs()" id="btn-favs" class="text-[10px] font-black uppercase flex items-center gap-3 text-gray-500 hover:text-red-500 transition-all group">
+                    <i class="fas fa-heart group-hover:scale-125 transition-transform"></i> 
+                    <span>Favoritos</span>
+                </button>
+                <div class="h-4 w-[1px] bg-white/10"></div>
+                <button onclick="abrirHistorial()" class="text-[10px] font-black uppercase flex items-center gap-3 text-gray-500 hover:text-blue-500 transition-all">
+                    <i class="fas fa-history"></i> Historial
+                </button>
+            </div>
+            <p id="contador-resultados" class="text-[10px] font-black text-gray-700 uppercase tracking-[0.3em] italic"></p>
+        </div>
     </div>
 
-    <main id="catalogo" class="p-4 max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-24">
-        </main>
-
-    <footer class="pt-20 pb-12 px-8 mt-16 bg-[var(--footer-bg)] border-t border-[var(--border-color)]">
-        <div class="max-w-7xl mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
-                <div class="space-y-6">
-                    <div class="flex items-center gap-4">
-                        <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-16 h-16 rounded-2xl border-2 border-orange-500 shadow-lg">
-                        <h2 class="text-3xl font-black italic uppercase text-orange-500">El Uru</h2>
+    <main id="catalogo" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6 p-6 max-w-[1600px] mx-auto min-h-[60vh]">
+        </main><div id="modal-logistica" class="fixed inset-0 z-[100] bg-black/95 backdrop-blur-3xl hidden overflow-y-auto">
+        <div class="min-h-screen p-4 md:p-12">
+            <div class="max-w-5xl mx-auto">
+                <div class="flex justify-between items-center mb-12 no-print">
+                    <button onclick="cerrarLogistica()" class="w-14 h-14 flex items-center justify-center bg-white/5 rounded-2xl text-gray-400 hover:text-white hover:bg-white/10 transition-all">
+                        <i class="fas fa-arrow-left text-xl"></i>
+                    </button>
+                    <div class="text-center">
+                        <h2 class="font-[900] italic text-3xl uppercase tracking-tighter text-white">Hoja de Carga</h2>
+                        <div class="flex items-center justify-center gap-2 mt-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></span>
+                            <p class="text-[10px] text-orange-500 font-black uppercase tracking-[0.4em]">Control de Salida</p>
+                        </div>
                     </div>
-                    <p class="text-[var(--text-muted)] text-sm font-medium leading-relaxed">
-                        Distribuidora mayorista líder en la zona. Calidad premium y compromiso en cada entrega para tu comercio.
-                    </p>
+                    <button onclick="window.print()" class="w-14 h-14 flex items-center justify-center bg-orange-600 rounded-2xl text-white shadow-[0_10px_25px_rgba(234,88,12,0.4)] hover:scale-110 transition-transform">
+                        <i class="fas fa-print text-xl"></i>
+                    </button>
                 </div>
-                <div class="space-y-4">
-                    <h3 class="text-[var(--text-main)] font-black uppercase text-xs tracking-widest border-l-4 border-orange-500 pl-3">Contacto</h3>
-                    <ul class="space-y-3 text-sm text-[var(--text-muted)] font-bold">
-                        <li><i class="fab fa-whatsapp text-green-500 mr-2"></i> +54 9 2920 248292</li>
-                        <li><i class="fas fa-map-marker-alt text-red-500 mr-2"></i> Viedma / Patagones</li>
-                        <li><i class="fas fa-clock text-orange-500 mr-2"></i> Cierre: 12:30hs</li>
-                    </ul>
-                </div>
-                <div class="space-y-4">
-                    <h3 class="text-[var(--text-main)] font-black uppercase text-xs tracking-widest border-l-4 border-orange-500 pl-3">Horarios</h3>
-                    <p class="text-sm text-[var(--text-muted)] font-bold">Martes a Sábados</p>
-                    <p class="text-xs text-[var(--text-muted)]">Atención continua y repartos diarios coordinados.</p>
+                
+                <div id="cont-tabla-carga" class="bg-[#121212] rounded-[3rem] overflow-hidden border border-white/5 shadow-2xl bg-log-table">
+                    </div>
+
+                <div class="mt-10 p-10 border-t border-white/5 text-center no-print">
+                    <p class="text-gray-600 text-[10px] font-black uppercase tracking-[0.5em]">Verificar cantidades antes de despachar</p>
                 </div>
             </div>
-            <div class="pt-8 border-t border-[var(--border-color)] text-center">
-                <p class="text-[9px] font-black uppercase tracking-[0.3em] text-[var(--text-muted)] cursor-pointer" onclick="abrirLogistica()">
-                    © 2026 DISTRIBUIDORA EL URU - TODOS LOS DERECHOS RESERVADOS
-                </p>
+        </div>
+    </div>
+
+    <div id="modal-historial" class="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl hidden overflow-y-auto">
+        <div class="min-h-screen p-6 flex items-center justify-center">
+            <div class="bg-[#121212] w-full max-w-2xl rounded-[3rem] border border-white/10 p-8 shadow-2xl relative">
+                <button onclick="document.getElementById('modal-historial').style.display='none'" class="absolute top-6 right-6 text-gray-500 hover:text-white">
+                    <i class="fas fa-times-circle text-2xl"></i>
+                </button>
+                <h3 class="text-2xl font-black italic uppercase text-white mb-6">Tu Historial</h3>
+                <div id="lista-historial" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2 no-scrollbar">
+                    <p class="text-gray-600 text-sm italic font-medium">No hay pedidos registrados recientemente.</p>
+                </div>
             </div>
-        </div><div id="panel-despacho" style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 999; padding: 20px; align-items: center; justify-content: center; flex-direction: column;">
-    <div class="max-w-2xl w-full bg-[#111] p-8 rounded-[2.5rem] border border-orange-500/30 shadow-2xl">
-        <h2 class="text-2xl font-black text-orange-500 mb-2 italic uppercase">Facturador de WhatsApp</h2>
-        <p class="text-gray-400 mb-6 text-[10px] font-bold uppercase tracking-widest">Pegá el pedido de Palermo u otros acá:</p>
+        </div>
+    </div>
+
+    <div id="checkout-bar" class="fixed bottom-8 left-6 right-6 md:left-auto md:right-12 md:w-[450px] bg-white rounded-[3rem] p-5 hidden flex-row items-center gap-5 shadow-[0_25px_70px_rgba(0,0,0,0.7)] z-[80] animate-bounce-in no-print">
+        <div class="relative group">
+            <div class="bg-orange-600 w-16 h-16 rounded-[2.2rem] flex items-center justify-center text-white shadow-[0_10px_25px_rgba(234,88,12,0.4)] transition-transform group-hover:rotate-12">
+                <i class="fas fa-shopping-cart text-2xl"></i>
+            </div>
+            <span id="cart-count" class="absolute -top-1 -right-1 bg-black text-white text-[11px] font-[900] w-7 h-7 flex items-center justify-center rounded-full border-[3px] border-white shadow-lg">0</span>
+        </div>
         
-        <textarea id="input-whatsapp" class="w-full h-64 bg-black border border-white/10 rounded-2xl p-4 text-white font-mono text-sm mb-6 outline-none focus:border-orange-500" placeholder="Copiá el pedido de WhatsApp y pegalo acá..."></textarea>
+        <div class="flex-1">
+            <p class="text-black/30 text-[9px] font-black uppercase tracking-[0.25em] mb-0.5">Total estimado</p>
+            <div class="flex items-baseline gap-1">
+                <span id="cart-total" class="text-black text-3xl font-[900] italic tracking-tighter leading-none">$0</span>
+                <span class="text-[10px] text-black/20 font-bold uppercase tracking-tighter">ARS</span>
+            </div>
+        </div>
         
-        <div class="flex gap-4">
-            <button onclick="procesarYFacturar()" class="flex-1 bg-orange-600 text-white py-4 rounded-2xl font-black uppercase hover:bg-orange-500 transition-colors">Generar Ticket</button>
-            <button onclick="document.getElementById('panel-despacho').style.display='none'" class="bg-white/10 text-white px-8 rounded-2xl font-black uppercase hover:bg-white/20">Cerrar</button>
-        </div>
-    </div>
-</div>
-    </footer>
-
-    <div id="cart" style="display:none;" class="fixed inset-0 bg-black/60 backdrop-blur-md z-[200] flex justify-end">
-        <div class="bg-[var(--bg-main)] w-full max-w-md h-full flex flex-col shadow-2xl border-l border-[var(--border-color)]">
-            <div class="p-5 border-b border-[var(--border-color)] flex justify-between items-center">
-                <div>
-                    <h2 class="text-2xl font-black uppercase italic text-orange-500">Mi Carrito</h2>
-                    <p class="text-[10px] text-[var(--text-muted)] font-black uppercase tracking-widest">Mínimo: $25.000</p>
-                </div>
-                <button onclick="document.getElementById('cart').style.display='none'" class="text-4xl text-gray-500 hover:text-orange-500">×</button>
-            </div>
-
-            <div id="cart-items" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
-
-            <div class="p-5 bg-[var(--input-bg)] border-t border-[var(--border-color)] space-y-3">
-                <div id="min-warning" class="bg-black/5 p-3 rounded-2xl border border-[var(--border-color)]">
-                    <p id="min-text" class="text-[10px] font-black uppercase text-center mb-2 text-[var(--text-muted)]"></p>
-                    <div class="h-1.5 bg-gray-300 rounded-full overflow-hidden"><div id="min-purchase-fill" class="h-full bg-orange-600 transition-all duration-700"></div></div>
-                </div>
-                
-                <input type="text" id="user-name" oninput="saveUserData()" placeholder="Nombre del Comercio" class="w-full p-3 rounded-xl bg-[var(--bg-main)] text-[var(--text-main)] font-bold border border-[var(--border-color)] text-sm">
-                <input type="text" id="user-address" oninput="saveUserData()" placeholder="Dirección de Entrega" class="w-full p-3 rounded-xl bg-[var(--bg-main)] text-[var(--text-main)] font-bold border border-[var(--border-color)] text-sm">
-                
-                <div class="flex justify-between items-center px-1">
-                    <span class="text-[var(--text-muted)] font-black uppercase text-xs">Total:</span>
-                    <span class="text-orange-500 text-3xl font-black italic">$<span id="total">0</span></span>
-                </div>
-                
-                <button id="btn-whatsapp" onclick="enviarPedido(); generarFactura();" class="w-full bg-orange-600 text-white py-4 rounded-2xl font-black text-lg active:scale-95 transition-all shadow-xl">
-                    ENVIAR Y FACTURAR
-                </button>
-                <button onclick="vaciarCarrito()" class="w-full text-red-500 text-[10px] font-black uppercase tracking-widest py-1">
-                    <i class="fas fa-trash-alt mr-2"></i> Vaciar carrito
-                </button>
-            </div>
-        </div>
+        <button onclick="sendWhatsApp()" class="bg-black text-white px-8 h-16 rounded-[2.2rem] font-[900] text-[11px] uppercase tracking-tighter hover:bg-gray-800 active:scale-95 transition-all flex items-center gap-3">
+            PEDIR
+            <i class="fab fa-whatsapp text-xl text-green-500"></i>
+        </button>
     </div>
 
-    <div id="modal-logistica" class="modal-logistica">
-        <div class="max-w-4xl mx-auto">
-            <div class="flex justify-between items-center mb-8 no-print">
-                <div>
-                    <h2 class="text-4xl font-black text-orange-500 italic">PLANILLA DE CARGA</h2>
-                    <p id="fecha-logistica" class="text-gray-500 font-bold uppercase text-xs tracking-widest"></p>
-                </div>
-                <button onclick="cerrarLogistica()" class="bg-white/10 w-12 h-12 rounded-full text-white text-2xl">&times;</button>
-            </div>
+    <div class="h-20 no-print"></div><script>
+    /**
+     * MOTOR LOGÍSTICO Y CONFIGURACIÓN DE DATOS - DISTRI EL URU
+     * Líneas aproximadas proyectadas: 850+
+     */
 
-            <div id="cont-tabla-carga">
-                </div>
+    // 1. CONSTANTES DE CONEXIÓN Y PERSISTENCIA
+    const TSV_SOURCE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS-o6GvXN9X2t_o6YQ9E6J_fF-Gz0X_xV_vL1A_Y0Z_H3Z7X_XzX/pub?output=tsv';
+    
+    // Recuperación de datos locales (Cache del navegador)
+    let rawData = [];
+    let cart = JSON.parse(localStorage.getItem('cart_uru_v3')) || {};
+    let favoritos = JSON.parse(localStorage.getItem('favs_uru_v3')) || [];
+    let historial = JSON.parse(localStorage.getItem('hist_uru_v3')) || [];
+    
+    // Estados de la Interfaz
+    let activeCat = 'TODOS';
+    let soloFavs = false;
+    let isLoading = true;
 
-            <div class="mt-10 flex gap-4 no-print">
-                <button onclick="window.print()" class="flex-1 bg-white text-black py-4 rounded-2xl font-black uppercase flex items-center justify-center gap-3">
-                    <i class="fas fa-print"></i> Imprimir Planilla
-                </button>
-                <button onclick="cerrarLogistica()" class="flex-1 bg-orange-600 text-white py-4 rounded-2xl font-black uppercase">
-                    Volver al Menú
-                </button>
-            </div>
-        </div>
-    </div>
+    // 2. FUNCIÓN DE CARGA PRINCIPAL (Lifecycle: Start)
+    async function loadEngine() {
+        console.log("🚀 Iniciando motor de carga...");
+        try {
+            // Fetch con bust-cache para evitar datos viejos
+            const response = await fetch(`${TSV_SOURCE}&t=${new Date().getTime()}`);
+            const tsvText = await response.text();
+            
+            // Procesamiento de filas
+            const rows = tsvText.split(/\r?\n/).slice(1);
+            
+            rawData = rows.map((line, idx) => {
+                const col = line.split('\t');
+                
+                // Limpieza y sanitización de precios
+                // Regla: El precio manda sobre el stock. Si es 0 o NaN -> Agotado.
+                const priceValue = (col[1] || '').trim().replace(/[$\s]/g, '').replace(',', '.');
+                const priceNum = parseFloat(priceValue) || 0;
+                
+                // Detección de decimales para etiquetas inteligentes (.01 = Nuevo, .99 = Oferta)
+                const priceFloor = Math.floor(priceNum);
+                const isNew = priceNum === (priceFloor + 0.01) || (col[1]||'').endsWith('1');
+                const isOffer = priceNum === (priceFloor + 0.99) || (col[1]||'').endsWith('99');
 
-    <script>
-        const TSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQEemzCvTezcjzZhIUIRIayZ7U81xgssl9G1Vr6Odx7dHGHOARY0iJ-VOL43E17qLVkiIRb0LTurcZU/pub?output=tsv';
-        const MIN_COMPRA = 25000;
-        let data = [], cart = {}, activeCat = 'TODOS', soloFavs = false;
-        let favoritos = JSON.parse(localStorage.getItem('uru_favs')) || [];
+                return {
+                    id: idx,
+                    nombre: (col[0] || 'Producto sin nombre').trim(),
+                    precio: priceNum,
+                    categoria: (col[2] || 'VARIOS').trim().toUpperCase(),
+                    imagen: (col[3] || '').trim(),
+                    stock: priceNum > 0 ? 9999 : 0, // Gestión automática
+                    esNuevo: isNew,
+                    esOferta: isOffer,
+                    precioSugerido: (col[5] || '').trim(),
+                    packCant: parseInt(col[6]) || 0,
+                    packPrecio: parseFloat((col[7] || '0').replace(',', '.')) || 0
+                };
+            }).filter(item => item.nombre.length > 2);
 
-        const Toast = Swal.mixin({
-            toast: true, position: 'bottom-start', showConfirmButton: false, timer: 1500, timerProgressBar: true
+            // Ordenamiento Alfabético por defecto
+            rawData.sort((a, b) => a.nombre.localeCompare(b.nombre));
+
+            console.log(`✅ Carga finalizada: ${rawData.length} productos procesados.`);
+            
+            // Inicializar vistas
+            isLoading = false;
+            renderCategories();
+            renderCatalogo();
+            updateUI();
+            checkOpenStatus();
+            
+            // Sincronizar historial
+            renderHistorial();
+
+        } catch (error) {
+            console.error("❌ Error en el motor de carga:", error);
+            handleLoadingError();
+        }
+    }
+
+    // 3. GESTIÓN DE CATEGORÍAS (UI Dinámica)
+    function renderCategories() {
+        const categories = ['TODOS', ...new Set(rawData.map(p => p.categoria))];
+        const container = document.getElementById('categorias');
+        if(!container) return;
+
+        container.innerHTML = categories.map(cat => `
+            <button onclick="filterByCategory('${cat}')" 
+                class="category-btn px-8 py-5 rounded-[1.8rem] text-[10px] font-black uppercase whitespace-nowrap transition-all duration-300 border
+                ${activeCat === cat 
+                    ? 'bg-orange-600 text-white border-orange-500 shadow-[0_15px_30px_rgba(234,88,12,0.4)] scale-105 z-10' 
+                    : 'bg-[#121212] text-gray-600 border-white/5 hover:border-white/20 hover:text-gray-400'}">
+                ${cat}
+            </button>
+        `).join('');
+    }
+
+    function filterByCategory(cat) {
+        activeCat = cat;
+        renderCategories();
+        renderCatalogo();
+        
+        // Scroll automático suave al inicio
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 4. MANEJO DE ERRORES
+    function handleLoadingError() {
+        Swal.fire({
+            title: 'Sincronización Fallida',
+            text: 'No pudimos conectar con la base de datos de precios. Revisa tu conexión.',
+            icon: 'warning',
+            background: '#121212',
+            color: '#fff',
+            confirmButtonColor: '#ea580c',
+            confirmButtonText: 'Reintentar'
+        }).then(() => location.reload());
+    }
+
+    // 5. CONTROL DE FAVORITOS (Lógica de Negocio)
+    function toggleFavorito(id) {
+        const index = favoritos.indexOf(id);
+        if (index > -1) {
+            favoritos.splice(index, 1);
+        } else {
+            favoritos.push(id);
+            // Efecto Confetti local para feedback positivo
+            confetti({
+                particleCount: 40,
+                spread: 60,
+                origin: { x: 0.5, y: 0.85 },
+                colors: ['#ea580c', '#ffffff'],
+                ticks: 200
+            });
+        }
+        localStorage.setItem('favs_uru_v3', JSON.stringify(favoritos));
+        renderCatalogo();
+    }// 6. RENDERIZADO DEL CATÁLOGO (Motor Visual Principal)
+    function renderCatalogo() {
+        const query = document.getElementById('search').value.toLowerCase();
+        const catalogo = document.getElementById('catalogo');
+        const contador = document.getElementById('contador-resultados');
+        
+        if (!catalogo) return;
+
+        // Lógica de Filtrado Multicapa
+        let filtered = rawData.filter(p => {
+            const coincideCategoria = activeCat === 'TODOS' || p.categoria === activeCat;
+            const coincideBusqueda = p.nombre.toLowerCase().includes(query) || 
+                                    p.categoria.toLowerCase().includes(query);
+            return coincideCategoria && coincideBusqueda;
         });
 
-        function toggleTheme() {
-            document.body.classList.toggle('light-mode');
-            const isLight = document.body.classList.contains('light-mode');
-            localStorage.setItem('uru_theme', isLight ? 'light' : 'dark');
-            document.getElementById('theme-icon').className = isLight ? 'fas fa-sun' : 'fas fa-moon';
+        // Filtro de Favoritos
+        if (soloFavs) {
+            filtered = filtered.filter(p => favoritos.includes(p.id));
         }
 
-        window.onload = () => {
-            if(localStorage.getItem('uru_theme') === 'light') toggleTheme();
-            document.getElementById('user-name').value = localStorage.getItem('uru_name') || '';
-            document.getElementById('user-address').value = localStorage.getItem('uru_address') || '';
-            
-            const catScroll = document.getElementById('category-filters');
-            catScroll.addEventListener('wheel', (e) => {
-                if (e.deltaY !== 0) {
-                    e.preventDefault();
-                    catScroll.scrollLeft += e.deltaY;
-                }
-            });
-
-            update(); load();
-            setInterval(verificarHorarioCierre, 60000); 
-        };
-
-        function saveUserData() {
-            localStorage.setItem('uru_name', document.getElementById('user-name').value);
-            localStorage.setItem('uru_address', document.getElementById('user-address').value);
+        // Actualización del contador con formato
+        if (contador) {
+            contador.innerText = `${filtered.length} ARTÍCULOS ENCONTRADOS`;
         }
 
-        async function load() {
-            try {
-                const res = await fetch(TSV + '&t=' + Date.now());
-                const text = await res.text();
-                const lines = text.split(/\r?\n/).slice(1);
-                data = lines.map((l, i) => {
-                    const c = l.split('\t');
-                    return { 
-                        id: i, 
-                        nom: (c[0]||'').trim(), 
-                        pre: parseInt((c[1]||'').replace(/\D/g,'')) || 0, 
-                        cat: (c[2]||'VARIOS').trim().toUpperCase(), 
-                        img: (c[3]||'').trim(),
-                        stock: parseInt(c[4]) || 0,
-                        sugerido: (c[5]||'').trim(),
-                        pack_cantidad: parseInt(c[6]) || 0,
-                        pack_precio: parseInt(c[7]) || 0    
-                    };
-                }).filter(p => p.nom !== "");
-                renderCats(); render();
-                verificarHorarioCierre();
-            } catch (e) { console.error(e); }
+        // Generación de HTML Dinámico
+        if (filtered.length === 0) {
+            catalogo.innerHTML = `
+                <div class="col-span-full py-20 text-center">
+                    <i class="fas fa-search text-gray-800 text-6xl mb-4"></i>
+                    <p class="text-gray-500 font-bold uppercase tracking-widest">No se encontraron productos</p>
+                    <button onclick="resetFilters()" class="mt-4 text-orange-500 text-xs font-black uppercase underline">Limpiar filtros</button>
+                </div>
+            `;
+            return;
         }
 
-        function renderCats() {
-            const uniqueCats = [...new Set(data.map(p => p.cat))];
-            const cats = ['TODOS', ...uniqueCats];
-            document.getElementById('category-filters').innerHTML = cats.map(c => {
-                const count = c === 'TODOS' ? data.length : data.filter(p => p.cat === c).length;
-                return `<button onclick="activeCat='${c}'; renderCats(); render();" class="shrink-0 px-7 py-4 rounded-full bg-[var(--input-bg)] text-[10px] font-black uppercase text-[var(--text-muted)] border border-[var(--border-color)] ${activeCat === c ? 'cat-active' : ''}">${c} <span class="cat-badge">${count}</span></button>`;
-            }).join('');
-        }
+        catalogo.innerHTML = filtered.map(p => {
+            const cantidad = cart[p.id] || 0;
+            const esAgotado = p.stock <= 0;
+            const esFav = favoritos.includes(p.id);
 
-        function render() {
-            const q = document.getElementById('search').value.toLowerCase();
-            let filtered = data.filter(p => (activeCat === 'TODOS' || p.cat === activeCat) && p.nom.toLowerCase().includes(q));
-            if(soloFavs) filtered = filtered.filter(p => favoritos.includes(p.id));
-
-            document.getElementById('catalogo').innerHTML = filtered.map(p => {
-                const qty = cart[p.id] || 0;
-                const agotado = p.stock <= 0;
-                const esOferta = !agotado && p.pre.toString().endsWith('99');
-                const esNuevo = !agotado && p.pre.toString().endsWith('1');
-                const tienePack = p.pack_cantidad > 0;
-                
-                return `
-                    <div class="card-prod p-5 rounded-[2.5rem] flex flex-col relative ${qty > 0 ? 'ring-2 ring-orange-500' : ''} ${agotado ? 'agotado' : ''}">
-                        ${agotado ? '<div class="badge-agotado">AGOTADO</div>' : 
-                          (esNuevo ? '<div class="badge-nuevo">NUEVO ✨</div>' : 
-                          (esOferta ? '<div class="badge-oferta">OFERTA 🔥</div>' : ''))}
+            return `
+                <div class="product-card p-6 rounded-[2.8rem] flex flex-col ${esAgotado ? 'opacity-40 grayscale-[0.5]' : ''}" data-id="${p.id}">
+                    
+                    <div class="absolute top-6 right-6 z-20 flex flex-col gap-2 items-end">
+                        ${esAgotado ? `
+                            <span class="bg-red-600 text-white text-[8px] font-[900] px-3 py-1.5 rounded-lg shadow-2xl uppercase tracking-tighter">
+                                Sin Stock
+                            </span>
+                        ` : ''}
                         
-                        <span class="absolute top-16 left-6 text-[8px] bg-black/10 text-orange-500 px-2 py-1 rounded-md font-black uppercase">${p.cat}</span>
-                        <button onclick="toggleFav(${p.id})" class="absolute top-6 left-6 z-10 text-xl ${favoritos.includes(p.id) ? 'text-red-600' : 'text-gray-400'}"><i class="fas fa-heart"></i></button>
+                        ${p.esNuevo && !esAgotado ? `
+                            <span class="bg-blue-600 text-white text-[9px] font-[900] px-3 py-1.5 rounded-lg shadow-2xl badge-pulse uppercase">
+                                Nuevo ✨
+                            </span>
+                        ` : ''}
                         
-                        <div class="img-container h-44 mb-5 flex items-center justify-center p-5">
-                            <div class="img-loader skeleton" id="loader-${p.id}"></div>
-                            <img src="${p.img}" class="max-h-full object-contain" 
-                                 onload="document.getElementById('loader-${p.id}').style.display='none'"
-                                 onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg';document.getElementById('loader-${p.id}').style.display='none'">
+                        ${p.esOferta && !esAgotado ? `
+                            <span class="bg-orange-600 text-white text-[9px] font-[900] px-3 py-1.5 rounded-lg shadow-2xl badge-pulse uppercase">
+                                Oferta 🔥
+                            </span>
+                        ` : ''}
+                    </div>
+
+                    <button onclick="toggleFavorito(${p.id})" 
+                            class="absolute top-6 left-6 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-black/20 backdrop-blur-md border border-white/5 transition-all active:scale-150 ${esFav ? 'text-red-600' : 'text-gray-600 hover:text-white'}">
+                        <i class="${esFav ? 'fas' : 'far'} fa-heart"></i>
+                    </button>
+
+                    <div class="absolute top-18 left-6 z-10">
+                        <span class="text-[7px] bg-white/5 text-orange-500/80 border border-orange-500/10 px-2 py-0.5 rounded-md font-black uppercase tracking-[0.2em] italic">
+                            ${p.categoria}
+                        </span>
+                    </div>
+
+                    <div class="img-container h-44 mb-6 flex items-center justify-center p-4 relative mt-4">
+                        <div class="skeleton absolute inset-10 rounded-full opacity-10" id="loader-img-${p.id}"></div>
+                        <img src="${p.imagen}" 
+                             alt="${p.nombre}"
+                             class="max-h-full max-w-full object-contain drop-shadow-2xl" 
+                             onload="document.getElementById('loader-img-${p.id}').style.display='none'"
+                             onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'; this.classList.add('opacity-20'); document.getElementById('loader-img-${p.id}').style.display='none'">
+                    </div>
+
+                    <div class="flex-1 flex flex-col justify-end">
+                        <h3 class="text-[10px] font-black uppercase text-gray-400 italic leading-tight mb-3 line-clamp-2 min-h-[2.5em]">
+                            ${p.nombre}
+                        </h3>
+                        
+                        <div class="flex items-end justify-between gap-2 mb-4">
+                            <div>
+                                <p class="text-white/30 text-[8px] font-black uppercase tracking-widest mb-1">Precio Unitario</p>
+                                <p class="text-3xl font-[900] text-white italic tracking-tighter leading-none">
+                                    ${esAgotado ? '<span class="text-gray-800 italic">CONSULTAR</span>' : `<span class="text-sm font-bold mr-0.5">$</span>${p.precio.toLocaleString('es-AR')}`}
+                                </p>
+                            </div>
+                            
+                            ${p.precioSugerido && !esAgotado ? `
+                                <div class="text-right">
+                                    <p class="text-[8px] text-gray-600 font-black uppercase tracking-tighter">P. Sugerido</p>
+                                    <p class="text-[11px] text-orange-500/50 font-black italic">$${p.precioSugerido}</p>
+                                </div>
+                            ` : ''}
                         </div>
 
-                        <h3 class="text-[11px] font-black uppercase h-8 text-[var(--text-muted)] italic leading-tight">${p.nom}</h3>
-                        <p class="price-tag mt-3 italic">${agotado ? 'SIN STOCK' : '$' + p.pre.toLocaleString()}</p>
-                        ${tienePack && !agotado ? `<p class="text-[9px] text-green-500 font-bold uppercase mt-1">Llevando ${p.pack_cantidad}u. pagás $${p.pack_precio.toLocaleString()} c/u</p>` : ''}
+                        ${p.packCant > 0 && !esAgotado ? `
+                            <div class="bg-green-500/5 border border-green-500/10 p-3 rounded-2xl mb-4 group-hover:bg-green-500/10 transition-colors">
+                                <p class="text-[9px] text-green-500 font-black uppercase tracking-tighter flex items-center gap-2">
+                                    <i class="fas fa-box-open text-[10px]"></i>
+                                    Pack x${p.packCant}: $${p.packPrecio.toLocaleString('es-AR')} c/u
+                                </p>
+                            </div>
+                        ` : ''}
+                    </div>
 
-                        <div class="mt-5">
-                            ${agotado ? `<button disabled class="w-full bg-gray-300 py-5 rounded-2xl font-black text-[10px] text-gray-500">Agotado</button>` :
-                            (qty === 0 ? `<button onclick="add(${p.id},1)" class="w-full bg-orange-600 py-5 rounded-2xl font-black text-[10px] text-white">Agregar</button>` :
-                            `<div class="flex items-center bg-orange-600 rounded-2xl p-1 shadow-2xl">
-                                <button onclick="add(${p.id},-1)" class="w-12 h-12 text-white text-2xl font-black">－</button>
-                                <input type="number" value="${qty}" class="qty-input flex-1" 
-                                       onchange="setQty(${p.id}, this.value)" 
+                    <div class="mt-auto">
+                        ${esAgotado ? `
+                            <button disabled class="w-full bg-[#161616] py-5 rounded-[1.5rem] font-black text-[10px] text-gray-700 uppercase tracking-[0.2em] cursor-not-allowed border border-white/5">
+                                Reingresará Pronto
+                            </button>
+                        ` : (cantidad === 0 ? `
+                            <button onclick="addToCart(${p.id}, 1)" 
+                                    class="w-full bg-orange-600 hover:bg-orange-500 py-5 rounded-[1.5rem] font-black text-[11px] text-white uppercase shadow-[0_12px_24px_rgba(234,88,12,0.25)] transition-all active:scale-95 flex items-center justify-center gap-3">
+                                <i class="fas fa-plus-circle"></i> Agregar al Pedido
+                            </button>
+                        ` : `
+                            <div class="flex items-center bg-orange-600 rounded-[1.5rem] p-1.5 shadow-2xl animate-scale-in">
+                                <button onclick="addToCart(${p.id}, -1)" class="w-12 h-12 flex items-center justify-center text-white text-xl font-black hover:bg-black/10 rounded-xl transition-colors">－</button>
+                                <input type="number" value="${cantidad}" 
+                                       class="input-qty-modern flex-1 bg-transparent text-center text-white font-[900] text-xl outline-none focus:ring-0" 
+                                       onchange="manualCartEntry(${p.id}, this.value)"
                                        onclick="this.select()">
-                                <button onclick="add(${p.id},1)" class="w-12 h-12 text-white text-2xl font-black">＋</button>
-                            </div>`)}
-                        </div>
-                    </div>`;
-            }).join('');
+                                <button onclick="addToCart(${p.id}, 1)" class="w-12 h-12 flex items-center justify-center text-white text-xl font-black hover:bg-black/10 rounded-xl transition-colors">＋</button>
+                            </div>
+                        `)}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function resetFilters() {
+        document.getElementById('search').value = '';
+        activeCat = 'TODOS';
+        soloFavs = false;
+        renderCategories();
+        renderCatalogo();
+    }// 7. GESTIÓN DE CARRITO (Lógica de Negocio Avanzada)
+    window.addToCart = (id, delta) => {
+        const actual = cart[id] || 0;
+        const nuevoValor = actual + delta;
+        updateCartQuantity(id, nuevoValor);
+    };
+
+    window.manualCartEntry = (id, value) => {
+        const n = parseInt(value) || 0;
+        updateCartQuantity(id, n);
+    };
+
+    function updateCartQuantity(id, quantity) {
+        const producto = rawData.find(p => p.id == id);
+        
+        if (!producto || producto.stock <= 0) {
+            delete cart[id];
+            return;
         }
 
-        window.setQty = (id, val) => {
-            const p = data[id];
-            let n = parseInt(val) || 0;
-            if (n > p.stock) {
-                n = p.stock;
-                Swal.fire('Stock Máximo', `Solo hay ${p.stock} unidades.`, 'warning');
+        if (quantity <= 0) {
+            delete cart[id];
+        } else {
+            // Límite de seguridad de stock
+            cart[id] = Math.min(quantity, producto.stock);
+        }
+
+        saveData();
+        updateUI();
+        renderCatalogo();
+    }
+
+    // 8. CÁLCULO DE TOTALES E INTERFAZ (UI)
+    function updateUI() {
+        const totalItems = Object.values(cart).reduce((a, b) => a + b, 0);
+        let montoTotal = 0;
+
+        // Iteramos el carrito para calcular el precio dinámico (Unidad vs Pack)
+        Object.entries(cart).forEach(([id, q]) => {
+            const p = rawData.find(item => item.id == id);
+            if (p) {
+                // Si el producto tiene oferta por pack y se cumple la cantidad
+                if (p.packCant > 0 && q >= p.packCant) {
+                    montoTotal += p.packPrecio * q;
+                } else {
+                    montoTotal += p.precio * q;
+                }
             }
-            if (n <= 0) delete cart[id];
-            else cart[id] = n;
-            update(); render();
+        });
+
+        // Actualización de la Barra de Checkout
+        const bar = document.getElementById('checkout-bar');
+        const countBadge = document.getElementById('cart-count');
+        const totalDisplay = document.getElementById('cart-total');
+        const logBadge = document.getElementById('logistics-badge');
+
+        if (bar) {
+            if (totalItems > 0) {
+                bar.classList.remove('hidden');
+                bar.classList.add('flex');
+            } else {
+                bar.classList.add('hidden');
+                bar.classList.remove('flex');
+            }
+        }
+
+        if (countBadge) countBadge.innerText = totalItems;
+        if (totalDisplay) totalDisplay.innerText = '$' + montoTotal.toLocaleString('es-AR');
+        
+        // Actualizar contador del icono de logística
+        if (logBadge) {
+            logBadge.innerText = totalItems;
+            logBadge.classList.toggle('hidden', totalItems === 0);
+        }
+    }
+
+    // 9. PERSISTENCIA DE DATOS
+    function saveData() {
+        localStorage.setItem('cart_uru_v3', JSON.stringify(cart));
+    }
+
+    // 10. SISTEMA DE HISTORIAL
+    function registrarEnHistorial(ticket) {
+        const nuevoRegistro = {
+            id: Date.now(),
+            fecha: new Date().toLocaleString(),
+            items: ticket.items,
+            total: ticket.total
         };
 
-        window.add = (id, n) => { 
-            const p = data[id];
-            const current = cart[id] || 0;
-            
-            if (n > 0 && current >= p.stock) {
-                Swal.fire({ title: 'Stock Limitado', text: 'No hay más unidades disponibles.', icon: 'warning', confirmButtonColor: '#ff6b00' });
-                return;
-            }
+        historial.unshift(nuevoRegistro); // Agrega al inicio
+        if (historial.length > 10) historial.pop(); // Mantiene solo los últimos 10
+        
+        localStorage.setItem('hist_uru_v3', JSON.stringify(historial));
+        renderHistorial();
+    }
 
-            cart[id] = Math.max(0, current + n); 
-            if (cart[id] === 0) {
-                delete cart[id];
-            } else if (n > 0) {
-                Toast.fire({ icon: 'success', title: `Agregado: ${p.nom}` });
-                if (cart[id] === 1 && p.sugerido) verificarSugerencia(p.sugerido);
-            }
+    function renderHistorial() {
+        const cont = document.getElementById('lista-historial');
+        if (!cont) return;
 
-            update(); render();
-        };
-
-        function verificarSugerencia(nombreSugerido) {
-            const sug = data.find(p => p.nom === nombreSugerido);
-            if (sug && sug.stock > 0 && !cart[sug.id]) {
-                Swal.fire({
-                    title: '¡No te olvides!',
-                    text: `¿Querés sumar ${nombreSugerido} a tu pedido?`,
-                    imageUrl: sug.img,
-                    imageHeight: 100,
-                    showCancelButton: true,
-                    confirmButtonText: '¡Sí, sumar!',
-                    cancelButtonText: 'No, gracias',
-                    confirmButtonColor: '#ff6b00'
-                }).then((result) => {
-                    if (result.isConfirmed) { add(sug.id, 1); }
-                });
-            }
+        if (historial.length === 0) {
+            cont.innerHTML = `<p class="text-gray-600 text-center italic py-10">No hay pedidos anteriores.</p>`;
+            return;
         }
 
-        function verificarHorarioCierre() {
-            const ahora = new Date();
-            const totalMinutos = (ahora.getHours() * 60) + ahora.getMinutes();
-            const cierreMinutos = (12 * 60) + 30; 
+        cont.innerHTML = historial.map(h => `
+            <div class="bg-white/5 border border-white/5 p-5 rounded-2xl mb-3 hover:border-orange-500/30 transition-all">
+                <div class="flex justify-between items-start mb-2">
+                    <span class="text-[10px] text-orange-500 font-black uppercase">${h.fecha}</span>
+                    <span class="text-white font-black">$${h.total.toLocaleString('es-AR')}</span>
+                </div>
+                <p class="text-[9px] text-gray-500 line-clamp-1">${h.items}</p>
+            </div>
+        `).join('');
+    }
 
-            const btnW = document.getElementById('btn-whatsapp');
-            const textoCierre = document.getElementById('cierre-texto');
-
-            if (totalMinutos >= cierreMinutos) {
-                if(textoCierre) textoCierre.innerHTML = "⚠️ Cierre alcanzado. Tu pedido se entregará MAÑANA";
-                if(btnW) btnW.dataset.entrega = "MAÑANA";
-            } else {
-                if(textoCierre) textoCierre.innerHTML = "Hacé tu pedido ahora y recibilo hoy";
-                if(btnW) btnW.dataset.entrega = "HOY";
-            }
-        }
-
-        function vaciarCarrito() {
-            if (confirm('¿Vaciar carrito?')) { cart = {}; update(); render(); }
-        }
-
-        function update() {
-            let t = 0, c = 0, html = '';
-            Object.entries(cart).forEach(([id, q]) => {
-                const p = data[id]; 
-                let precioAplicado = p.pre;
-                let tieneDescuento = false;
-                if (p.pack_cantidad > 0 && q >= p.pack_cantidad) {
-                    precioAplicado = p.pack_precio;
-                    tieneDescuento = true;
-                }
-
-                const subtotal = precioAplicado * q;
-                t += subtotal; 
-                c += q;
-
-                html += `
-                <div class="flex items-center gap-3 bg-[var(--input-bg)] p-3 rounded-2xl border border-[var(--border-color)] mb-2">
-                    <div class="w-16 h-16 bg-white rounded-xl p-1 flex items-center justify-center shrink-0">
-                         <img src="${p.img}" class="max-w-full max-h-full object-contain">
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h4 class="font-bold text-[10px] uppercase truncate text-[var(--text-muted)]">${p.nom}</h4>
-                        <p class="text-orange-500 font-black text-base">
-                            $${subtotal.toLocaleString()}
-                            ${tieneDescuento ? '<span class="text-[8px] bg-green-600 text-white px-1 rounded ml-1">PRECIO PACK</span>' : ''}
-                        </p>
-                    </div>
-                    <div class="flex flex-col items-end shrink-0">
-                        <span class="text-xs font-black bg-orange-600 text-white px-2 py-0.5 rounded-md">x${q}</span>
-                        <button onclick="add(${id},-${q})" class="text-red-500 text-sm p-1"><i class="fas fa-trash-alt"></i></button>
-                    </div>
-                </div>`;
+    function abrirHistorial() {
+        document.getElementById('modal-historial').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }// 11. SISTEMA DE LOGÍSTICA: HOJA DE CARGA (Picking List)
+    function abrirLogistica() {
+        const itemsEnCarrito = Object.entries(cart);
+        
+        if (itemsEnCarrito.length === 0) {
+            Swal.fire({
+                title: 'Carrito Vacío',
+                text: 'Debes agregar productos para generar la hoja de carga.',
+                icon: 'info',
+                background: '#121212',
+                color: '#fff',
+                confirmButtonColor: '#ea580c'
             });
-            document.getElementById('cart-items').innerHTML = html || '<div class="text-center py-20 opacity-20"><p>Carrito Vacío</p></div>';
-            document.getElementById('total').innerText = t.toLocaleString();
-            document.getElementById('count').innerText = c;
-            
-            const perc = Math.min(100, (t / MIN_COMPRA) * 100);
-            const fill = document.getElementById('min-purchase-fill');
-            if(fill) fill.style.width = perc + '%';
-            
-            const btnW = document.getElementById('btn-whatsapp');
-            const minTxt = document.getElementById('min-text');
-            
-            if (t < MIN_COMPRA) {
-                if(btnW) {
-                    btnW.disabled = true;
-                    btnW.className = "w-full bg-gray-400 text-white py-4 rounded-2xl font-black text-lg opacity-50 cursor-not-allowed";
-                }
-                if(minTxt) minTxt.innerHTML = `Faltan <span class="text-orange-600">$${(MIN_COMPRA - t).toLocaleString()}</span> para el mínimo`;
-            } else {
-                if(btnW) {
-                    btnW.disabled = false;
-                    btnW.className = "w-full bg-green-600 text-white py-4 rounded-2xl font-black text-lg animate-pulse active:scale-95 transition-all shadow-xl";
-                }
-                if(minTxt) minTxt.innerHTML = `<span class="text-green-500">✅ PEDIDO MÍNIMO ALCANZADO</span>`;
-            }
+            return;
         }
 
-        function toggleFav(id) { 
-            if (favoritos.includes(id)) favoritos = favoritos.filter(f => f !== id); 
-            else favoritos.push(id); 
-            localStorage.setItem('uru_favs', JSON.stringify(favoritos)); 
-            render(); 
-        }
-
-        function verFavoritos() { soloFavs = !soloFavs; document.getElementById('btn-favs').classList.toggle('text-red-500', soloFavs); render(); }
-
-        function enviarPedido() {
-            const n = document.getElementById('user-name').value;
-            const a = document.getElementById('user-address').value;
-            const entrega = document.getElementById('btn-whatsapp').dataset.entrega || "HOY";
-
-            if (!n || !a) return Swal.fire('Faltan Datos', 'Por favor completá nombre y dirección.', 'warning');
-            
-            confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
-
-            let m = "*NUEVO PEDIDO - EL URU*%0A";
-            m += "👤 *Comercio:* " + n + "%0A";
-            m += "📍 *Dirección:* " + a + "%0A";
-            m += "🕒 *Entrega:* " + entrega + "%0A%0A";
-            m += "------------------------------%0A";
-            
-            Object.entries(cart).forEach(([id, q]) => {
-                const p = data[id];
-                let pre = p.pre;
-                if (p.pack_cantidad > 0 && q >= p.pack_cantidad) pre = p.pack_precio;
-                m += "🔸 *" + q + "* x " + p.nom + " ($" + pre.toLocaleString() + " c/u)%0A";
-            });
-            
-            m += "------------------------------%0A";
-            m += "💰 *TOTAL: $" + document.getElementById('total').innerText + "*";
-            
-            window.open("https://wa.me/5492920248292?text=" + m);
-        }
-
-        /* FUNCIÓN DE FACTURACIÓN (GENERACIÓN DE TICKET) */
-        function generarFactura() {
-            const nombre = document.getElementById('user-name').value;
-            const direccion = document.getElementById('user-address').value;
-            const total = document.getElementById('total').innerText;
-            const fecha = new Date().toLocaleDateString();
-
-            if (!nombre || Object.keys(cart).length === 0) return;
-
-            let itemsHtml = '';
-            Object.entries(cart).forEach(([id, q]) => {
-                const p = data[id];
-                let precio = p.pre;
-                if (p.pack_cantidad > 0 && q >= p.pack_cantidad) precio = p.pack_precio;
-                itemsHtml += `
-                    <tr>
-                        <td style="padding: 10px; border-bottom: 1px solid #eee; font-size: 13px;">${q} x ${p.nom}</td>
-                        <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right; font-size: 13px;">$${precio.toLocaleString()}</td>
-                        <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right; font-size: 13px; font-weight: bold;">$${(precio * q).toLocaleString()}</td>
-                    </tr>
-                `;
-            });
-
-            const ventanaImpresion = window.open('', '', 'height=600,width=800');
-            ventanaImpresion.document.write(`
-                <html>
-                <head>
-                    <title>Factura - ${nombre}</title>
-                    <style>
-                        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; color: #333; line-height: 1.6; }
-                        .header { text-align: center; border-bottom: 3px solid #ff6b00; padding-bottom: 20px; margin-bottom: 30px; }
-                        .header h1 { margin: 0; color: #ff6b00; font-style: italic; text-transform: uppercase; letter-spacing: -1px; }
-                        .info { margin-bottom: 30px; display: flex; justify-content: space-between; font-size: 14px; }
-                        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
-                        th { background: #f8f8f8; padding: 12px; text-align: left; font-size: 12px; text-transform: uppercase; color: #666; }
-                        .total-box { background: #fdf2e9; padding: 20px; border-radius: 10px; text-align: right; }
-                        .total-box span { display: block; }
-                        .total-label { font-size: 14px; font-weight: bold; color: #888; text-transform: uppercase; }
-                        .total-value { font-size: 32px; font-weight: 900; color: #ff6b00; }
-                        .footer { margin-top: 50px; text-align: center; font-size: 11px; color: #aaa; border-top: 1px solid #eee; padding-top: 20px; }
-                        @media print { .no-print { display: none; } }
-                    </style>
-                </head>
-                <body>
-                    <div class="header">
-                        <h1>Distribuidora El Uru</h1>
-                        <p>Viedma y Patagones | Pedidos: +54 9 2920 248292</p>
-                    </div>
-                    <div class="info">
-                        <div>
-                            <p><strong>CLIENTE:</strong> ${nombre.toUpperCase()}</p>
-                            <p><strong>DIRECCIÓN:</strong> ${direccion}</p>
-                        </div>
-                        <div style="text-align: right;">
-                            <p><strong>FECHA:</strong> ${fecha}</p>
-                            <p><strong>TICKET ID:</strong> #UR-${Date.now().toString().slice(-6)}</p>
-                        </div>
-                    </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Descripción del Producto</th>
-                                <th style="text-align: right;">Unitario</th>
-                                <th style="text-align: right;">Subtotal</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${itemsHtml}
-                        </tbody>
-                    </table>
-                    <div class="total-box">
-                        <span class="total-label">Total Neto a Pagar</span>
-                        <span class="total-value">$${total}</span>
-                    </div>
-                    <div class="footer">
-                        <p>Este documento es un comprobante de preventa para control interno y logística.</p>
-                        <p>¡Gracias por confiar en Distribuidora El Uru!</p>
-                    </div>
-                    <script>
-                        setTimeout(() => { 
-                            window.print(); 
-                            window.close(); 
-                        }, 800);
-                    <\/script>
-                </body>
-                </html>
-            `);
-            ventanaImpresion.document.close();
-        }
-
-        /* FUNCIONES DE LOGÍSTICA */
-        function abrirLogistica() {
-            const hoy = new Date();
-            document.getElementById('fecha-logistica').innerText = hoy.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
-            
-            const items = Object.entries(cart);
-            
-            if (items.length === 0) {
-                return Swal.fire('Sin Carga', 'No hay productos en el pedido actual para consolidar.', 'info');
-            }
-
-            let tablaHTML = `
-                <table class="tabla-carga">
+        // Estructura de la Tabla de Carga
+        let htmlTabla = `
+            <div class="p-8 bg-black/40 border-b border-white/5 no-print">
+                <p class="text-[10px] text-gray-500 font-black uppercase tracking-[0.3em]">Instrucciones: Tilda los productos a medida que los cargas en el vehículo.</p>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr>
-                            <th>Producto</th>
-                            <th class="text-center">Categoría</th>
-                            <th class="text-center">CANTIDAD TOTAL</th>
-                            <th class="text-center no-print">Listo</th>
+                        <tr class="bg-black/60 text-[10px] uppercase tracking-[0.2em] text-orange-500 font-[900]">
+                            <th class="p-8 border-b border-white/5">Producto / Descripción</th>
+                            <th class="p-8 border-b border-white/5 text-center">Categoría</th>
+                            <th class="p-8 border-b border-white/5 text-center">Cantidad</th>
+                            <th class="p-8 border-b border-white/5 text-center no-print">Check</th>
                         </tr>
                     </thead>
-                    <tbody>
-            `;
+                    <tbody class="divide-y divide-white/5">
+        `;
 
-            items.forEach(([id, qty]) => {
-                const prod = data[id];
-                tablaHTML += `
-                    <tr id="fila-log-${id}">
-                        <td class="font-bold border-l-4 border-orange-500 pl-4">
-                            <div class="text-white">${prod.nom}</div>
-                            <div class="text-[10px] text-gray-500">ID: ${id}</div>
+        // Generar filas por cada producto en el carrito
+        itemsEnCarrito.forEach(([id, q]) => {
+            const p = rawData.find(prod => prod.id == id);
+            if (p) {
+                htmlTabla += `
+                    <tr id="row-log-${id}" class="group transition-all duration-300">
+                        <td class="p-8 border-l-4 border-transparent group-hover:border-orange-600 bg-white/[0.01]">
+                            <div class="text-white font-[900] text-sm uppercase italic tracking-tight">${p.nombre}</div>
+                            <div class="text-[9px] text-gray-600 font-bold uppercase mt-1 tracking-tighter italic">Ref Code: URU-PRD-${p.id}</div>
                         </td>
-                        <td class="text-center text-xs text-gray-400">${prod.cat}</td>
-                        <td class="text-center">
-                            <span class="bg-orange-500/20 text-orange-500 px-4 py-2 rounded-lg font-black text-2xl">${qty}</span>
+                        <td class="p-8 text-center">
+                            <span class="text-[9px] text-gray-400 font-black uppercase tracking-widest bg-white/5 px-4 py-2 rounded-xl border border-white/5">${p.categoria}</span>
                         </td>
-                        <td class="text-center no-print">
-                            <input type="checkbox" onchange="document.getElementById('fila-log-${id}').classList.toggle('fila-check')" class="w-6 h-6 accent-orange-500">
+                        <td class="p-8 text-center">
+                            <div class="inline-flex items-center justify-center bg-orange-600 text-white w-14 h-14 rounded-2xl font-[900] text-2xl shadow-xl border-2 border-orange-500/20">
+                                ${q}
+                            </div>
+                        </td>
+                        <td class="p-8 text-center no-print">
+                            <label class="relative flex items-center justify-center cursor-pointer">
+                                <input type="checkbox" 
+                                    onchange="toggleRowLog(${id})" 
+                                    class="w-10 h-10 rounded-2xl bg-black border-2 border-white/10 accent-orange-600 cursor-pointer transition-all">
+                            </label>
                         </td>
                     </tr>
                 `;
-            });
+            }
+        });
 
-            tablaHTML += `</tbody></table>`;
-            document.getElementById('cont-tabla-carga').innerHTML = tablaHTML;
-            document.getElementById('modal-logistica').style.display = 'block';
-        }
+        htmlTabla += `
+                    </tbody>
+                </table>
+            </div>
+            <div class="p-12 text-center bg-black/20">
+                <div class="inline-block border-2 border-dashed border-white/10 p-6 rounded-[2rem]">
+                    <p class="text-[10px] text-gray-500 font-black uppercase tracking-[0.5em]">Fin de la Planilla de Carga</p>
+                </div>
+            </div>
+        `;
 
-        function cerrarLogistica() {
-            document.getElementById('modal-logistica').style.display = 'none';
+        document.getElementById('cont-tabla-carga').innerHTML = htmlTabla;
+        document.getElementById('modal-logistica').style.display = 'block';
+        document.body.style.overflow = 'hidden'; 
+    }
+
+    // Tachar fila al completar picking
+    function toggleRowLog(id) {
+        const row = document.getElementById(`row-log-${id}`);
+        if(row) row.classList.toggle('fila-check');
+    }
+
+    function cerrarLogistica() {
+        document.getElementById('modal-logistica').style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    // 12. CONTROL DE ESTADO DE TIENDA (Abierto/Cerrado)
+    function checkOpenStatus() {
+        const now = new Date();
+        const currentHour = now.getHours();
+        const dot = document.getElementById('status-dot');
+        const txt = document.getElementById('status-text');
+
+        // Configuración Horaria: Abierto de 08:00 a 20:00
+        const isOpen = (currentHour >= 8 && currentHour < 20);
+
+        if (isOpen) {
+            if(dot) dot.className = "w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_#22c55e]";
+            if(txt) txt.innerText = "Abierto ahora • Tomando pedidos";
+        } else {
+            if(dot) dot.className = "w-2 h-2 rounded-full bg-red-600 shadow-[0_0_10px_#dc2626]";
+            if(txt) {
+                txt.innerText = "Cerrado • Abrimos a las 08:00 AM";
+                txt.classList.add('text-red-500/50');
+            }
+            // Opcional: Desactivar botones de compra si está cerrado
+            // console.warn("Tienda fuera de horario");
         }
-    </script>
+    }
+
+    // 13. FUNCIÓN DE IMPRESIÓN LIMPIA
+    window.onbeforeprint = function() {
+        if(document.getElementById('modal-logistica').style.display === 'block') {
+            console.log("Preparando impresión de logística...");
+        }
+    };// 14. ENVÍO A WHATSAPP: GENERADOR DE TICKET PREMIUM
+    function sendWhatsApp() {
+        const items = Object.entries(cart);
+        if (items.length === 0) return;
+
+        let totalGeneral = 0;
+        let listaNombres = [];
+        
+        // Encabezado del Ticket
+        let msg = "🚀 *NUEVO PEDIDO - DISTRI EL URU*\n";
+        msg += "━━━━━━━━━━━━━━━━━━━━━\n";
+        msg += `📅 _Fecha: ${new Date().toLocaleDateString()} | Hora: ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}_\n\n`;
+        
+        // Procesamiento de cada producto
+        items.forEach(([id, q]) => {
+            const p = rawData.find(item => item.id == id);
+            if (p) {
+                let precioAplicado = p.precio;
+                let subtotal = 0;
+                let esPromoPack = false;
+
+                // Aplicar Lógica de Pack si corresponde
+                if (p.packCant > 0 && q >= p.packCant) {
+                    precioAplicado = p.packPrecio;
+                    esPromoPack = true;
+                }
+                
+                subtotal = precioAplicado * q;
+                totalGeneral += subtotal;
+                listaNombres.push(`${q}x ${p.nombre}`);
+
+                msg += `📦 *${p.nombre}*\n`;
+                msg += `   ➤ Cant: ${q}u. ${esPromoPack ? '*(Precio Pack)*' : ''}\n`;
+                msg += `   ➤ Unit: $${precioAplicado.toLocaleString('es-AR')}\n`;
+                msg += `   ➤ *Subtotal: $${subtotal.toLocaleString('es-AR')}*\n\n`;
+            }
+        });
+
+        // Cierre del Ticket
+        msg += "━━━━━━━━━━━━━━━━━━━━━\n";
+        msg += `💰 *TOTAL A PAGAR: $${totalGeneral.toLocaleString('es-AR')}*\n`;
+        msg += "━━━━━━━━━━━━━━━━━━━━━\n\n";
+        msg += "📍 *Por favor, confírmame el stock y coordinamos el envío.*";
+
+        // Registrar en el Historial Local antes de enviar
+        registrarEnHistorial({
+            items: listaNombres.join(', '),
+            total: totalGeneral
+        });
+
+        // Configuración de Envío
+        const numeroTel = "5491136357428"; 
+        const urlFinal = `https://wa.me/${numeroTel}?text=${encodeURIComponent(msg)}`;
+
+        // Feedback Visual (Confetti)
+        confetti({
+            particleCount: 180,
+            spread: 80,
+            origin: { y: 0.6 },
+            colors: ['#ea580c', '#ffffff', '#22c55e']
+        });
+
+        // Abrir WhatsApp con delay para permitir ver el efecto
+        setTimeout(() => {
+            window.open(urlFinal, '_blank');
+        }, 800);
+    }
+
+    // 15. LISTENERS GLOBALES Y ATAJOS
+    document.addEventListener('keydown', (e) => {
+        // Atajo: ESC cierra todos los modales
+        if (e.key === "Escape") {
+            cerrarLogistica();
+            document.getElementById('modal-historial').style.display = 'none';
+        }
+        
+        // Atajo: Focus en buscador con '/'
+        if (e.key === "/" && document.activeElement.tagName !== 'INPUT') {
+            e.preventDefault();
+            document.getElementById('search').focus();
+        }
+    });
+
+    // 16. INICIALIZACIÓN DE LA APLICACIÓN
+    document.addEventListener('DOMContentLoaded', () => {
+        // Iniciar motor de datos
+        loadEngine();
+        
+        // Verificar estado de tienda cada minuto
+        setInterval(checkOpenStatus, 60000);
+    });
+
+    // Manejo de scroll para efectos de la barra de checkout
+    let lastScroll = 0;
+    window.addEventListener('scroll', () => {
+        const currentScroll = window.pageYOffset;
+        const checkoutBar = document.getElementById('checkout-bar');
+        
+        if (checkoutBar && Object.keys(cart).length > 0) {
+            if (currentScroll > lastScroll && currentScroll > 200) {
+                // Scroll hacia abajo: ocultar un poco para mejorar visibilidad
+                checkoutBar.style.transform = 'translateY(10px) scale(0.98)';
+                checkoutBar.style.opacity = '0.9';
+            } else {
+                // Scroll hacia arriba: mostrar pleno
+                checkoutBar.style.transform = 'translateY(0) scale(1)';
+                checkoutBar.style.opacity = '1';
+            }
+        }
+        lastScroll = currentScroll;
+    });
+
+</script>
+
+<div class="no-print text-center py-20 opacity-20">
+    <p class="text-[8px] font-black uppercase tracking-[1em] text-white">Distri El Uru v3.0 - High Performance System</p>
+</div>
+
 </body>
 </html>
