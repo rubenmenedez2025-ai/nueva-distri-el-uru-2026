@@ -188,134 +188,35 @@
             <span>🔥 PRECIOS MAYORISTAS ACTUALIZADOS 2026 🔥</span>
         </div>
     </div>
-<nav lass="bg-white/5 backdrop-blur-2xl sticky top-0 z-50 p-4 border-b border-[var(--border-color)]">
-    <div class="max-w-7xl mx-auto flex justify-between items-center">
-        <div class="flex items-center gap-3">
-            <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-12 h-12 rounded-2xl border border-orange-500">
-            <div class="block"> 
-                <h1 class="text-lg md:text-2xl font-black italic text-orange-500 uppercase leading-none tracking-tighter">Distribuidora El Uru</h1>
-                <span class="text-[9px] text-gray-500 font-bold uppercase tracking-[0.2em]">Viedma y Patagones</span>
-            </div>
-        </div>
-        <div class="flex items-center gap-2">
-            <button id="boton-admin" onclick="document.getElementById('panel-despacho').style.display='flex'" style="display:none;" class="bg-blue-600 text-white px-4 py-3 rounded-2xl font-black shadow-xl flex items-center gap-2 text-xs">
-                <i class="fas fa-file-invoice"></i>
-                <span class="hidden sm:inline">FACTURAR</span>
-            </button>
-            <button ondblclick="accesoAdmin()" onclick="toggleTheme()" class="mode-toggle">
-                <i id="theme-icon" class="fas fa-moon"></i>
-            </button>
-            <button onclick="document.getElementById('cart').style.display='flex'" class="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-4 py-3 rounded-2xl font-black flex items-center gap-3 text-xs">
-                <div class="relative">
-                    <i class="fas fa-shopping-basket"></i>
-                    <span id="count" class="absolute -top-3 -right-3 bg-white text-orange-600 w-5 h-5 rounded-full flex items-center justify-center text-[10px]">0</span>
+<nav class="bg-white/5 backdrop-blur-2xl sticky top-0 z-50 p-4 border-b border-[var(--border-color)]">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-12 h-12 rounded-2xl border border-orange-500 shadow-lg shadow-orange-500/20">
+                <div class="block"> 
+                    <h1 class="text-lg md:text-2xl font-black italic text-orange-500 uppercase leading-none tracking-tighter">Distribuidora El Uru</h1>
+                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-[0.2em]">Viedma y Patagones</span>
                 </div>
-                <span class="hidden sm:inline uppercase">Pedido</span>
-            </button>
-        </div>
-    </div>
-</nav>
-
-<div id="panel-despacho" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:9999; align-items:center; justify-content:center; padding:20px;">
-    <div class="bg-[#111] p-6 rounded-[2rem] border border-orange-500 w-full max-w-xl">
-        <h2 class="text-orange-500 font-black mb-4 uppercase italic">Facturador WhatsApp</h2>
-        <textarea id="input-whatsapp" class="w-full h-64 bg-black border border-white/10 rounded-xl p-4 text-white text-sm mb-4" placeholder="Pegá el pedido de WhatsApp acá..."></textarea>
-        <div class="flex gap-2">
-    <button onclick="ejecutarFactura()" class="flex-1 bg-orange-600 text-white py-4 rounded-xl font-black uppercase shadow-lg active:scale-95 transition-all">
-        Generar Ticket
-    </button>
-    
-    <button onclick="document.getElementById('panel-despacho').style.display='none'" class="px-6 bg-white/10 text-white rounded-xl">Cerrar</button>
-</div>
-    </div>
-</div>
-
-<script>
-function accesoAdmin() {
-    Swal.fire({
-        title: 'Acceso Admin',
-        input: 'password',
-        confirmButtonText: 'Entrar',
-        confirmButtonColor: '#2563eb'
-    }).then((result) => {
-        if (result.value === 'uru2026') { 
-            document.getElementById('boton-admin').style.display = 'flex';
-            Swal.fire('Habilitado', '', 'success');
-        }
-    });
-}
-
-function procesarYFacturar() {
-    const texto = document.getElementById('input-whatsapp').value;
-    if(!texto) return Swal.fire('Error', 'Pegá el pedido primero', 'error');
-
-    const comercio = texto.match(/Comercio:\s*(.*)/)?.[1] || "Cliente El Uru";
-    const direccion = texto.match(/Dirección:\s*(.*)/)?.[1] || "-";
-    const total = texto.match(/TOTAL:\s*\$(.*)/)?.[1] || "0";
-    const lineas = texto.split('\n').filter(l => l.includes('🔸') || l.includes('🔥') || (l.includes(' x ') && l.includes('$')));
-    
-    let itemsHtml = '';
-    lineas.forEach(l => {
-        itemsHtml += `<tr><td style="padding:8px 0; border-bottom:1px dashed #ccc; font-family: monospace;">${l.replace(/[🔸🔥]/g, '').trim()}</td></tr>`;
-    });
-
-    // CREAMOS EL CONTENIDO DEL TICKET
-    const ticketHtml = `
-        <div id="ticket-imprimir" style="background:white; color:black; padding:20px; font-family:monospace; width:100%; max-width:400px; margin:0 auto; text-align:left;">
-            <div style="text-align:center; border-bottom:2px solid #000; margin-bottom:10px; padding-bottom:10px;">
-                <h2 style="margin:0;">EL URU DISTRIBUIDORA</h2>
-                <p style="margin:0; font-size:12px;">Viedma y Patagones</p>
             </div>
-            <p style="font-size:12px; margin:5px 0;"><strong>CLIENTE:</strong> ${comercio}</p>
-            <p style="font-size:12px; margin:5px 0;"><strong>DIR:</strong> ${direccion}</p>
-            <p style="font-size:12px; margin:5px 0;"><strong>FECHA:</strong> ${new Date().toLocaleDateString()}</p>
-            <table width="100%" style="margin:10px 0; border-collapse:collapse;">${itemsHtml}</table>
-            <h2 style="text-align:right; margin-top:10px; border-top:2px solid #000;">TOTAL: $${total}</h2>
-            <p style="text-align:center; font-size:10px; margin-top:20px;">*** COMPROBANTE NO VÁLIDO COMO FACTURA ***</p>
-        </div>
-    `;
-
-    // MOSTRAR PREVISUALIZACIÓN ANTES DE IMPRIMIR
-    Swal.fire({
-        title: 'Previsualización del Ticket',
-        html: ticketHtml,
-        showCancelButton: true,
-        confirmButtonText: 'Imprimir / Guardar PDF',
-        cancelButtonText: 'Corregir',
-        confirmButtonColor: '#2563eb',
-        width: '450px'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            const v = window.open('', '_blank');
-            v.document.write(`<html><head><title>Ticket_${comercio.replace(/\s+/g, '_')}</title></head><body style="margin:0;">${ticketHtml}</body></html>`);
-            v.document.close();
             
-            // Pequeño delay para asegurar que el contenido cargue antes de pedir el PDF
-            setTimeout(() => {
-                v.print();
-            }, 500);
-        }
-    });
-}
+            <div class="flex items-center gap-2">
+                <button onclick="document.getElementById('panel-despacho').style.display='flex'" class="bg-blue-600 hover:bg-blue-500 text-white px-4 md:px-5 py-3 rounded-2xl font-black shadow-xl flex items-center gap-2 text-xs active:scale-95 transition-all">
+                    <i class="fas fa-file-invoice text-base"></i>
+                    <span class="uppercase tracking-widest hidden sm:inline">Facturar</span>
+                </button>
 
-    const v = window.open('', '', 'width=600,height=800');
-    v.document.write(`
-        <html><body style="font-family:monospace; padding:30px;">
-            <div style="text-align:center; border-bottom:2px solid #000; margin-bottom:10px;">
-                <h2 style="margin:0;">EL URU DISTRIBUIDORA</h2>
-                <p>Ticket de Preventa</p>
+                <button onclick="toggleTheme()" class="mode-toggle">
+                    <i id="theme-icon" class="fas fa-moon"></i>
+                </button>
+
+                <button onclick="document.getElementById('cart').style.display='flex'" class="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-4 md:px-6 py-3 rounded-2xl font-black shadow-xl flex items-center gap-3 text-xs active:scale-95 transition-all">
+                    <div class="relative">
+                        <i class="fas fa-shopping-basket text-base"></i>
+                        <span id="count" class="absolute -top-3 -right-3 bg-white text-orange-600 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold">0</span>
+                    </div>
+                    <span class="uppercase tracking-widest hidden sm:inline">Pedido</span>
+                </button>
             </div>
-            <p><strong>CLIENTE:</strong> ${comercio}</p>
-            <p><strong>DIRECCIÓN:</strong> ${direccion}</p>
-            <p><strong>FECHA:</strong> ${new Date().toLocaleDateString()}</p>
-            <table width="100%" style="margin:10px 0;">${itemsHtml}</table>
-            <h2 style="text-align:right;">TOTAL: $${total}</h2>
-            <script>setTimeout(() => { window.print(); window.close(); }, 500);<\/script>
-        </body></html>
-    `);
-    v.document.close();
-}
-</script>
+        </div>
     </nav>
 
     <section class="px-4 max-w-7xl mx-auto mt-6">
@@ -392,42 +293,8 @@ function procesarYFacturar() {
         <textarea id="input-whatsapp" class="w-full h-64 bg-black border border-white/10 rounded-2xl p-4 text-white font-mono text-sm mb-6 outline-none focus:border-orange-500" placeholder="Copiá el pedido de WhatsApp y pegalo acá..."></textarea>
         
         <div class="flex gap-4">
-            <button onclick="procesarYFacturar()" class="flex-1 bg-orange-600 text-white py-4 rounded-2xl font-black uppercase hover:bg-orange-500 transition-colors">rar Ticket</button>
-            <button onclick="
-    const texto = document.getElementById('input-whatsapp').value;
-    if(!texto) { alert('Pegá el pedido'); return; }
-
-    const comercio = texto.match(/Comercio:\s*(.*)/)?.[1] || 'Cliente El Uru';
-    const direccion = texto.match(/Dirección:\s*(.*)/)?.[1] || '-';
-    const total = texto.match(/TOTAL:\s*\$(.*)/)?.[1] || '0';
-    const lineas = texto.split('\n').filter(l => l.includes('🔸') || l.includes('🔥') || (l.includes(' x ') && l.includes('$')));
-    
-    let itemsHtml = '';
-    lineas.forEach(l => {
-        itemsHtml += '<tr><td style=\'padding:8px 0; border-bottom:1px dashed #ccc; font-family:monospace;\'>' + l.replace(/[🔸🔥]/g, '').trim() + '</td></tr>';
-    });
-
-    const ticketHtml = `
-        <html><head><title>Ticket - ${comercio}</title></head>
-        <body style='font-family:monospace; padding:20px;'>
-            <div style='text-align:center; border-bottom:2px solid #000; margin-bottom:10px;'>
-                <h2 style='margin:0;'>EL URU DISTRIBUIDORA</h2>
-                <p style='margin:0; font-size:12px;'>Viedma y Patagones</p>
-            </div>
-            <p style='font-size:13px;'><strong>CLIENTE:</strong> ${comercio}</p>
-            <p style='font-size:13px;'><strong>DIRECCIÓN:</strong> ${direccion}</p>
-            <table width='100%'>${itemsHtml}</table>
-            <h2 style='text-align:right; border-top:2px solid #000;'>TOTAL: $${total}</h2>
-            <script>setTimeout(() => { window.print(); window.close(); }, 500);<\/script>
-        </body></html>
-    `;
-
-    const v = window.open('', '_blank');
-    v.document.write(ticketHtml);
-    v.document.close();
-" class="flex-1 bg-orange-600 text-white py-4 rounded-xl font-black uppercase shadow-lg active:scale-95 transition-all">
-    Generar Ticket
-</button>
+            <button onclick="procesarYFacturar()" class="flex-1 bg-orange-600 text-white py-4 rounded-2xl font-black uppercase hover:bg-orange-500 transition-colors">Generar Ticket</button>
+            <button onclick="document.getElementById('panel-despacho').style.display='none'" class="bg-white/10 text-white px-8 rounded-2xl font-black uppercase hover:bg-white/20">Cerrar</button>
         </div>
     </div>
 </div>
@@ -919,89 +786,7 @@ function procesarYFacturar() {
 
         function cerrarLogistica() {
             document.getElementById('modal-logistica').style.display = 'none';
-        }function accesoAdmin() {
-    Swal.fire({
-        title: 'Acceso Administrador',
-        input: 'password',
-        inputPlaceholder: 'Ingresá tu clave',
-        showCancelButton: true,
-        confirmButtonColor: '#25eb25',
-        confirmButtonText: 'Entrar'
-    }).then((result) => {
-        // ACÁ PODÉS CAMBIAR '1234' POR LA CLAVE QUE VOS QUIERAS
-        if (result.value === 'uru2026') { 
-            document.getElementById('boton-admin').style.display = 'flex';
-            Swal.fire('¡Hola Uru!', 'Botón de facturación habilitado', 'success');
-        } else if (result.value) {
-            Swal.fire('Error', 'Clave incorrecta', 'error');
         }
-    });
-}
-    <script>
-function ejecutarFactura() {
-    try {
-        const texto = document.getElementById('input-whatsapp').value;
-        if (!texto) {
-            alert("Por favor, pegá el pedido de WhatsApp primero.");
-            return;
-        }
-
-        // Extraer datos básicos
-        const comercioMatch = texto.match(/Comercio:\s*(.*)/);
-        const direccionMatch = texto.match(/Dirección:\s*(.*)/);
-        const totalMatch = texto.match(/TOTAL:\s*\$(.*)/);
-
-        const comercio = comercioMatch ? comercioMatch[1] : "Cliente El Uru";
-        const direccion = direccionMatch ? direccionMatch[1] : "-";
-        const total = totalMatch ? totalMatch[1] : "0";
-
-        // Filtrar productos
-        const lineas = texto.split('\n').filter(l => l.includes('🔸') || l.includes('🔥') || (l.includes(' x ') && l.includes('$')));
-        
-        let filas = "";
-        lineas.forEach(l => {
-            const limpio = l.replace(/[🔸🔥]/g, '').trim();
-            filas += `<tr><td style="padding:8px 0; border-bottom:1px dashed #ccc; font-family:monospace; font-size:14px;">${limpio}</td></tr>`;
-        });
-
-        // Crear el documento del ticket
-        const contenido = `
-            <html>
-            <head><title>Ticket - ${comercio}</title></head>
-            <body style="font-family:monospace; padding:20px; color:black; background:white;">
-                <div style="text-align:center; border-bottom:2px solid black; padding-bottom:10px; margin-bottom:10px;">
-                    <h2 style="margin:0;">EL URU DISTRIBUIDORA</h2>
-                    <p style="margin:0; font-size:12px;">Viedma y Patagones</p>
-                </div>
-                <p><strong>CLIENTE:</strong> ${comercio}</p>
-                <p><strong>DIRECCIÓN:</strong> ${direccion}</p>
-                <p><strong>FECHA:</strong> ${new Date().toLocaleDateString()}</p>
-                <table width="100%" cellspacing="0">${filas}</table>
-                <h2 style="text-align:right; border-top:2px solid black; margin-top:15px; padding-top:10px;">TOTAL: $${total}</h2>
-                <p style="text-align:center; font-size:10px; margin-top:30px;">*** COMPROBANTE DE PREVENTA ***</p>
-                <script>
-                    window.onload = function() {
-                        window.print();
-                        setTimeout(function() { window.close(); }, 500);
-                    }
-                <\/script>
-            </body>
-            </html>
-        `;
-
-        // Abrir e imprimir
-        const ventana = window.open('', '_blank');
-        if (ventana) {
-            ventana.document.write(contenido);
-            ventana.document.close();
-        } else {
-            alert("El navegador bloqueó la ventana emergente. Por favor, permití los pop-ups para esta página.");
-        }
-    } catch (error) {
-        console.error(error);
-        alert("Hubo un error al generar el ticket. Revisá la consola.");
-    }
-}
-</script>
+    </script>
 </body>
 </html>
