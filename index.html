@@ -244,7 +244,7 @@ function accesoAdmin() {
 
 function procesarYFacturar() {
     const texto = document.getElementById('input-whatsapp').value;
-    if(!texto) return alert("Pegá el pedido primero");
+    if(!texto) return Swal.fire('Error', 'Pegá el pedido primero', 'error');
 
     const comercio = texto.match(/Comercio:\s*(.*)/)?.[1] || "Cliente El Uru";
     const direccion = texto.match(/Dirección:\s*(.*)/)?.[1] || "-";
@@ -253,8 +253,47 @@ function procesarYFacturar() {
     
     let itemsHtml = '';
     lineas.forEach(l => {
-        itemsHtml += `<tr><td style="padding:5px; border-bottom:1px dashed #ccc;">${l.replace(/[🔸🔥]/g, '').trim()}</td></tr>`;
+        itemsHtml += `<tr><td style="padding:8px 0; border-bottom:1px dashed #ccc; font-family: monospace;">${l.replace(/[🔸🔥]/g, '').trim()}</td></tr>`;
     });
+
+    // CREAMOS EL CONTENIDO DEL TICKET
+    const ticketHtml = `
+        <div id="ticket-imprimir" style="background:white; color:black; padding:20px; font-family:monospace; width:100%; max-width:400px; margin:0 auto; text-align:left;">
+            <div style="text-align:center; border-bottom:2px solid #000; margin-bottom:10px; padding-bottom:10px;">
+                <h2 style="margin:0;">EL URU DISTRIBUIDORA</h2>
+                <p style="margin:0; font-size:12px;">Viedma y Patagones</p>
+            </div>
+            <p style="font-size:12px; margin:5px 0;"><strong>CLIENTE:</strong> ${comercio}</p>
+            <p style="font-size:12px; margin:5px 0;"><strong>DIR:</strong> ${direccion}</p>
+            <p style="font-size:12px; margin:5px 0;"><strong>FECHA:</strong> ${new Date().toLocaleDateString()}</p>
+            <table width="100%" style="margin:10px 0; border-collapse:collapse;">${itemsHtml}</table>
+            <h2 style="text-align:right; margin-top:10px; border-top:2px solid #000;">TOTAL: $${total}</h2>
+            <p style="text-align:center; font-size:10px; margin-top:20px;">*** COMPROBANTE NO VÁLIDO COMO FACTURA ***</p>
+        </div>
+    `;
+
+    // MOSTRAR PREVISUALIZACIÓN ANTES DE IMPRIMIR
+    Swal.fire({
+        title: 'Previsualización del Ticket',
+        html: ticketHtml,
+        showCancelButton: true,
+        confirmButtonText: 'Imprimir / Guardar PDF',
+        cancelButtonText: 'Corregir',
+        confirmButtonColor: '#2563eb',
+        width: '450px'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const v = window.open('', '_blank');
+            v.document.write(`<html><head><title>Ticket_${comercio.replace(/\s+/g, '_')}</title></head><body style="margin:0;">${ticketHtml}</body></html>`);
+            v.document.close();
+            
+            // Pequeño delay para asegurar que el contenido cargue antes de pedir el PDF
+            setTimeout(() => {
+                v.print();
+            }, 500);
+        }
+    });
+}
 
     const v = window.open('', '', 'width=600,height=800');
     v.document.write(`
