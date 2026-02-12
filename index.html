@@ -480,7 +480,18 @@ lineas.forEach(l => {
             localStorage.setItem('uru_address', document.getElementById('user-address').value);
         }
 
-        async function load() {
+        // --- EMPEZÁ A BORRAR DESDE ACÁ ---
+async function load() {
+    try {
+        const res = await fetch(TSV + '&t=' + Date.now());
+        // ... todo lo que hay en el medio ...
+        renderCats(); 
+        render();
+        verificarHorarioCierre();
+    } catch (e) { 
+        console.error("Error cargando productos:", e); 
+    }
+} // --- TERMINÁ DE BORRAR EN ESTA LLAVE ---async function load() {
     try {
         const res = await fetch(TSV + '&t=' + Date.now());
         const text = await res.text();
@@ -489,9 +500,9 @@ lineas.forEach(l => {
         data = lines.map((l, i) => {
             const c = l.split('\t');
             
-            // 1. Limpiamos el precio: si no hay nada o es 0, lo dejamos en 0
-            const precioRaw = (c[1] || '').replace(/\D/g, '');
-            const precioFinal = parseInt(precioRaw) || 0;
+            // LIMPIEZA: Quitamos símbolos pero mantenemos el número real
+            const precioRaw = (c[1] || '').replace(/[$\s]/g, '').replace(',', '.');
+            const precioFinal = Math.floor(Number(precioRaw)) || 0;
 
             return { 
                 id: i, 
@@ -499,12 +510,7 @@ lineas.forEach(l => {
                 pre: precioFinal, 
                 cat: (c[2]||'VARIOS').trim().toUpperCase(), 
                 img: (c[3]||'').trim(),
-                
-                // 2. TRUCO DE MAGIA: 
-                // Si precioFinal > 0, le inventamos un stock de 999 para que la web lo muestre disponible.
-                // Si precioFinal es 0, el stock queda en 0 y saldrá "Agotado".
                 stock: precioFinal > 0 ? 999 : 0,
-
                 sugerido: (c[5]||'').trim(),
                 pack_cantidad: parseInt(c[6]) || 0,
                 pack_precio: parseInt(c[7]) || 0    
