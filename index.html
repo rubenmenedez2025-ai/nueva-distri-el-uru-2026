@@ -188,24 +188,68 @@
             <span>🔥 PRECIOS MAYORISTAS ACTUALIZADOS 2026 🔥</span>
         </div>
     </div>
-<nav <div class="flex items-center gap-2">
-    <button id="boton-admin" onclick="document.getElementById('panel-despacho').style.display='flex'" style="display:none;" class="bg-blue-600 hover:bg-blue-500 text-white px-4 md:px-5 py-3 rounded-2xl font-black shadow-xl flex items-center gap-2 text-xs active:scale-95 transition-all">
-        <i class="fas fa-file-invoice text-base"></i>
-        <span class="uppercase tracking-widest hidden sm:inline">Facturar</span>
-    </button>
-
-    <button ondblclick="accesoAdmin()" class="mode-toggle">
-        <i id="theme-icon" class="fas fa-moon"></i>
-    </button>
-
-    <button onclick="document.getElementById('cart').style.display='flex'" class="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-4 md:px-6 py-3 rounded-2xl font-black shadow-xl flex items-center gap-3 text-xs active:scale-95 transition-all">
-        <div class="relative">
-            <i class="fas fa-shopping-basket text-base"></i>
-            <span id="count" class="absolute -top-3 -right-3 bg-white text-orange-600 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold">0</span>
+<nav <nav class="bg-white/5 backdrop-blur-2xl sticky top-0 z-50 p-4 border-b border-[var(--border-color)]">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+        
+        <div class="flex items-center gap-3">
+            <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" class="w-12 h-12 rounded-2xl border border-orange-500 shadow-lg shadow-orange-500/20">
+            <div class="block"> 
+                <h1 class="text-lg md:text-2xl font-black italic text-orange-500 uppercase leading-none tracking-tighter">Distribuidora El Uru</h1>
+                <span class="text-[9px] text-gray-500 font-bold uppercase tracking-[0.2em]">Viedma y Patagones</span>
+            </div>
         </div>
-        <span class="uppercase tracking-widest hidden sm:inline">Pedido</span>
-    </button>
-</div>
+        
+        <div class="flex items-center gap-2">
+            
+            <button id="boton-admin" onclick="document.getElementById('panel-despacho').style.display='flex'" style="display:none;" class="bg-blue-600 hover:bg-blue-500 text-white px-4 md:px-5 py-3 rounded-2xl font-black shadow-xl flex items-center gap-2 text-xs active:scale-95 transition-all">
+                <i class="fas fa-file-invoice text-base"></i>
+                <span class="uppercase tracking-widest hidden sm:inline">Facturar</span>
+            </button>
+
+            <button ondblclick="accesoAdmin()" onclick="toggleTheme()" class="mode-toggle">
+                <i id="theme-icon" class="fas fa-moon"></i>
+            </button>
+
+            <button onclick="document.getElementById('cart').style.display='flex'" class="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-4 md:px-6 py-3 rounded-2xl font-black shadow-xl flex items-center gap-3 text-xs active:scale-95 transition-all">
+                <div class="relative">
+                    <i class="fas fa-shopping-basket text-base"></i>
+                    <span id="count" class="absolute -top-3 -right-3 bg-white text-orange-600 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold">0</span>
+                </div>
+                <span class="uppercase tracking-widest hidden sm:inline">Pedido</span>
+            </button>
+
+        </div>
+    </div>
+</nav>
+
+<script>
+function accesoAdmin() {
+    Swal.fire({
+        title: 'Acceso Restringido',
+        text: 'Ingresá la clave de Administrador',
+        input: 'password',
+        inputPlaceholder: 'Clave...',
+        showCancelButton: true,
+        confirmButtonColor: '#2563eb',
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Entrar'
+    }).then((result) => {
+        // La clave es uru2026 (podés cambiarla acá abajo)
+        if (result.value === 'uru2026') { 
+            document.getElementById('boton-admin').style.display = 'flex';
+            Swal.fire({
+                title: '¡Acceso Correcto!',
+                text: 'El botón de facturación ya es visible.',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        } else if (result.value) {
+            Swal.fire('Error', 'Clave incorrecta', 'error');
+        }
+    });
+}
+</script>
     </nav>
 
     <section class="px-4 max-w-7xl mx-auto mt-6">
