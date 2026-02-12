@@ -252,7 +252,31 @@ function procesarYFacturar() {
     const lineas = texto.split('\n').filter(l => l.includes('🔸') || l.includes('🔥') || (l.includes(' x ') && l.includes('$')));
     
     let itemsHtml = '';
-    lineas.forEach(l => {
+    // Dentro de tu bucle de productos o función de carga
+lineas.forEach(l => {
+    const datos = l.split('\t'); // O como extraigas los datos del Sheets
+    let precio = datos[1]; // Suponiendo que la columna 2 es el precio
+    let nombre = datos[0];
+    
+    let precioDisplay = "";
+    let esAgotado = false;
+
+    // LÓGICA DE PRODUCTO AGOTADO
+    if (!precio || precio.trim() === "" || parseFloat(precio) === 0) {
+        precioDisplay = '<span style="color: red; font-weight: bold;">AGOTADO</span>';
+        esAgotado = true;
+    } else {
+        precioDisplay = `$${precio}`;
+    }
+
+    // Al generar el HTML del producto, usamos precioDisplay
+    itemsHtml += `
+        <div class="producto ${esAgotado ? 'agotado' : ''}">
+            <p>${nombre}</p>
+            <p class="precio">${precioDisplay}</p>
+            ${!esAgotado ? '<button onclick="agregarAlCarrito(...)">Agregar</button>' : '<button disabled>Sin Stock</button>'}
+        </div>
+    `;
         itemsHtml += `<tr><td style="padding:5px; border-bottom:1px dashed #ccc;">${l.replace(/[🔸🔥]/g, '').trim()}</td></tr>`;
     });
 
