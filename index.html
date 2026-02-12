@@ -221,9 +221,12 @@
         <h2 class="text-orange-500 font-black mb-4 uppercase italic">Facturador WhatsApp</h2>
         <textarea id="input-whatsapp" class="w-full h-64 bg-black border border-white/10 rounded-xl p-4 text-white text-sm mb-4" placeholder="Pegá el pedido de WhatsApp acá..."></textarea>
         <div class="flex gap-2">
-            <button onclick="procesarYFacturar()" class="flex-1 bg-orange-600 text-white py-4 rounded-xl font-black uppercase">Generar Ticket</button>
-            <button onclick="document.getElementById('panel-despacho').style.display='none'" class="px-6 bg-white/10 text-white rounded-xl">Cerrar</button>
-        </div>
+    <button onclick="ejecutarFactura()" class="flex-1 bg-orange-600 text-white py-4 rounded-xl font-black uppercase shadow-lg active:scale-95 transition-all">
+        Generar Ticket
+    </button>
+    
+    <button onclick="document.getElementById('panel-despacho').style.display='none'" class="px-6 bg-white/10 text-white rounded-xl">Cerrar</button>
+</div>
     </div>
 </div>
 
@@ -389,7 +392,7 @@ function procesarYFacturar() {
         <textarea id="input-whatsapp" class="w-full h-64 bg-black border border-white/10 rounded-2xl p-4 text-white font-mono text-sm mb-6 outline-none focus:border-orange-500" placeholder="Copiá el pedido de WhatsApp y pegalo acá..."></textarea>
         
         <div class="flex gap-4">
-            <button onclick="procesarYFacturar()" class="flex-1 bg-orange-600 text-white py-4 rounded-2xl font-black uppercase hover:bg-orange-500 transition-colors">Generar Ticket</button>
+            <button onclick="procesarYFacturar()" class="flex-1 bg-orange-600 text-white py-4 rounded-2xl font-black uppercase hover:bg-orange-500 transition-colors">rar Ticket</button>
             <button onclick="
     const texto = document.getElementById('input-whatsapp').value;
     if(!texto) { alert('Pegá el pedido'); return; }
@@ -934,6 +937,71 @@ function procesarYFacturar() {
         }
     });
 }
-    </script>
+    <script>
+function ejecutarFactura() {
+    try {
+        const texto = document.getElementById('input-whatsapp').value;
+        if (!texto) {
+            alert("Por favor, pegá el pedido de WhatsApp primero.");
+            return;
+        }
+
+        // Extraer datos básicos
+        const comercioMatch = texto.match(/Comercio:\s*(.*)/);
+        const direccionMatch = texto.match(/Dirección:\s*(.*)/);
+        const totalMatch = texto.match(/TOTAL:\s*\$(.*)/);
+
+        const comercio = comercioMatch ? comercioMatch[1] : "Cliente El Uru";
+        const direccion = direccionMatch ? direccionMatch[1] : "-";
+        const total = totalMatch ? totalMatch[1] : "0";
+
+        // Filtrar productos
+        const lineas = texto.split('\n').filter(l => l.includes('🔸') || l.includes('🔥') || (l.includes(' x ') && l.includes('$')));
+        
+        let filas = "";
+        lineas.forEach(l => {
+            const limpio = l.replace(/[🔸🔥]/g, '').trim();
+            filas += `<tr><td style="padding:8px 0; border-bottom:1px dashed #ccc; font-family:monospace; font-size:14px;">${limpio}</td></tr>`;
+        });
+
+        // Crear el documento del ticket
+        const contenido = `
+            <html>
+            <head><title>Ticket - ${comercio}</title></head>
+            <body style="font-family:monospace; padding:20px; color:black; background:white;">
+                <div style="text-align:center; border-bottom:2px solid black; padding-bottom:10px; margin-bottom:10px;">
+                    <h2 style="margin:0;">EL URU DISTRIBUIDORA</h2>
+                    <p style="margin:0; font-size:12px;">Viedma y Patagones</p>
+                </div>
+                <p><strong>CLIENTE:</strong> ${comercio}</p>
+                <p><strong>DIRECCIÓN:</strong> ${direccion}</p>
+                <p><strong>FECHA:</strong> ${new Date().toLocaleDateString()}</p>
+                <table width="100%" cellspacing="0">${filas}</table>
+                <h2 style="text-align:right; border-top:2px solid black; margin-top:15px; padding-top:10px;">TOTAL: $${total}</h2>
+                <p style="text-align:center; font-size:10px; margin-top:30px;">*** COMPROBANTE DE PREVENTA ***</p>
+                <script>
+                    window.onload = function() {
+                        window.print();
+                        setTimeout(function() { window.close(); }, 500);
+                    }
+                <\/script>
+            </body>
+            </html>
+        `;
+
+        // Abrir e imprimir
+        const ventana = window.open('', '_blank');
+        if (ventana) {
+            ventana.document.write(contenido);
+            ventana.document.close();
+        } else {
+            alert("El navegador bloqueó la ventana emergente. Por favor, permití los pop-ups para esta página.");
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Hubo un error al generar el ticket. Revisá la consola.");
+    }
+}
+</script>
 </body>
 </html>
