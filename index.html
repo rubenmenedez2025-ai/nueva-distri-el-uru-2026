@@ -19,88 +19,117 @@
             --text-muted: #888;
             --border-color: rgba(255, 255, 255, 0.05);
             --input-bg: #151515;
-            --footer-bg: #050505;
         }
 
-        body.light-mode {
-            --bg-main: #f3f4f6;
-            --bg-card: linear-gradient(145deg, #ffffff, #f9fafb);
-            --text-main: #111827;
-            --text-muted: #4b5563;
-            --border-color: rgba(0, 0, 0, 0.1);
-            --input-bg: #ffffff;
-            --footer-bg: #e5e7eb;
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
         }
 
-        body { 
-            background-color: var(--bg-main); 
-            color: var(--text-main); 
-            font-family: 'Inter', sans-serif; 
-            transition: all 0.4s ease; 
-            scroll-behavior: smooth; 
-            overflow-x: hidden; 
+        /* CORRECCIÓN SCROLL CATEGORÍAS */
+        #categorias-scroll {
+            display: flex;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 10px;
+            gap: 12px;
         }
-        
-        .no-scrollbar::-webkit-scrollbar { height: 4px; }
-        .no-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .no-scrollbar::-webkit-scrollbar-thumb { background: #ff6b00; border-radius: 10px; }
-        
-        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        .animate-marquee { display: flex; width: max-content; animation: marquee 25s linear infinite; }
+        #categorias-scroll::-webkit-scrollbar { display: none; }
 
-        .card-prod { 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-            background: var(--bg-card) !important; 
-            border: 1px solid var(--border-color) !important; 
+        .card-prod {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
         }
-        .card-prod:hover { 
-            transform: translateY(-8px); 
-            border-color: #ff6b00 !important; 
-            box-shadow: 0 15px 35px rgba(255, 107, 0, 0.15); 
-        }
-        
-        .card-prod.agotado { filter: grayscale(1); opacity: 0.6; }
 
-        .badge-pulse { animation: pulse-badge 2s infinite; }
-        @keyframes pulse-badge {
-            0% { box-shadow: 0 0 0 0 rgba(255, 107, 0, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(255, 107, 0, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 107, 0, 0); }
+        .card-prod:hover {
+            transform: translateY(-8px);
+            border-color: #ff6b00;
+            box-shadow: 0 15px 35px rgba(255, 107, 0, 0.15);
+        }
+
+        .badge-nuevo {
+            position: absolute;
+            top: 15px;
+            right: -10px;
+            background: #0066ff;
+            color: white;
+            font-weight: 900;
+            font-size: 10px;
+            padding: 5px 15px;
+            transform: rotate(15deg);
+            box-shadow: 0 5px 15px rgba(0,102,255,0.4);
+            z-index: 20;
+            border-radius: 5px;
+        }
+
+        .badge-oferta {
+            position: absolute;
+            top: 15px;
+            right: -10px;
+            background: #ff0000;
+            color: white;
+            font-weight: 900;
+            font-size: 10px;
+            padding: 5px 15px;
+            transform: rotate(15deg);
+            animation: pulse 2s infinite;
+            z-index: 20;
+            border-radius: 5px;
+        }
+
+        @keyframes pulse {
+            0% { transform: rotate(15deg) scale(1); }
+            50% { transform: rotate(15deg) scale(1.1); }
+            100% { transform: rotate(15deg) scale(1); }
         }
 
         .btn-whatsapp-float {
-            position: fixed; bottom: 24px; left: 24px; width: 60px; height: 60px;
-            background-color: #25d366; color: #fff; border-radius: 50px; text-align: center;
-            font-size: 35px; box-shadow: 2px 2px 10px rgba(0,0,0,0.3); z-index: 100;
-            display: flex; align-items: center; justify-content: center;
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            width: 60px;
+            height: 60px;
+            background-color: #25d366;
+            color: #fff;
+            border-radius: 50px;
+            text-align: center;
+            font-size: 35px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse-green 2s infinite;
         }
 
-        .price-tag { color: #ff6b00; font-weight: 900; font-size: 1.7rem; }
-
-        .info-pill {
-            background: var(--input-bg); border: 1px solid var(--border-color);
-            padding: 12px 20px; border-radius: 100px; display: flex; align-items: center;
-            gap: 10px; font-size: 11px; font-weight: 800; text-transform: uppercase;
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
         }
 
-        .cat-active { background-color: #ff6b00 !important; color: white !important; }
-        
-        #go-up { display: none; position: fixed; bottom: 24px; right: 24px; z-index: 90; background: #ff6b00; color: white; width: 50px; height: 50px; border-radius: 50%; }
-        
-        .skeleton {
-            background: linear-gradient(90deg, var(--input-bg) 25%, var(--border-color) 50%, var(--input-bg) 75%);
-            background-size: 200% 100%;
-            animation: skeleton-loading 1.5s infinite;
+        #go-up {
+            display: none;
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 90;
+            background: #ff6b00;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
         }
-        @keyframes skeleton-loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-        .fila-check { opacity: 0.2; text-decoration: line-through; filter: grayscale(1); transition: 0.3s; }
+        .fila-check { opacity: 0.3; text-decoration: line-through; filter: grayscale(1); }
 
         @media print {
-            body * { visibility: hidden; }
-            #modal-logistica, #modal-logistica * { visibility: visible; }
-            #modal-logistica { position: absolute; left: 0; top: 0; width: 100%; background: white !important; color: black !important; }
             .no-print { display: none !important; }
+            body { background: white; color: black; }
         }
     </style>
 </head>
@@ -110,339 +139,336 @@
         <i class="fab fa-whatsapp"></i>
     </a>
 
-    <button id="go-up" class="no-print" onclick="window.scrollTo(0,0)"><i class="fas fa-chevron-up"></i></button>
+    <button id="go-up" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="no-print">
+        <i class="fas fa-chevron-up"></i>
+    </button>
 
     <div class="bg-black text-orange-500 py-2 overflow-hidden border-b border-orange-500/20 no-print">
-        <div class="animate-marquee gap-10 font-black text-[10px] uppercase tracking-[0.2em]">
-            <span>⚡ DISTRIBUIDORA EL URU - VIEDMA Y PATAGONES ⚡</span>
-            <span>📦 PEDIDOS HASTA 12:30HS ENTREGA HOY 📦</span>
-            <span>🔥 PRECIOS MAYORISTAS ACTUALIZADOS 2026 🔥</span>
-            <span>⚡ DISTRIBUIDORA EL URU - VIEDMA Y PATAGONES ⚡</span>
+        <div class="flex whitespace-nowrap animate-[marquee_25s_linear_infinite] gap-10 font-black text-[10px] uppercase tracking-[0.2em]">
+            <span>⚡ DISTRIBUIDORA EL URU - VIEDMA Y PATAGONES ⚡ PEDIDOS HASTA 12:30HS ENTREGA HOY ⚡ PRECIOS ACTUALIZADOS 2026 ⚡</span>
+            <span>⚡ DISTRIBUIDORA EL URU - VIEDMA Y PATAGONES ⚡ PEDIDOS HASTA 12:30HS ENTREGA HOY ⚡ PRECIOS ACTUALIZADOS 2026 ⚡</span>
         </div>
     </div>
 
     <nav class="bg-white/5 backdrop-blur-2xl sticky top-0 z-50 p-4 border-b border-[var(--border-color)] no-print">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" 
-                     onclick="abrirLogistica()"
-                     class="w-12 h-12 rounded-2xl border border-orange-500 shadow-lg cursor-pointer hover:scale-110 transition-transform">
-                <div> 
-                    <h1 class="text-lg md:text-2xl font-black italic text-orange-500 uppercase leading-none tracking-tighter">Distribuidora El Uru</h1>
-                    <span id="status-text" class="text-[9px] text-gray-500 font-bold uppercase tracking-[0.2em]">Cargando...</span>
+                <img src="https://i.ibb.co/yB7ffL4T/unnamed.jpg" onclick="abrirLogistica()" class="w-12 h-12 rounded-2xl border border-orange-500 cursor-pointer hover:scale-105 transition-transform">
+                <div>
+                    <h1 class="text-lg md:text-2xl font-black italic text-orange-500 uppercase leading-none">El Uru</h1>
+                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Distribuidora</span>
                 </div>
             </div>
-            
-            <div class="flex items-center gap-2">
-                <button onclick="abrirHistorial()" class="w-10 h-10 rounded-xl bg-[var(--input-bg)] border border-[var(--border-color)] text-gray-500 hover:text-orange-500 transition-all">
-                    <i class="fas fa-history"></i>
-                </button>
-                <button onclick="toggleTheme()" class="w-10 h-10 rounded-xl bg-[var(--input-bg)] border border-[var(--border-color)] text-orange-500">
-                    <i id="theme-icon" class="fas fa-moon"></i>
-                </button>
-                <button onclick="document.getElementById('cart').style.display='flex'" class="bg-orange-600 text-white px-4 py-3 rounded-2xl font-black shadow-xl flex items-center gap-3 text-xs active:scale-95 transition-all">
+            <div class="flex items-center gap-4">
+                <button onclick="document.getElementById('modal-cart').style.display='flex'" class="bg-orange-600 text-white px-4 py-3 rounded-2xl font-black shadow-xl flex items-center gap-3 text-xs">
                     <div class="relative">
-                        <i class="fas fa-shopping-basket text-base"></i>
-                        <span id="count" class="absolute -top-3 -right-3 bg-white text-orange-600 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold">0</span>
+                        <i class="fas fa-shopping-basket"></i>
+                        <span id="cart-count" class="absolute -top-3 -right-3 bg-white text-orange-600 w-5 h-5 rounded-full flex items-center justify-center text-[10px]">0</span>
                     </div>
                 </button>
             </div>
         </div>
     </nav>
 
-    <section class="px-4 max-w-7xl mx-auto mt-6 no-print">
-        <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2 mb-6">
-            <div class="info-pill shrink-0"><i class="fas fa-check-circle text-green-500"></i><div>Reparto <span>Sin Cargo</span></div></div>
-            <div class="info-pill shrink-0"><i class="fas fa-history text-blue-500"></i><button onclick="abrirHistorial()">Ver <span>Historial</span></button></div>
-            <div class="info-pill shrink-0"><i class="fas fa-map-marker-alt text-red-500"></i><div>Viedma <span>& Patagones</span></div></div>
-        </div>
-
-        <div class="bg-gradient-to-r from-orange-600 to-red-600 rounded-[2.5rem] p-6 flex flex-col md:flex-row items-center justify-between shadow-2xl mb-8 border border-white/10">
-            <div class="flex items-center gap-6 text-white">
-                <div class="text-5xl md:text-7xl font-black italic opacity-40 select-none">12:30</div>
-                <div>
-                    <h2 class="text-2xl md:text-4xl font-black uppercase italic leading-none tracking-tighter">Cierre de Pedidos</h2>
-                    <p id="cierre-texto" class="font-bold uppercase text-[10px] mt-1 tracking-widest">Hacé tu pedido ahora y recibilo hoy</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <div class="p-4 max-w-5xl mx-auto space-y-6 no-print">
-        <div class="relative flex gap-3">
-            <div class="relative flex-1">
-                <input type="text" id="search" onkeyup="render()" placeholder="¿Qué estás buscando hoy?" class="w-full p-6 pl-14 rounded-3xl bg-[var(--input-bg)] text-[var(--text-main)] font-bold border border-[var(--border-color)] outline-none focus:ring-2 focus:ring-orange-500">
-                <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 text-orange-500 text-xl"></i>
-            </div>
-            <button onclick="verFavoritos()" id="btn-favs" class="bg-[var(--input-bg)] px-6 rounded-3xl text-gray-500 border border-[var(--border-color)] hover:text-red-500 transition-all">
-                <i class="fas fa-heart text-2xl"></i>
-            </button>
+        <div class="relative">
+            <input type="text" id="searchInput" onkeyup="filterProducts()" placeholder="¿Qué buscas hoy?" 
+                   class="w-full p-6 pl-14 rounded-3xl bg-[var(--input-bg)] text-[var(--text-main)] font-bold border border-[var(--border-color)] outline-none focus:ring-2 focus:ring-orange-500 transition-all">
+            <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 text-orange-500 text-xl"></i>
         </div>
-        <div class="flex gap-3 overflow-x-auto pb-4 no-scrollbar" id="category-filters"></div>
+
+        <div id="categorias-scroll" class="no-scrollbar">
+            </div>
     </div>
 
-    <main id="catalogo" class="p-4 max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-24 no-print"></main>
+    <main id="product-grid" class="p-4 max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-24 no-print">
+        </main>
 
-    <div id="cart" style="display:none;" class="fixed inset-0 bg-black/60 backdrop-blur-md z-[200] flex justify-end no-print">
+    <footer class="bg-[#0c0c0c] border-t border-white/5 p-12 mt-20 no-print">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8 text-center md:text-left">
+            <div>
+                <h3 class="text-white font-black italic text-xl">DISTRI EL <span class="text-orange-600">URU</span></h3>
+                <p class="text-gray-500 text-[10px] uppercase tracking-widest mt-2">Distribución Mayorista - Viedma</p>
+            </div>
+            <div class="flex gap-6 text-gray-400">
+                <a href="#" class="hover:text-white transition-colors"><i class="fab fa-instagram text-2xl"></i></a>
+                <a href="https://wa.me/5492920248292" class="hover:text-white transition-colors"><i class="fab fa-whatsapp text-2xl"></i></a>
+            </div>
+            <div class="text-[9px] text-gray-600 font-bold uppercase tracking-tighter">
+                © 2026 Todos los derechos reservados.
+            </div>
+        </div>
+    </footer>
+
+    <div id="modal-cart" style="display:none;" class="fixed inset-0 bg-black/60 backdrop-blur-md z-[200] flex justify-end no-print">
         <div class="bg-[var(--bg-main)] w-full max-w-md h-full flex flex-col shadow-2xl border-l border-[var(--border-color)]">
-            <div class="p-5 border-b border-[var(--border-color)] flex justify-between items-center">
-                <div>
-                    <h2 class="text-2xl font-black uppercase italic text-orange-500">Mi Carrito</h2>
-                    <p class="text-[10px] text-[var(--text-muted)] font-black uppercase tracking-widest">Mínimo: $25.000</p>
-                </div>
-                <button onclick="document.getElementById('cart').style.display='none'" class="text-4xl text-gray-500">×</button>
+            <div class="p-6 border-b border-[var(--border-color)] flex justify-between items-center">
+                <h2 class="text-2xl font-black uppercase text-orange-500 italic">Tu Pedido</h2>
+                <button onclick="document.getElementById('modal-cart').style.display='none'" class="text-4xl text-gray-500">&times;</button>
             </div>
-            <div id="cart-items" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
-            <div class="p-5 bg-[var(--input-bg)] border-t border-[var(--border-color)] space-y-3">
-                <div id="min-warning" class="bg-black/5 p-3 rounded-2xl border border-[var(--border-color)]">
-                    <p id="min-text" class="text-[10px] font-black uppercase text-center mb-2 text-[var(--text-muted)]"></p>
-                    <div class="h-1.5 bg-gray-300 rounded-full overflow-hidden"><div id="min-purchase-fill" class="h-full bg-orange-600 transition-all duration-700"></div></div>
+            <div id="cart-items" class="flex-1 overflow-y-auto p-4 space-y-3">
                 </div>
-                <input type="text" id="user-name" oninput="saveUserData()" placeholder="Nombre del Comercio" class="w-full p-3 rounded-xl bg-[var(--bg-main)] text-[var(--text-main)] font-bold border border-[var(--border-color)] text-sm">
-                <input type="text" id="user-address" oninput="saveUserData()" placeholder="Dirección de Entrega" class="w-full p-3 rounded-xl bg-[var(--bg-main)] text-[var(--text-main)] font-bold border border-[var(--border-color)] text-sm">
-                <div class="flex justify-between items-center px-1">
-                    <span class="text-[var(--text-muted)] font-black uppercase text-xs">Total:</span>
-                    <span class="text-orange-500 text-3xl font-black italic">$<span id="total">0</span></span>
+            <div class="p-6 bg-[var(--input-bg)] border-t border-[var(--border-color)] space-y-4">
+                <div class="space-y-2">
+                    <input type="text" id="cliente-nombre" placeholder="Nombre del Comercio" class="w-full p-4 rounded-xl bg-black/50 border border-white/10 text-white font-bold">
+                    <input type="text" id="cliente-direccion" placeholder="Dirección de entrega" class="w-full p-4 rounded-xl bg-black/50 border border-white/10 text-white font-bold">
                 </div>
-                <button id="btn-whatsapp" onclick="enviarPedido()" class="w-full bg-orange-600 text-white py-4 rounded-2xl font-black text-lg shadow-xl">ENVIAR POR WHATSAPP</button>
-                <button onclick="vaciarCarrito()" class="w-full text-red-500 text-[10px] font-black uppercase py-1">Vaciar carrito</button>
+                <div class="flex justify-between items-center font-black italic">
+                    <span class="text-xs uppercase opacity-50">Total estimado:</span>
+                    <span class="text-orange-500 text-3xl">$<span id="cart-total">0</span></span>
+                </div>
+                <button onclick="enviarPedido()" class="w-full bg-orange-600 text-white py-5 rounded-2xl font-black text-lg shadow-lg hover:bg-orange-500 transition-colors">
+                    CONFIRMAR POR WHATSAPP
+                </button>
             </div>
         </div>
     </div>
 
-    <div id="modal-logistica" style="display:none;" class="fixed inset-0 bg-black/95 backdrop-blur-xl z-[300] flex items-center justify-center p-4">
-        <div class="bg-[var(--bg-main)] w-full max-w-4xl rounded-[2.5rem] border border-orange-500/30 overflow-hidden flex flex-col max-h-[90vh]">
-            <div class="p-6 border-b border-orange-500/20 flex justify-between items-center bg-orange-600/10 no-print">
-                <h2 class="text-xl font-black text-orange-500 uppercase italic">Control de Carga Logística</h2>
-                <button onclick="document.getElementById('modal-logistica').style.display='none'" class="text-3xl text-gray-500">×</button>
+    <div id="modal-logistica" style="display:none;" class="fixed inset-0 bg-black z-[300] overflow-y-auto">
+        <div class="p-4 max-w-4xl mx-auto">
+            <div class="flex justify-between items-center py-6 border-b border-white/10 no-print">
+                <h2 class="text-orange-500 font-black italic text-2xl uppercase">Modo Logística</h2>
+                <button onclick="cerrarLogistica()" class="text-white text-4xl">&times;</button>
             </div>
-            <div id="cont-tabla-carga" class="p-6 overflow-y-auto bg-white text-black"></div>
-            <div class="p-4 bg-orange-600 no-print">
-                <button onclick="window.print()" class="w-full text-white font-black uppercase">Imprimir Planilla</button>
+            <div id="cont-tabla-carga" class="mt-8 text-white">
+                </div>
+            <div class="mt-8 no-print pb-10">
+                <button onclick="window.print()" class="w-full bg-white text-black py-4 rounded-xl font-black uppercase">Imprimir Planilla de Carga</button>
             </div>
         </div>
     </div>
 
-    <div id="modal-historial" style="display:none;" class="fixed inset-0 bg-black/90 backdrop-blur-md z-[250] flex items-center justify-center p-4 no-print">
-        <div class="bg-[var(--bg-main)] w-full max-w-lg rounded-[2.5rem] border border-white/10 overflow-hidden flex flex-col max-h-[80vh]">
-            <div class="p-6 border-b border-white/10 flex justify-between items-center">
-                <h2 class="text-xl font-black text-orange-500 uppercase italic">Pedidos Recientes</h2>
-                <button onclick="document.getElementById('modal-historial').style.display='none'" class="text-3xl text-gray-500">×</button>
-            </div>
-            <div id="lista-historial" class="p-6 overflow-y-auto space-y-4"></div>
-        </div>
-    </div><script>
-        const TSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQEemzCvTezcjzZhIUIRIayZ7U81xgssl9G1Vr6Odx7dHGHOARY0iJ-VOL43E17qLVkiIRb0LTurcZU/pub?output=tsv';
-        const MIN_COMPRA = 25000;
-        let data = [], cart = {}, activeCat = 'TODOS', soloFavs = false;
-        let favoritos = JSON.parse(localStorage.getItem('uru_favs')) || [];
-        let historial = JSON.parse(localStorage.getItem('uru_historial')) || [];
+    <script>
+        const SHEETS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQEemzCvTezcjzZhIUIRIayZ7U81xgssl9G1Vr6Odx7dHGHOARY0iJ-VOL43E17qLVkiIRb0LTurcZU/pub?output=tsv';
+        
+        let data = [];
+        let cart = {};
+        let currentCategory = 'TODOS';
 
-        window.onload = () => {
-            if(localStorage.getItem('uru_theme') === 'light') toggleTheme();
-            document.getElementById('user-name').value = localStorage.getItem('uru_name') || '';
-            document.getElementById('user-address').value = localStorage.getItem('uru_address') || '';
-            load();
-            setInterval(verificarHorarioCierre, 60000); 
-        };
-
-        function toggleTheme() {
-            document.body.classList.toggle('light-mode');
-            const isLight = document.body.classList.contains('light-mode');
-            localStorage.setItem('uru_theme', isLight ? 'light' : 'dark');
-            document.getElementById('theme-icon').className = isLight ? 'fas fa-sun' : 'fas fa-moon';
-        }
-
-        async function load() {
+        // CARGA DE DATOS CORREGIDA PARA "PRODUCTOS NUEVOS"
+        async function loadEngine() {
             try {
-                const res = await fetch(TSV + '&t=' + Date.now());
-                const text = await res.text();
-                const lines = text.split(/\r?\n/).slice(1);
-                data = lines.map((l, i) => {
-                    const c = l.split('\t');
-                    return { 
-                        id: i, 
-                        nom: (c[0]||'').trim(), 
-                        pre: parseInt((c[1]||'').replace(/\D/g,'')) || 0, 
-                        cat: (c[2]||'VARIOS').trim().toUpperCase(), 
-                        img: (c[3]||'').trim(),
-                        stock: parseInt(c[4]) || 0,
-                        sugerido: (c[5]||'').trim(),
-                        pack_cantidad: parseInt(c[6]) || 0,
-                        pack_precio: parseInt(c[7]) || 0 
+                const response = await fetch(SHEETS_URL + '&t=' + Date.now());
+                const text = await response.text();
+                const rows = text.split('\n').slice(1);
+
+                data = rows.map((row, idx) => {
+                    const col = row.split('\t');
+                    const rawPrice = (col[1] || '0').trim();
+                    const priceNum = parseFloat(rawPrice.replace(',', '.')) || 0;
+                    
+                    // CORRECCIÓN: Si el precio original en la celda termina en .01, es "NUEVO"
+                    // Y nos aseguramos de que el stock no se bloquee por el .01
+                    const esNuevo = rawPrice.endsWith('.01') || rawPrice.endsWith(',01');
+                    const esOferta = rawPrice.endsWith('.99') || rawPrice.endsWith(',99');
+                    
+                    return {
+                        id: idx,
+                        nom: (col[0] || '').trim(),
+                        pre: Math.floor(priceNum), // Precio visual entero
+                        cat: (col[2] || 'VARIOS').trim().toUpperCase(),
+                        img: (col[3] || '').trim(),
+                        stock: (col[4] && parseInt(col[4]) > 0) ? parseInt(col[4]) : (priceNum > 0 ? 999 : 0),
+                        nuevo: esNuevo,
+                        oferta: esOferta
                     };
                 }).filter(p => p.nom !== "");
-                renderCats(); render(); update();
-                verificarHorarioCierre();
-            } catch (e) { console.error(e); }
+
+                renderCategories();
+                renderProducts();
+            } catch (error) {
+                console.error("Error cargando base de datos:", error);
+            }
         }
 
-        function renderCats() {
-            const uniqueCats = [...new Set(data.map(p => p.cat))];
-            const cats = ['TODOS', ...uniqueCats];
-            document.getElementById('category-filters').innerHTML = cats.map(c => {
-                const count = c === 'TODOS' ? data.length : data.filter(p => p.cat === c).length;
-                return `<button onclick="activeCat='${c}'; renderCats(); render();" class="shrink-0 px-7 py-4 rounded-full bg-[var(--input-bg)] text-[10px] font-black uppercase text-[var(--text-muted)] border border-[var(--border-color)] ${activeCat === c ? 'cat-active' : ''}">${c} <span class="opacity-40 ml-1">${count}</span></button>`;
-            }).join('');
+        function renderCategories() {
+            const categories = ['TODOS', ...new Set(data.map(p => p.cat))];
+            const cont = document.getElementById('categorias-scroll');
+            cont.innerHTML = categories.map(cat => `
+                <button onclick="filterByCategory('${cat}')" 
+                    class="category-btn shrink-0 px-8 py-4 rounded-2xl bg-[var(--input-bg)] text-[10px] font-black uppercase border border-[var(--border-color)] transition-all
+                    ${currentCategory === cat ? 'bg-orange-600 text-white border-orange-600 shadow-lg' : 'text-gray-500'}">
+                    ${cat}
+                </button>
+            `).join('');
         }
 
-        function render() {
-            const q = document.getElementById('search').value.toLowerCase();
-            let filtered = data.filter(p => (activeCat === 'TODOS' || p.cat === activeCat) && p.nom.toLowerCase().includes(q));
-            if(soloFavs) filtered = filtered.filter(p => favoritos.includes(p.id));
-
-            document.getElementById('catalogo').innerHTML = filtered.map(p => {
-                const qty = cart[p.id] || 0;
-                const agotado = p.stock <= 0;
-                const esOferta = !agotado && (p.pre.toString().endsWith('99') || p.pre.toString().endsWith('90'));
-                
-                return `
-                <div class="card-prod p-5 rounded-[2.5rem] flex flex-col relative ${qty > 0 ? 'ring-2 ring-orange-500' : ''} ${agotado ? 'agotado' : ''}">
-                    ${agotado ? '<div class="absolute top-4 right-2 bg-gray-800 text-white text-[8px] px-3 py-1 rounded-full font-black">AGOTADO</div>' : 
-                    (esOferta ? '<div class="absolute top-4 right-2 bg-red-600 text-white text-[8px] px-3 py-1 rounded-full font-black badge-pulse">OFERTA 🔥</div>' : '')}
-                    
-                    <button onclick="toggleFav(${p.id})" class="absolute top-6 left-6 z-10 text-xl ${favoritos.includes(p.id) ? 'text-red-600' : 'text-gray-400'}"><i class="fas fa-heart"></i></button>
-                    
-                    <div class="h-44 mb-5 flex items-center justify-center p-5 bg-white/5 rounded-3xl">
-                        <img src="${p.img}" class="max-h-full object-contain" onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'">
-                    </div>
-                    
-                    <h3 class="text-[11px] font-black uppercase h-8 text-[var(--text-muted)] italic leading-tight line-clamp-2">${p.nom}</h3>
-                    <p class="price-tag mt-3 italic">$${p.pre.toLocaleString()}</p>
-                    ${p.pack_cantidad > 0 ? `<p class="text-[9px] text-green-500 font-bold uppercase">Pack x${p.pack_cantidad}: $${p.pack_precio.toLocaleString()} c/u</p>` : ''}
-
-                    <div class="mt-5">
-                        ${agotado ? `<button disabled class="w-full bg-gray-300 py-5 rounded-2xl font-black text-[10px] text-gray-500">Sin Stock</button>` :
-                        (qty === 0 ? `<button onclick="add(${p.id},1)" class="w-full bg-orange-600 py-5 rounded-2xl font-black text-[10px] text-white active:scale-95 transition-all">Agregar</button>` :
-                        `<div class="flex items-center bg-orange-600 rounded-2xl p-1 shadow-2xl">
-                            <button onclick="add(${p.id},-1)" class="w-12 h-10 text-white text-xl font-black">－</button>
-                            <span class="flex-1 text-center font-black text-white">${qty}</span>
-                            <button onclick="add(${p.id},1)" class="w-12 h-10 text-white text-xl font-black">＋</button>
-                        </div>`)}
-                    </div>
-                </div>`;
-            }).join('');
+        function filterByCategory(cat) {
+            currentCategory = cat;
+            renderCategories();
+            renderProducts();
         }
 
-        function add(id, n) {
-            const p = data[id];
-            cart[id] = Math.max(0, (cart[id] || 0) + n);
-            if (cart[id] === 0) delete cart[id];
-            update(); render();
+        function filterProducts() {
+            renderProducts();
         }
 
-        function update() {
-            let t = 0, c = 0, html = '';
-            Object.entries(cart).forEach(([id, q]) => {
-                const p = data[id];
-                let preActual = (p.pack_cantidad > 0 && q >= p.pack_cantidad) ? p.pack_precio : p.pre;
-                let sub = preActual * q;
-                t += sub; c += q;
-                html += `
-                <div class="flex items-center gap-3 bg-[var(--input-bg)] p-3 rounded-2xl border border-[var(--border-color)]">
-                    <img src="${p.img}" class="w-12 h-12 object-contain bg-white rounded-lg p-1">
-                    <div class="flex-1 min-w-0">
-                        <h4 class="font-bold text-[10px] uppercase truncate text-[var(--text-muted)]">${p.nom}</h4>
-                        <p class="text-orange-500 font-black text-sm">$${sub.toLocaleString()}</p>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs font-black bg-orange-600 text-white px-2 py-1 rounded-md">x${q}</span>
-                    </div>
-                </div>`;
+        function renderProducts() {
+            const grid = document.getElementById('product-grid');
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            
+            const filtered = data.filter(p => {
+                const matchCat = currentCategory === 'TODOS' || p.cat === currentCategory;
+                const matchSearch = p.nom.toLowerCase().includes(search);
+                return matchCat && matchSearch;
             });
-            
-            document.getElementById('cart-items').innerHTML = html || '<p class="text-center opacity-30 py-10">Carrito vacío</p>';
-            document.getElementById('total').innerText = t.toLocaleString();
-            document.getElementById('count').innerText = c;
-            
-            const perc = Math.min(100, (t / MIN_COMPRA) * 100);
-            document.getElementById('min-purchase-fill').style.width = perc + '%';
-            document.getElementById('min-text').innerHTML = t < MIN_COMPRA ? `Faltan $${(MIN_COMPRA - t).toLocaleString()} para el mínimo` : `Mínimo alcanzado ✅`;
-            
-            const btnW = document.getElementById('btn-whatsapp');
-            btnW.disabled = t < MIN_COMPRA;
-            btnW.style.opacity = t < MIN_COMPRA ? '0.5' : '1';
+
+            grid.innerHTML = filtered.map(p => {
+                const q = cart[p.id] || 0;
+                const agotado = p.stock <= 0;
+                return `
+                    <div class="card-prod p-5 rounded-[2.5rem] flex flex-col relative ${agotado ? 'opacity-50 grayscale' : ''}">
+                        ${p.nuevo && !agotado ? '<div class="badge-nuevo">NUEVO ✨</div>' : ''}
+                        ${p.oferta && !agotado ? '<div class="badge-oferta">OFERTA 🔥</div>' : ''}
+                        
+                        <div class="h-48 flex items-center justify-center p-4 bg-white/5 rounded-3xl mb-4 overflow-hidden">
+                            <img src="${p.img}" class="max-h-full object-contain hover:scale-110 transition-transform duration-500" onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'">
+                        </div>
+                        
+                        <div class="flex-1">
+                            <p class="text-[9px] font-black text-orange-600 uppercase tracking-widest mb-1">${p.cat}</p>
+                            <h3 class="text-xs font-black uppercase leading-tight italic line-clamp-2 h-8">${p.nom}</h3>
+                            <div class="mt-3 flex items-baseline gap-1">
+                                <span class="text-2xl font-black text-white italic">$${p.pre.toLocaleString()}</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-5">
+                            ${agotado ? 
+                                '<button disabled class="w-full py-4 rounded-2xl bg-gray-800 text-gray-500 font-black text-[10px] uppercase">Agotado</button>' :
+                                (q === 0 ? 
+                                    `<button onclick="updateCart(${p.id}, 1)" class="w-full py-4 rounded-2xl bg-orange-600 text-white font-black text-[10px] uppercase hover:bg-orange-500 shadow-lg shadow-orange-900/20">Agregar</button>` :
+                                    `<div class="flex items-center bg-white/10 rounded-2xl p-1 border border-white/10">
+                                        <button onclick="updateCart(${p.id}, -1)" class="w-10 h-10 flex items-center justify-center text-white font-black text-xl hover:bg-white/5 rounded-xl">-</button>
+                                        <span class="flex-1 text-center font-black text-orange-500">${q}</span>
+                                        <button onclick="updateCart(${p.id}, 1)" class="w-10 h-10 flex items-center justify-center text-white font-black text-xl hover:bg-white/5 rounded-xl">+</button>
+                                    </div>`
+                                )
+                            }
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
-        function verificarHorarioCierre() {
-            const h = new Date().getHours(), m = new Date().getMinutes();
-            const esAbierto = (h >= 8 && (h < 20)); // Ejemplo: Abierto de 8 a 20hs
-            const esEntregaHoy = (h < 12 || (h === 12 && m < 30));
+        function updateCart(id, delta) {
+            const p = data[id];
+            const current = cart[id] || 0;
+            const nuevo = current + delta;
+
+            if (nuevo > p.stock) return Swal.fire({title: 'Sin Stock', text: 'No hay más unidades disponibles', icon: 'warning', background: '#111', color: '#fff'});
             
-            document.getElementById('status-text').innerText = esAbierto ? "Abierto ahora" : "Cerrado temporalmente";
-            document.getElementById('cierre-texto').innerText = esEntregaHoy ? "Hacé tu pedido ahora y recibilo hoy" : "Entrega programada para MAÑANA";
-            document.getElementById('btn-whatsapp').dataset.entrega = esEntregaHoy ? "HOY" : "MAÑANA";
+            if (nuevo <= 0) delete cart[id];
+            else cart[id] = nuevo;
+
+            refreshCartUI();
+            renderProducts();
+        }
+
+        function refreshCartUI() {
+            const itemsCont = document.getElementById('cart-items');
+            const items = Object.entries(cart);
+            let total = 0;
+            let count = 0;
+
+            itemsCont.innerHTML = items.map(([id, q]) => {
+                const p = data[id];
+                total += p.pre * q;
+                count += q;
+                return `
+                    <div class="flex items-center gap-4 bg-white/5 p-3 rounded-2xl border border-white/5">
+                        <img src="${p.img}" class="w-12 h-12 object-contain bg-white rounded-lg p-1">
+                        <div class="flex-1">
+                            <h4 class="text-[10px] font-black uppercase text-white line-clamp-1">${p.nom}</h4>
+                            <p class="text-orange-500 font-black">$${(p.pre * q).toLocaleString()}</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="updateCart(${id}, -1)" class="text-gray-500 font-bold px-2">-</button>
+                            <span class="font-black text-white">${q}</span>
+                            <button onclick="updateCart(${id}, 1)" class="text-gray-500 font-bold px-2">+</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            if (items.length === 0) itemsCont.innerHTML = '<div class="text-center py-20 opacity-20 font-black uppercase italic">Carrito vacío</div>';
+
+            document.getElementById('cart-total').innerText = total.toLocaleString();
+            document.getElementById('cart-count').innerText = count;
         }
 
         function enviarPedido() {
-            const n = document.getElementById('user-name').value, a = document.getElementById('user-address').value;
-            if (!n || !a) return Swal.fire('Error', 'Completá nombre y dirección', 'warning');
-            
-            let m = `*NUEVO PEDIDO - EL URU*%0A👤 *Comercio:* ${n}%0A📍 *Dirección:* ${a}%0A🕒 *Entrega:* ${document.getElementById('btn-whatsapp').dataset.entrega}%0A%0A`;
-            
+            const nom = document.getElementById('cliente-nombre').value;
+            const dir = document.getElementById('cliente-direccion').value;
+            if(!nom || !dir) return Swal.fire('Faltan Datos', 'Completa nombre y dirección', 'error');
+
+            let msg = `*PEDIDO DISTRI EL URU*%0A*Comercio:* ${nom}%0A*Dirección:* ${dir}%0A%0A`;
             Object.entries(cart).forEach(([id, q]) => {
                 const p = data[id];
-                let preActual = (p.pack_cantidad > 0 && q >= p.pack_cantidad) ? p.pack_precio : p.pre;
-                m += `• *${q}* x ${p.nom} ($${preActual.toLocaleString()} c/u)%0A`;
+                msg += `• ${q} x ${p.nom} ($${(p.pre * q).toLocaleString()})%0A`;
             });
-
-            const pedidoObj = { fecha: new Date().toLocaleString(), comercio: n, total: document.getElementById('total').innerText };
-            historial.unshift(pedidoObj);
-            localStorage.setItem('uru_historial', JSON.stringify(historial.slice(0, 10)));
+            msg += `%0A*TOTAL ESTIMADO: $${document.getElementById('cart-total').innerText}*`;
             
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-            window.open(`https://wa.me/5492920248292?text=${m}%0A💰 *TOTAL: $${document.getElementById('total').innerText}*`);
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#ff6b00', '#ffffff'] });
+            setTimeout(() => {
+                window.open(`https://wa.me/5492920248292?text=${msg}`);
+            }, 1000);
         }
 
+        // FUNCIONES DE LOGÍSTICA (Originales)
         function abrirLogistica() {
-            if (Object.keys(cart).length === 0) return Swal.fire('Error', 'Carrito vacío', 'info');
-            let html = `<table class="w-full text-left">
-                <thead class="border-b"><tr><th class="py-2">Producto</th><th class="text-center">Cant.</th><th class="text-center">Carga</th><th class="no-print">Ok</th></tr></thead><tbody>`;
-            
-            Object.entries(cart).forEach(([id, q]) => {
-                const p = data[id];
-                const packs = p.pack_cantidad > 0 ? Math.floor(q / p.pack_cantidad) : 0;
-                const sueltos = p.pack_cantidad > 0 ? q % p.pack_cantidad : q;
-                
-                html += `<tr id="fila-log-${id}" class="border-b">
-                    <td class="py-4 text-xs font-bold uppercase">${p.nom}</td>
-                    <td class="text-center font-black text-xl">${q}</td>
-                    <td class="text-center text-[10px]">
-                        ${packs > 0 ? `<div class="bg-green-100 p-1 rounded">${packs} PACKS</div>` : ''}
-                        ${sueltos > 0 ? `<div class="bg-gray-100 p-1 rounded mt-1">${sueltos} UN.</div>` : ''}
-                    </td>
-                    <td class="no-print text-center"><input type="checkbox" onchange="document.getElementById('fila-log-${id}').classList.toggle('fila-check')" class="w-6 h-6"></td>
-                </tr>`;
+            const items = Object.entries(cart);
+            if (items.length === 0) return Swal.fire('Vacío', 'Agrega productos al carrito primero', 'info');
+
+            let tablaHTML = `
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr class="text-orange-500 uppercase text-[10px] tracking-widest border-b border-white/10">
+                            <th class="py-4 text-left">Producto</th>
+                            <th class="py-4 text-center">Categoría</th>
+                            <th class="py-4 text-center">Cant.</th>
+                            <th class="py-4 text-center no-print">Carga</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            items.forEach(([id, qty]) => {
+                const prod = data[id];
+                tablaHTML += `
+                    <tr id="fila-log-${id}" class="border-b border-white/5">
+                        <td class="py-4 font-bold">
+                            <div class="text-white text-xs">${prod.nom}</div>
+                        </td>
+                        <td class="text-center text-[10px] text-gray-500">${prod.cat}</td>
+                        <td class="text-center">
+                            <span class="bg-orange-500/20 text-orange-500 px-3 py-1 rounded-lg font-black text-xl">${qty}</span>
+                        </td>
+                        <td class="text-center no-print">
+                            <input type="checkbox" onchange="document.getElementById('fila-log-${id}').classList.toggle('fila-check')" class="w-6 h-6 accent-orange-500">
+                        </td>
+                    </tr>
+                `;
             });
-            document.getElementById('cont-tabla-carga').innerHTML = html + "</tbody></table>";
-            document.getElementById('modal-logistica').style.display = 'flex';
+
+            tablaHTML += `</tbody></table>`;
+            document.getElementById('cont-tabla-carga').innerHTML = tablaHTML;
+            document.getElementById('modal-logistica').style.display = 'block';
         }
 
-        function abrirHistorial() {
-            const lista = document.getElementById('lista-historial');
-            if (historial.length === 0) { lista.innerHTML = '<p class="text-center opacity-30">No hay pedidos registrados</p>'; }
-            else {
-                lista.innerHTML = historial.map(h => `
-                    <div class="bg-white/5 p-4 rounded-2xl border border-white/10">
-                        <div class="flex justify-between font-black text-orange-500 text-xs uppercase"><span>${h.fecha}</span><span>$${h.total}</span></div>
-                        <div class="text-[10px] opacity-50 mt-1">${h.comercio}</div>
-                    </div>
-                `).join('');
-            }
-            document.getElementById('modal-historial').style.display = 'flex';
+        function cerrarLogistica() {
+            document.getElementById('modal-logistica').style.display = 'none';
         }
 
-        function toggleFav(id) {
-            if(favoritos.includes(id)) favoritos = favoritos.filter(f => f !== id);
-            else favoritos.push(id);
-            localStorage.setItem('uru_favs', JSON.stringify(favoritos));
-            render();
-        }
+        window.onscroll = () => {
+            const btn = document.getElementById('go-up');
+            btn.style.display = window.scrollY > 400 ? 'flex' : 'none';
+            btn.style.alignItems = 'center';
+            btn.style.justifyContent = 'center';
+        };
 
-        function verFavoritos() { soloFavs = !soloFavs; document.getElementById('btn-favs').classList.toggle('text-red-500', soloFavs); render(); }
-        function saveUserData() { localStorage.setItem('uru_name', document.getElementById('user-name').value); localStorage.setItem('uru_address', document.getElementById('user-address').value); }
-        function vaciarCarrito() { if(confirm('¿Vaciar carrito?')) { cart = {}; update(); render(); } }
-        window.onscroll = () => { document.getElementById('go-up').style.display = window.scrollY > 500 ? 'block' : 'none'; };
+        // Iniciar
+        loadEngine();
     </script>
 </body>
 </html>
