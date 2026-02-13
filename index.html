@@ -218,6 +218,29 @@
         <div class="flex gap-3 overflow-x-auto pb-4 no-scrollbar" id="category-filters"></div>
     </div>
 
+    <section class="mt-4 mb-8 max-w-7xl mx-auto px-4">
+        <div onclick="filtrarNuevos()" class="relative w-full rounded-[2rem] overflow-hidden shadow-2xl border border-yellow-500/30 group cursor-pointer">
+            <div class="absolute inset-0 bg-gradient-to-r from-black via-gray-900 to-yellow-900 opacity-90"></div>
+            
+            <div class="relative p-6 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="text-center md:text-left z-10">
+                    <span class="bg-yellow-500 text-black text-[10px] font-black uppercase px-3 py-1 rounded-md mb-2 inline-block animate-pulse">¡Recién Ingresado!</span>
+                    <h3 class="text-3xl md:text-5xl font-black italic text-white uppercase leading-none mb-2">
+                        Quesos y <span class="text-yellow-400">Dulces</span>
+                    </h3>
+                    <p class="text-gray-400 text-xs md:text-sm font-bold uppercase tracking-widest max-w-md">
+                        Nueva línea premium ya disponible. Calidad superior.
+                    </p>
+                </div>
+
+                <button class="bg-white text-black px-8 py-4 rounded-full font-black uppercase text-xs tracking-widest hover:bg-yellow-400 transition-colors shadow-[0_0_20px_rgba(255,255,255,0.3)] flex items-center gap-3 z-10">
+                    Ver Catálogo <i class="fas fa-arrow-right"></i>
+                </button>
+                
+                <i class="fas fa-cheese text-[150px] text-white/5 absolute -right-10 -bottom-10 rotate-12 group-hover:rotate-0 transition-all duration-700"></i>
+            </div>
+        </div>
+    </section>
     <main id="catalogo" class="p-4 max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-24">
         <div class="card-prod p-5 rounded-[2.5rem] flex flex-col opacity-50"><div class="img-container h-44 mb-5 skeleton"></div><div class="h-4 skeleton mb-2"></div><div class="h-8 skeleton"></div></div>
     </main>
@@ -347,6 +370,21 @@
                 const count = c === 'TODOS' ? data.length : data.filter(p => p.cat === c).length;
                 return `<button onclick="activeCat='${c}'; renderCats(); render();" class="shrink-0 px-7 py-4 rounded-full bg-[var(--input-bg)] text-[10px] font-black uppercase text-[var(--text-muted)] border border-[var(--border-color)] ${activeCat === c ? 'cat-active' : ''}">${c} <span class="cat-badge">${count}</span></button>`;
             }).join('');
+        }
+        
+        // Función NUEVA para filtrar los productos nuevos al hacer click en el banner
+        function filtrarNuevos() {
+            // Asegúrate de que en tu Excel la categoría de estos productos sea 'LACTEOS'
+            activeCat = 'LACTEOS'; 
+            
+            renderCats(); 
+            render();     
+            
+            // Efecto de confeti
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#fbbf24', '#ffffff'] });
+
+            // Scroll hacia el catálogo
+            document.getElementById('catalogo').scrollIntoView({ behavior: 'smooth' });
         }
 
         function render() {
