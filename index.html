@@ -9,6 +9,19 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    /* ARREGLO: Esto permite que las categorías se muevan de costado en el celular */
+#category-filters, #categorias {
+    display: flex !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    gap: 10px !important;
+    padding-bottom: 15px !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important; /* Oculta barra en Firefox */
+}
+#category-filters::-webkit-scrollbar, #categorias::-webkit-scrollbar {
+    display: none !important; /* Oculta barra en Chrome/Safari */
+}
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         
@@ -336,35 +349,28 @@
         };
 
         async function load() {
-    try {
-        const res = await fetch(TSV + '&t=' + Date.now());
-        const text = await res.text();
-        const lines = text.split(/\r?\n/).slice(1);
-        data = lines.map((l, i) => {
-            const c = l.split('\t');
-            const preRaw = (c[1]||'').trim();
-            
-            // Lógica para detectar .01 (Nuevo) o .99 (Oferta)
-            const esNuevo = preRaw.endsWith('.01') || preRaw.endsWith(',01');
-            const esOferta = preRaw.endsWith('.99') || preRaw.endsWith(',99');
-            
-            // Limpiamos el precio para que sea un número (ej: 1500.01 -> 1500)
-            const preNum = Math.floor(parseFloat(preRaw.replace(',', '.'))) || 0;
-
-            return { 
-                id: i, 
-                nom: (c[0]||'').trim(), 
-                pre: preNum, 
-                cat: (c[2]||'VARIOS').trim().toUpperCase(), 
-                img: (c[3]||'').trim(), 
-                stock: 999, // Mantienes tu stock en 999
-                nuevo: esNuevo, 
-                oferta: esOferta 
-            };
-        }).filter(p => p.nom !== "");
-        renderCats(); render();
-    } catch (e) { console.error(e); }
-}
+            try {
+                const res = await fetch(TSV + '&t=' + Date.now());
+                const text = await res.text();
+                const lines = text.split(/\r?\n/).slice(1);
+                data = lines.map((l, i) => {
+                    const c = l.split('\t');
+                    return { 
+                        id: i, 
+                        nom: (c[0]||'').trim(), 
+                        pre: parseInt((c[1]||'').replace(/\D/g,'')) || 0, 
+                        cat: (c[2]||'VARIOS').trim().toUpperCase(), 
+                        img: (c[3]||'').trim(),
+                        stock: parseInt(c[4]) || 0,
+                        sugerido: (c[5]||'').trim(),
+                        pack_cantidad: parseInt(c[6]) || 0,
+                        pack_precio: parseInt(c[7]) || 0 
+                    };
+                }).filter(p => p.nom !== "");
+                renderCats(); render();
+                verificarHorarioCierre();
+            } catch (e) { console.error(e); }
+        }
 
         function startPress() { pressTimer = window.setTimeout(generarListaCarga, 2000); }
         function cancelPress() { clearTimeout(pressTimer); }
