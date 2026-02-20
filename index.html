@@ -343,331 +343,365 @@
         </div>
     </div>
 
-<script>
-const CONFIG = {
-    TSV: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQEemzCvTezcjzZhIUIRIayZ7U81xgssl9G1Vr6Odx7dHGHOARY0iJ-VOL43E17qLVkiIRb0LTurcZU/pub?output=tsv',
-    MIN_COMPRA: 25000,
-    STORAGE: {
-        CART: 'uru_cart',
-        FAVS: 'uru_favs',
-        THEME: 'uru_theme',
-        NAME: 'uru_name',
-        ADDRESS: 'uru_address'
-    }
-};
+    <script>
+        const TSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQEemzCvTezcjzZhIUIRIayZ7U81xgssl9G1Vr6Odx7dHGHOARY0iJ-VOL43E17qLVkiIRb0LTurcZU/pub?output=tsv';
+        const MIN_COMPRA = 25000;
+        let data = [], cart = {}, activeCat = 'TODOS', soloFavs = false;
+        let favoritos = JSON.parse(localStorage.getItem('uru_favs')) || [];
 
-const Store = {
-    products: new Map(),
-    cart: new Map(),
-    favorites: new Set(),
-    activeCat: 'TODOS',
-    soloFavs: false
-};
-
-/* ===== UTILIDADES ===== */
-
-function sanitize(str){
-    if(!str) return '';
-    return str.replace(/[&<>"']/g,m=>({
-        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
-    }[m]));
-}
-
-function encodeMessage(msg){
-    return encodeURIComponent(msg);
-}
-
-function debounce(fn,delay=300){
-    let t;
-    return (...args)=>{
-        clearTimeout(t);
-        t=setTimeout(()=>fn(...args),delay);
-    };
-}
-
-/* ===== PERSISTENCIA ===== */
-
-function saveCart(){
-    localStorage.setItem(CONFIG.STORAGE.CART,JSON.stringify([...Store.cart]));
-}
-function loadCart(){
-    Store.cart=new Map(JSON.parse(localStorage.getItem(CONFIG.STORAGE.CART)||"[]"));
-}
-function saveFavorites(){
-    localStorage.setItem(CONFIG.STORAGE.FAVS,JSON.stringify([...Store.favorites]));
-}
-function loadFavorites(){
-    Store.favorites=new Set(JSON.parse(localStorage.getItem(CONFIG.STORAGE.FAVS)||"[]"));
-}
-
-/* ===== INICIO ===== */
-
-window.addEventListener("DOMContentLoaded",()=>{
-    loadCart();
-    loadFavorites();
-
-    document.getElementById('search')
-        .addEventListener('keyup',debounce(render,250));
-const catScroll=document.getElementById('category-filters');
-catScroll.addEventListener('wheel',(e)=>{
-    if(e.deltaY!==0){
-        e.preventDefault();
-        catScroll.scrollLeft+=e.deltaY;
-    }
-});
-    fetchData();
-});async function fetchData(){
-    try{
-        const res=await fetch(CONFIG.TSV+'&t='+Date.now());
-        if(!res.ok) throw new Error("Error servidor");
-        const text=await res.text();
-        parseTSV(text);
-        renderCategories();
-        render();
-        update();
-    }catch(err){
-        console.error(err);
-        document.getElementById("catalogo").innerHTML=
-        `<div class="col-span-full text-center text-red-500 py-20 font-bold">
-            Error cargando productos
-        </div>`;
-    }
-}
-
-function generateStableId(nombre,categoria){
-    return (nombre+"_"+categoria)
-        .toLowerCase()
-        .replace(/\s+/g,'_')
-        .replace(/[^\w\-]/g,'');
-}
-
-function normalizeImageUrl(url){
-    if(!url) return 'https://i.ibb.co/yB7ffL4T/unnamed.jpg';
-    url=url.trim();
-
-    if(url.includes("drive.google.com")){
-        const match=url.match(/\/d\/(.*?)\//);
-        if(match && match[1]){
-            return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-        }
-    }
-    return url;
-}
-
-function parseTSV(text){
-    Store.products.clear();
-    const lines=text.split(/\r?\n/).slice(1);
-
-    lines.forEach(line=>{
-        const c=line.split('\t');
-        const nombre=sanitize((c[0]||'').trim());
-        if(!nombre) return;
-
-        const categoria=sanitize((c[2]||'VARIOS').trim().toUpperCase());
-        const id=generateStableId(nombre,categoria);
-
-        const precio=parseInt((c[1]||'').replace(/\D/g,''))||0;
-        const stock=parseInt(c[4])||0;
-        const packCantidad=parseInt(c[6])||0;
-        const packPrecio=parseInt(c[7])||0;
-
-        Store.products.set(id,{
-            id,
-            nom:nombre,
-            pre:precio,
-            cat:categoria,
-            img:normalizeImageUrl(c[3]||''),
-            stock,
-            sugerido:sanitize((c[5]||'').trim()),
-            pack_cantidad:packCantidad>0?packCantidad:0,
-            pack_precio:(packCantidad>0 && packPrecio>0 && packPrecio<precio)
-                ?packPrecio:0
+        const Toast = Swal.mixin({
+            toast: true, position: 'bottom-start', showConfirmButton: false, timer: 1500, timerProgressBar: true
         });
-    });
-}function renderCategories(){
-    const cont=document.getElementById('category-filters');
-    const cats=new Set(['TODOS']);
-    Store.products.forEach(p=>cats.add(p.cat));
 
-    cont.innerHTML=[...cats].map(cat=>{
-        const count=cat==='TODOS'
-            ?Store.products.size
-            :[...Store.products.values()].filter(p=>p.cat===cat).length;
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('uru_theme', isLight ? 'light' : 'dark');
+            document.getElementById('theme-icon').className = isLight ? 'fas fa-sun' : 'fas fa-moon';
+        }
 
-        return `<button onclick="setCategory('${cat}')"
-            class="shrink-0 px-7 py-4 rounded-full bg-[var(--input-bg)] text-[10px] font-black uppercase border ${Store.activeCat===cat?'cat-active':''}">
-            ${cat} <span class="cat-badge">${count}</span>
-        </button>`;
-    }).join('');
-}
-
-function setCategory(cat){
-    Store.activeCat=cat;
-    renderCategories();
-    render();
-}
-
-function render(){
-    const catalogo=document.getElementById('catalogo');
-    const q=document.getElementById('search').value.toLowerCase();
-
-    let productos=[...Store.products.values()];
-
-    if(Store.activeCat!=='TODOS')
-        productos=productos.filter(p=>p.cat===Store.activeCat);
-
-    if(q)
-        productos=productos.filter(p=>p.nom.toLowerCase().includes(q));
-
-    const fragment=document.createDocumentFragment();
-
-    productos.forEach(p=>{
-        const qty=Store.cart.get(p.id)||0;
-        const agotado=p.stock<=0;
-
-        const div=document.createElement('div');
-        div.className=`card-prod p-5 rounded-[2.5rem] flex flex-col relative
-        ${qty>0?'ring-2 ring-orange-500':''}
-        ${agotado?'agotado':''}`;
-
-        div.innerHTML=`
-            ${agotado?'<div class="badge-agotado">AGOTADO</div>':''}
-            <div class="img-container h-44 mb-5 flex items-center justify-center p-5">
-                <img src="${p.img}"
-                     class="max-h-full object-contain"
-                     onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'">
-            </div>
-
-            <h3 class="text-[11px] font-black uppercase h-8 text-[var(--text-muted)] italic leading-tight">
-                ${p.nom}
-            </h3>
-
-            <p class="price-tag mt-3 italic">
-                ${agotado?'SIN STOCK':'$'+p.pre.toLocaleString()}
-            </p>
-
-            <div class="mt-5">
-                ${agotado?
-                    `<button disabled class="w-full bg-gray-300 py-5 rounded-2xl font-black text-[10px] text-gray-500">Agotado</button>`
-                :
-                    qty===0?
-                        `<button onclick="addToCart('${p.id}',1)"
-                            class="w-full bg-orange-600 py-5 rounded-2xl font-black text-[10px] text-white">
-                            Agregar
-                        </button>`
-                    :
-                        `<div class="flex items-center bg-orange-600 rounded-2xl p-1">
-                            <button onclick="addToCart('${p.id}',-1)" class="w-12 h-12 text-white text-2xl">－</button>
-                            <div class="flex-1 text-center text-white font-black">${qty}</div>
-                            <button onclick="addToCart('${p.id}',1)" class="w-12 h-12 text-white text-2xl">＋</button>
-                        </div>`
+        window.onload = () => {
+            if(localStorage.getItem('uru_theme') === 'light') toggleTheme();
+            document.getElementById('user-name').value = localStorage.getItem('uru_name') || '';
+            document.getElementById('user-address').value = localStorage.getItem('uru_address') || '';
+            
+            const catScroll = document.getElementById('category-filters');
+            catScroll.addEventListener('wheel', (e) => {
+                if (e.deltaY !== 0) {
+                    e.preventDefault();
+                    catScroll.scrollLeft += e.deltaY;
                 }
-            </div>
-        `;
+            });
 
-        fragment.appendChild(div);
-    });
+            update(); load();
+            setInterval(verificarHorarioCierre, 60000); 
+        };
 
-    catalogo.innerHTML='';
-    catalogo.appendChild(fragment);
+        function saveUserData() {
+            localStorage.setItem('uru_name', document.getElementById('user-name').value);
+            localStorage.setItem('uru_address', document.getElementById('user-address').value);
+        }
+
+        async function load() {
+            try {
+                const res = await fetch(TSV + '&t=' + Date.now());
+                const text = await res.text();
+                const lines = text.split(/\r?\n/).slice(1);
+                data = lines.map((l, i) => {
+                    const c = l.split('\t');
+                    return { 
+                        id: i, 
+                        nom: (c[0]||'').trim(), 
+                        pre: parseInt((c[1]||'').replace(/\D/g,'')) || 0, 
+                        cat: (c[2]||'VARIOS').trim().toUpperCase(), 
+                        img: (c[3]||'').trim(),
+                        stock: parseInt(c[4]) || 0,
+                        sugerido: (c[5]||'').trim(),
+                        pack_cantidad: parseInt(c[6]) || 0,
+                        pack_precio: parseInt(c[7]) || 0    
+                    };
+                }).filter(p => p.nom !== "");
+                renderCats(); render();
+                verificarHorarioCierre();
+            } catch (e) { console.error(e); }
+        }
+
+        function renderCats() {
+            const uniqueCats = [...new Set(data.map(p => p.cat))];
+            const cats = ['TODOS', ...uniqueCats];
+            document.getElementById('category-filters').innerHTML = cats.map(c => {
+                const count = c === 'TODOS' ? data.length : data.filter(p => p.cat === c).length;
+                return `<button onclick="activeCat='${c}'; renderCats(); render();" class="shrink-0 px-7 py-4 rounded-full bg-[var(--input-bg)] text-[10px] font-black uppercase text-[var(--text-muted)] border border-[var(--border-color)] ${activeCat === c ? 'cat-active' : ''}">${c} <span class="cat-badge">${count}</span></button>`;
+            }).join('');
+        }
+
+        function render() {
+            const q = document.getElementById('search').value.toLowerCase();
+            let filtered = data.filter(p => (activeCat === 'TODOS' || p.cat === activeCat) && p.nom.toLowerCase().includes(q));
+            if(soloFavs) filtered = filtered.filter(p => favoritos.includes(p.id));
+
+            document.getElementById('catalogo').innerHTML = filtered.map(p => {
+                const qty = cart[p.id] || 0;
+                const agotado = p.stock <= 0;
+                const esOferta = !agotado && p.pre.toString().endsWith('99');
+                const esNuevo = !agotado && p.pre.toString().endsWith('1');
+                const tienePack = p.pack_cantidad > 0;
+                
+                return `
+                    <div class="card-prod p-5 rounded-[2.5rem] flex flex-col relative ${qty > 0 ? 'ring-2 ring-orange-500' : ''} ${agotado ? 'agotado' : ''}">
+                        ${agotado ? '<div class="badge-agotado">AGOTADO</div>' : 
+                          (esNuevo ? '<div class="badge-nuevo">NUEVO ✨</div>' : 
+                          (esOferta ? '<div class="badge-oferta">OFERTA 🔥</div>' : ''))}
+                        
+                        <span class="absolute top-16 left-6 text-[8px] bg-black/10 text-orange-500 px-2 py-1 rounded-md font-black uppercase">${p.cat}</span>
+                        <button onclick="toggleFav(${p.id})" class="absolute top-6 left-6 z-10 text-xl ${favoritos.includes(p.id) ? 'text-red-600' : 'text-gray-400'}"><i class="fas fa-heart"></i></button>
+                        
+                        <div class="img-container h-44 mb-5 flex items-center justify-center p-5">
+                            <div class="img-loader skeleton" id="loader-${p.id}"></div>
+                            <img src="${p.img}" class="max-h-full object-contain" 
+                                 onload="document.getElementById('loader-${p.id}').style.display='none'"
+                                 onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg';document.getElementById('loader-${p.id}').style.display='none'">
+                        </div>
+
+                        <h3 class="text-[11px] font-black uppercase h-8 text-[var(--text-muted)] italic leading-tight">${p.nom}</h3>
+                        <p class="price-tag mt-3 italic">${agotado ? 'SIN STOCK' : '$' + p.pre.toLocaleString()}</p>
+                        ${tienePack && !agotado ? `<p class="text-[9px] text-green-500 font-bold uppercase mt-1">Llevando ${p.pack_cantidad}u. pagás $${p.pack_precio.toLocaleString()} c/u</p>` : ''}
+
+                        <div class="mt-5">
+                            ${agotado ? `<button disabled class="w-full bg-gray-300 py-5 rounded-2xl font-black text-[10px] text-gray-500">Agotado</button>` :
+                            (qty === 0 ? `<button onclick="add(${p.id},1)" class="w-full bg-orange-600 py-5 rounded-2xl font-black text-[10px] text-white">Agregar</button>` :
+                            `<div class="flex items-center bg-orange-600 rounded-2xl p-1 shadow-2xl">
+                                <button onclick="add(${p.id},-1)" class="w-12 h-12 text-white text-2xl font-black">－</button>
+                                <input type="number" value="${qty}" class="qty-input flex-1" 
+                                       onchange="setQty(${p.id}, this.value)" 
+                                       onclick="this.select()">
+                                <button onclick="add(${p.id},1)" class="w-12 h-12 text-white text-2xl font-black">＋</button>
+                            </div>`)}
+                        </div>
+                    </div>`;
+            }).join('');
+        }
+
+        window.setQty = (id, val) => {
+            const p = data[id];
+            let n = parseInt(val) || 0;
+            if (n > p.stock) {
+                n = p.stock;
+                Swal.fire('Stock Máximo', `Solo hay ${p.stock} unidades.`, 'warning');
+            }
+            if (n <= 0) delete cart[id];
+            else cart[id] = n;
+            update(); render();
+        };
+
+        window.add = (id, n) => { 
+            const p = data[id];
+            const current = cart[id] || 0;
+            
+            if (n > 0 && current >= p.stock) {
+                Swal.fire({ title: 'Stock Limitado', text: 'No hay más unidades disponibles.', icon: 'warning', confirmButtonColor: '#ff6b00' });
+                return;
+            }
+
+            cart[id] = Math.max(0, current + n); 
+            if (cart[id] === 0) {
+                delete cart[id];
+            } else if (n > 0) {
+                Toast.fire({ icon: 'success', title: `Agregado: ${p.nom}` });
+                if (cart[id] === 1 && p.sugerido) verificarSugerencia(p.sugerido);
+            }
+
+            update(); render();
+        };
+
+        function verificarSugerencia(nombreSugerido) {
+            const sug = data.find(p => p.nom === nombreSugerido);
+            if (sug && sug.stock > 0 && !cart[sug.id]) {
+                Swal.fire({
+                    title: '¡No te olvides!',
+                    text: `¿Querés sumar ${nombreSugerido} a tu pedido?`,
+                    imageUrl: sug.img,
+                    imageHeight: 100,
+                    showCancelButton: true,
+                    confirmButtonText: '¡Sí, sumar!',
+                    cancelButtonText: 'No, gracias',
+                    confirmButtonColor: '#ff6b00'
+                }).then((result) => {
+                    if (result.isConfirmed) { add(sug.id, 1); }
+                });
+            }
+        }
+
+        function verificarHorarioCierre() {
+            const ahora = new Date();
+            const totalMinutos = (ahora.getHours() * 60) + ahora.getMinutes();
+            const cierreMinutos = (12 * 60) + 30; 
+
+            const btnW = document.getElementById('btn-whatsapp');
+            const textoCierre = document.getElementById('cierre-texto');
+
+            if (totalMinutos >= cierreMinutos) {
+                if(textoCierre) textoCierre.innerHTML = "⚠️ Cierre alcanzado. Tu pedido se entregará MAÑANA";
+                if(btnW) btnW.dataset.entrega = "MAÑANA";
+            } else {
+                if(textoCierre) textoCierre.innerHTML = "Hacé tu pedido ahora y recibilo hoy";
+                if(btnW) btnW.dataset.entrega = "HOY";
+            }
+        }
+
+        function vaciarCarrito() {
+            if (confirm('¿Vaciar carrito?')) { cart = {}; update(); render(); }
+        }
+
+        function update() {
+            let t = 0, c = 0, html = '';
+            Object.entries(cart).forEach(([id, q]) => {
+                const p = data[id]; 
+                let precioAplicado = p.pre;
+                let tieneDescuento = false;
+                if (p.pack_cantidad > 0 && q >= p.pack_cantidad) {
+                    precioAplicado = p.pack_precio;
+                    tieneDescuento = true;
+                }
+
+                const subtotal = precioAplicado * q;
+                t += subtotal; 
+                c += q;
+
+                html += `
+                <div class="flex items-center gap-3 bg-[var(--input-bg)] p-3 rounded-2xl border border-[var(--border-color)] mb-2">
+                    <div class="w-16 h-16 bg-white rounded-xl p-1 flex items-center justify-center shrink-0">
+                         <img src="${p.img}" class="max-w-full max-h-full object-contain">
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-bold text-[10px] uppercase truncate text-[var(--text-muted)]">${p.nom}</h4>
+                        <p class="text-orange-500 font-black text-base">
+                            $${subtotal.toLocaleString()}
+                            ${tieneDescuento ? '<span class="text-[8px] bg-green-600 text-white px-1 rounded ml-1">PRECIO PACK</span>' : ''}
+                        </p>
+                    </div>
+                    <div class="flex flex-col items-end shrink-0">
+                        <span class="text-xs font-black bg-orange-600 text-white px-2 py-0.5 rounded-md">x${q}</span>
+                        <button onclick="add(${id},-${q})" class="text-red-500 text-sm p-1"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                </div>`;
+            });
+            document.getElementById('cart-items').innerHTML = html || '<div class="text-center py-20 opacity-20"><p>Carrito Vacío</p></div>';
+            document.getElementById('total').innerText = t.toLocaleString();
+            document.getElementById('count').innerText = c;
+            
+            const perc = Math.min(100, (t / MIN_COMPRA) * 100);
+            const fill = document.getElementById('min-purchase-fill');
+            if(fill) fill.style.width = perc + '%';
+            
+            const btnW = document.getElementById('btn-whatsapp');
+            const minTxt = document.getElementById('min-text');
+            
+            if (t < MIN_COMPRA) {
+                if(btnW) {
+                    btnW.disabled = true;
+                    btnW.className = "w-full bg-gray-400 text-white py-4 rounded-2xl font-black text-lg opacity-50 cursor-not-allowed";
+                }
+                if(minTxt) minTxt.innerHTML = `Faltan <span class="text-orange-600">$${(MIN_COMPRA - t).toLocaleString()}</span> para el mínimo`;
+            } else {
+                if(btnW) {
+                    btnW.disabled = false;
+                    btnW.className = "w-full bg-green-600 text-white py-4 rounded-2xl font-black text-lg animate-pulse active:scale-95 transition-all shadow-xl";
+                }
+                if(minTxt) minTxt.innerHTML = `<span class="text-green-500">✅ PEDIDO MÍNIMO ALCANZADO</span>`;
+            }
+        }
+
+        function toggleFav(id) { 
+            if (favoritos.includes(id)) favoritos = favoritos.filter(f => f !== id); 
+            else favoritos.push(id); 
+            localStorage.setItem('uru_favs', JSON.stringify(favoritos)); 
+            render(); 
+        }
+
+        function verFavoritos() { soloFavs = !soloFavs; document.getElementById('btn-favs').classList.toggle('text-red-500', soloFavs); render(); }
+
+        function enviarPedido() {
+            const n = document.getElementById('user-name').value;
+            const a = document.getElementById('user-address').value;
+            const entrega = document.getElementById('btn-whatsapp').dataset.entrega || "HOY";
+
+            if (!n || !a) return Swal.fire('Faltan Datos', 'Por favor completá nombre y dirección.', 'warning');
+            
+            confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
+
+            let m = "*NUEVO PEDIDO - EL URU*%0A";
+            m += "👤 *Comercio:* " + n + "%0A";
+            m += "📍 *Dirección:* " + a + "%0A";
+            m += "🕒 *Entrega:* " + entrega + "%0A%0A";
+            m += "------------------------------%0A";
+            
+            Object.entries(cart).forEach(([id, q]) => {
+                const p = data[id];
+                let pre = p.pre;
+                if (p.pack_cantidad > 0 && q >= p.pack_cantidad) pre = p.pack_precio;
+                m += "🔸 *" + q + "* x " + p.nom + " ($" + pre.toLocaleString() + " c/u)%0A";
+            });
+            
+            m += "------------------------------%0A";
+            m += "💰 *TOTAL: $" + document.getElementById('total').innerText + "*";
+            
+            window.open("https://wa.me/5492920248292?text=" + m);
+        }
+
+        /* FUNCIONES DE LOGÍSTICA INTEGRADAS */
+        function abrirLogistica() {
+            const hoy = new Date();
+            document.getElementById('fecha-logistica').innerText = hoy.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
+            
+            const items = Object.entries(cart);
+            
+            if (items.length === 0) {
+                return Swal.fire('Sin Carga', 'No hay productos en el pedido actual para consolidar.', 'info');
+            }
+
+            let tablaHTML = `
+                <table class="tabla-carga">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th class="text-center">Categoría</th>
+                            <th class="text-center">CANTIDAD TOTAL</th>
+                            <th class="text-center no-print">Listo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            items.forEach(([id, qty]) => {
+                const prod = data[id];
+                tablaHTML += `
+                    <tr id="fila-log-${id}">
+                        <td class="font-bold border-l-4 border-orange-500 pl-4">
+                            <div class="text-white">${prod.nom}</div>
+                            <div class="text-[10px] text-gray-500">ID: ${id}</div>
+                        </td>
+                        <td class="text-center text-xs text-gray-400">${prod.cat}</td>
+                        <td class="text-center">
+                            <span class="bg-orange-500/20 text-orange-500 px-4 py-2 rounded-lg font-black text-2xl">${qty}</span>
+                        </td>
+                        <td class="text-center no-print">
+                            <input type="checkbox" onchange="document.getElementById('fila-log-${id}').classList.toggle('fila-check')" class="w-6 h-6 accent-orange-500">
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tablaHTML += `</tbody></table>`;
+            document.getElementById('cont-tabla-carga').innerHTML = tablaHTML;
+            document.getElementById('modal-logistica').style.display = 'block';
+        }
+
+        function cerrarLogistica() {
+            document.getElementById('modal-logistica').style.display = 'none';
+        }
+    </script>
+    <!-- Banner descuento app -->
+<div id="banner-app-descuento">
+  📲 Comprando por la aplicación 3% descuento en tu carrito
+</div>
+
+<style>
+#banner-app-descuento{
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #0a7cff;
+  color: #ffffff;
+  text-align: center;
+  padding: 12px;
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+  z-index: 9999;
+}body {
+  padding-bottom: 60px;
 }
-
-function addToCart(id,delta){
-    const p=Store.products.get(id);
-    if(!p) return;
-
-    const current=Store.cart.get(id)||0;
-    let next=current+delta;
-
-    if(next>p.stock){
-        Swal.fire('Stock Máximo',`Solo hay ${p.stock} unidades.`,'warning');
-        return;
-    }
-
-    if(next<=0)
-        Store.cart.delete(id);
-    else
-        Store.cart.set(id,next);
-
-    saveCart();
-    update();
-    render();
-}
-
-function update(){
-    let total=0,count=0;
-    let html='';
-
-    Store.cart.forEach((qty,id)=>{
-        const p=Store.products.get(id);
-        if(!p) return;
-
-        let precio=p.pre;
-
-        if(p.pack_cantidad>0 && qty>=p.pack_cantidad && p.pack_precio>0)
-            precio=p.pack_precio;
-
-        const subtotal=precio*qty;
-
-        total+=subtotal;
-        count+=qty;
-
-        html+=`
-        <div class="flex items-center gap-3 bg-[var(--input-bg)] p-3 rounded-2xl border mb-2">
-            <div class="w-16 h-16 bg-white rounded-xl p-1 flex items-center justify-center shrink-0">
-                <img src="${p.img}" class="max-w-full max-h-full object-contain">
-            </div>
-            <div class="flex-1 min-w-0">
-                <h4 class="font-bold text-[10px] uppercase truncate text-[var(--text-muted)]">
-                    ${p.nom}
-                </h4>
-                <p class="text-orange-500 font-black text-base">
-                    $${subtotal.toLocaleString()}
-                </p>
-            </div>
-            <div class="flex flex-col items-end shrink-0">
-                <span class="text-xs font-black bg-orange-600 text-white px-2 py-0.5 rounded-md">
-                    x${qty}
-                </span>
-                <button onclick="addToCart('${id}',-${qty})"
-                        class="text-red-500 text-sm p-1">
-                    <i class="fas fa-trash-alt"></i>
-                </button>
-            </div>
-        </div>`;
-    });
-
-    document.getElementById('cart-items').innerHTML =
-        html || '<div class="text-center py-20 opacity-20"><p>Carrito Vacío</p></div>';
-
-    document.getElementById('total').innerText=total.toLocaleString();
-    document.getElementById('count').innerText=count;
-}
-function enviarPedido(){
-    const nombre=document.getElementById('user-name').value.trim();
-    const direccion=document.getElementById('user-address').value.trim();
-
-    if(!nombre||!direccion){
-        Swal.fire('Faltan Datos','Completá nombre y dirección.','warning');
-        return;
-    }
-
-    let mensaje=`*NUEVO PEDIDO*\n`;
-    mensaje+=`Comercio: ${nombre}\n`;
-    mensaje+=`Dirección: ${direccion}\n\n`;
-
-    Store.cart.forEach((qty,id)=>{
-        const p=Store.products.get(id);
-        mensaje+=`${qty} x ${p.nom}\n`;
-    });
-
-    mensaje+=`\nTOTAL: $${document.getElementById('total').innerText}`;
-
-    window.open(
-        `https://wa.me/5492920248292?text=${encodeMessage(mensaje)}`,
-        '_blank'
-    );
-}
-</script>
+</style>
 </body>
 </html>
