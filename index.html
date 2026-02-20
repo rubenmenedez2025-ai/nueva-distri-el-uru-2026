@@ -408,7 +408,13 @@ window.addEventListener("DOMContentLoaded",()=>{
 
     document.getElementById('search')
         .addEventListener('keyup',debounce(render,250));
-
+const catScroll=document.getElementById('category-filters');
+catScroll.addEventListener('wheel',(e)=>{
+    if(e.deltaY!==0){
+        e.preventDefault();
+        catScroll.scrollLeft+=e.deltaY;
+    }
+});
     fetchData();
 });async function fetchData(){
     try{
@@ -590,6 +596,7 @@ function addToCart(id,delta){
 
 function update(){
     let total=0,count=0;
+    let html='';
 
     Store.cart.forEach((qty,id)=>{
         const p=Store.products.get(id);
@@ -600,14 +607,42 @@ function update(){
         if(p.pack_cantidad>0 && qty>=p.pack_cantidad && p.pack_precio>0)
             precio=p.pack_precio;
 
-        total+=precio*qty;
+        const subtotal=precio*qty;
+
+        total+=subtotal;
         count+=qty;
+
+        html+=`
+        <div class="flex items-center gap-3 bg-[var(--input-bg)] p-3 rounded-2xl border mb-2">
+            <div class="w-16 h-16 bg-white rounded-xl p-1 flex items-center justify-center shrink-0">
+                <img src="${p.img}" class="max-w-full max-h-full object-contain">
+            </div>
+            <div class="flex-1 min-w-0">
+                <h4 class="font-bold text-[10px] uppercase truncate text-[var(--text-muted)]">
+                    ${p.nom}
+                </h4>
+                <p class="text-orange-500 font-black text-base">
+                    $${subtotal.toLocaleString()}
+                </p>
+            </div>
+            <div class="flex flex-col items-end shrink-0">
+                <span class="text-xs font-black bg-orange-600 text-white px-2 py-0.5 rounded-md">
+                    x${qty}
+                </span>
+                <button onclick="addToCart('${id}',-${qty})"
+                        class="text-red-500 text-sm p-1">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </div>
+        </div>`;
     });
+
+    document.getElementById('cart-items').innerHTML =
+        html || '<div class="text-center py-20 opacity-20"><p>Carrito Vacío</p></div>';
 
     document.getElementById('total').innerText=total.toLocaleString();
     document.getElementById('count').innerText=count;
 }
-
 function enviarPedido(){
     const nombre=document.getElementById('user-name').value.trim();
     const direccion=document.getElementById('user-address').value.trim();
