@@ -172,7 +172,7 @@
 </head>
 <body>
 
-    <a href="https://wa.me/5492920248292" target="_blank" class="btn-whatsapp-float">
+    <a href="https://wa.me/5492920248292" target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp" class="btn-whatsapp-float">
         <i class="fab fa-whatsapp"></i>
     </a>
 
@@ -236,7 +236,7 @@
     <div class="p-4 max-w-5xl mx-auto space-y-6">
         <div class="relative flex gap-3">
             <div class="relative flex-1">
-                <input type="text" id="search" onkeyup="render()" placeholder="¿Qué estás buscando hoy?" class="w-full p-6 pl-14 rounded-3xl bg-[var(--input-bg)] text-[var(--text-main)] font-bold border border-[var(--border-color)] outline-none focus:ring-2 focus:ring-orange-500">
+                <input type="text" id="search" onkeyup="render()" placeholder="¿Qué estás buscando hoy?" aria-label="Buscar productos" class="w-full p-6 pl-14 rounded-3xl bg-[var(--input-bg)] text-[var(--text-main)] font-bold border border-[var(--border-color)] outline-none focus:ring-2 focus:ring-orange-500">
                 <i class="fas fa-search absolute left-6 top-1/2 -translate-y-1/2 text-orange-500 text-xl"></i>
             </div>
             <button onclick="verFavoritos()" id="btn-favs" class="bg-[var(--input-bg)] px-6 rounded-3xl text-gray-500 border border-[var(--border-color)] hover:text-red-500 transition-all">
@@ -348,6 +348,7 @@
         const MIN_COMPRA = 25000;
         let data = [], cart = {}, activeCat = 'TODOS', soloFavs = false;
         let favoritos = JSON.parse(localStorage.getItem('uru_favs')) || [];
+        const goUpButton = document.getElementById('go-up');
 
         const Toast = Swal.mixin({
             toast: true, position: 'bottom-start', showConfirmButton: false, timer: 1500, timerProgressBar: true
@@ -364,6 +365,7 @@
             if(localStorage.getItem('uru_theme') === 'light') toggleTheme();
             document.getElementById('user-name').value = localStorage.getItem('uru_name') || '';
             document.getElementById('user-address').value = localStorage.getItem('uru_address') || '';
+            cart = JSON.parse(localStorage.getItem('uru_cart')) || {};
             
             const catScroll = document.getElementById('category-filters');
             catScroll.addEventListener('wheel', (e) => {
@@ -371,6 +373,22 @@
                     e.preventDefault();
                     catScroll.scrollLeft += e.deltaY;
                 }
+            });
+
+            window.addEventListener('scroll', () => {
+                goUpButton.style.display = window.scrollY > 400 ? 'grid' : 'none';
+                goUpButton.style.placeItems = 'center';
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    document.getElementById('cart').style.display = 'none';
+                    cerrarLogistica();
+                }
+            });
+
+            document.getElementById('cart').addEventListener('click', (e) => {
+                if (e.target.id === 'cart') e.currentTarget.style.display = 'none';
             });
 
             update(); load();
@@ -438,7 +456,7 @@
                         
                         <div class="img-container h-44 mb-5 flex items-center justify-center p-5">
                             <div class="img-loader skeleton" id="loader-${p.id}"></div>
-                            <img src="${p.img}" class="max-h-full object-contain" 
+                            <img src="${p.img}" class="max-h-full object-contain" alt="${p.nom}" loading="lazy"
                                  onload="document.getElementById('loader-${p.id}').style.display='none'"
                                  onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg';document.getElementById('loader-${p.id}').style.display='none'">
                         </div>
@@ -537,6 +555,7 @@
             let t = 0, c = 0, html = '';
             Object.entries(cart).forEach(([id, q]) => {
                 const p = data[id]; 
+                if (!p) return;
                 let precioAplicado = p.pre;
                 let tieneDescuento = false;
                 if (p.pack_cantidad > 0 && q >= p.pack_cantidad) {
@@ -569,6 +588,7 @@
             document.getElementById('cart-items').innerHTML = html || '<div class="text-center py-20 opacity-20"><p>Carrito Vacío</p></div>';
             document.getElementById('total').innerText = t.toLocaleString();
             document.getElementById('count').innerText = c;
+            localStorage.setItem('uru_cart', JSON.stringify(cart));
             
             const perc = Math.min(100, (t / MIN_COMPRA) * 100);
             const fill = document.getElementById('min-purchase-fill');
