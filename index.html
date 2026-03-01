@@ -168,6 +168,21 @@
             #modal-logistica, #modal-logistica * { display: block !important; }
             .no-print { display: none !important; }
         }
+        /* Animación del botón subir */
+#btn-subir.mostrar {
+    opacity: 1 !important;
+    scale: 1 !important;
+    transform: translateY(0);
+}
+
+#btn-subir:not(.mostrar) {
+    transform: translateY(20px);
+}
+
+#btn-subir:hover {
+    filter: brightness(1.2);
+    box-shadow: 0 0 30px rgba(255, 107, 0, 0.6);
+}
     </style>
 </head>
 <body>
@@ -680,6 +695,26 @@
         function cerrarLogistica() {
             document.getElementById('modal-logistica').style.display = 'none';
         }
+        // Control de visibilidad del botón circular
+window.addEventListener('scroll', () => {
+    const btn = document.getElementById("btn-subir");
+    if (window.scrollY > 400) {
+        btn.classList.add("mostrar");
+    } else {
+        btn.classList.remove("mostrar");
+    }
+});
+
+// Función de scroll suave
+function irArriba() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
     </script>
+    <button id="btn-subir" onclick="irArriba()" class="fixed bottom-24 right-6 w-14 h-14 rounded-full shadow-[0_0_20px_rgba(255,107,0,0.4)] flex items-center justify-center z-[150] transition-all duration-500 opacity-0 scale-0 no-print border border-white/10" style="background: linear-gradient(135deg, #ff8c00, #ff4500);">
+    <i class="fas fa-chevron-up text-white text-xl"></i>
+</button>
 </body>
 </html>
