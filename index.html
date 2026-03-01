@@ -447,19 +447,18 @@
                         <p class="price-tag mt-3 italic">${agotado ? 'SIN STOCK' : '$' + p.pre.toLocaleString()}</p>
                         ${tienePack && !agotado ? `<p class="text-[9px] text-green-500 font-bold uppercase mt-1">Llevando ${p.pack_cantidad}u. pagás $${p.pack_precio.toLocaleString()} c/u</p>` : ''}
 
-                        <div class="flex items-center bg-orange-600 rounded-2xl p-1 shadow-2xl">
-    <button onclick="add(${p.id}, -1)" class="w-12 h-12 text-white text-2xl font-black">－</button>
-    
-    <input type="number" 
-           step="0.5" 
-           min="0" 
-           value="${qty}" 
-           class="flex-1 bg-transparent text-center font-black text-white outline-none w-10 text-lg" 
-           onchange="manualAdd(${p.id}, this.value)" 
-           onclick="this.select()">
-    
-    <button onclick="add(${p.id}, 1)" class="w-12 h-12 text-white text-2xl font-black">＋</button>
-</div>`;
+                        <div class="mt-5">
+                            ${agotado ? `<button disabled class="w-full bg-gray-300 py-5 rounded-2xl font-black text-[10px] text-gray-500">Agotado</button>` :
+                            (qty === 0 ? `<button onclick="add(${p.id},1)" class="w-full bg-orange-600 py-5 rounded-2xl font-black text-[10px] text-white">Agregar</button>` :
+                            `<div class="flex items-center bg-orange-600 rounded-2xl p-1 shadow-2xl">
+                                <button onclick="add(${p.id},-1)" class="w-12 h-12 text-white text-2xl font-black">－</button>
+                                <input type="number" value="${qty}" class="qty-input flex-1" 
+                                       onchange="setQty(${p.id}, this.value)" 
+                                       onclick="this.select()">
+                                <button onclick="add(${p.id},1)" class="w-12 h-12 text-white text-2xl font-black">＋</button>
+                            </div>`)}
+                        </div>
+                    </div>`;
             }).join('');
         }
 
