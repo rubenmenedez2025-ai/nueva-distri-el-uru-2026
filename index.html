@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -616,63 +616,27 @@
 
         function verFavoritos() { soloFavs = !soloFavs; document.getElementById('btn-favs').classList.toggle('text-red-500', soloFavs); render(); }
 
-        async function enviarPedido() {
-    const n = document.getElementById('user-name').value;
-    const a = document.getElementById('user-address').value;
-    const entrega = document.getElementById('btn-whatsapp').dataset.entrega || "HOY";
+        function enviarPedido() {
+            const n = document.getElementById('user-name').value;
+            const a = document.getElementById('user-address').value;
+            const entrega = document.getElementById('btn-whatsapp').dataset.entrega || "HOY";
 
-    // 1. Validación inicial
-    if (!n || !a) return Swal.fire('Faltan Datos', 'Por favor completá nombre y dirección.', 'warning');
-    
-    // Mostramos un mensaje de "Procesando" para que el cliente espere un segundo
-    Swal.fire({
-        title: 'Procesando pedido...',
-        text: 'Estamos reservando tu stock',
-        allowOutsideClick: false,
-        didOpen: () => { Swal.showLoading(); }
-    });
+            if (!n || !a) return Swal.fire('Faltan Datos', 'Por favor completá nombre y dirección.', 'warning');
+            
+            confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
 
-    // 2. CONEXIÓN CON GOOGLE SHEETS (Descuento de Stock)
-    const URL_CEREBRO = "https://script.google.com/macros/s/AKfycbw3hm6Y-twLo9a4NlAQiMngCs3JdeWbyXxjn_vbQ44TwWVfiFyzuupLUth1Slh6emTF/exec"
-url web"; // ⚠️ PEGA ACÁ TU URL DEL PASO 2
-
-    try {
-        await fetch(URL_CEREBRO, {
-            method: 'POST',
-            mode: 'no-cors', // Evita problemas de permisos entre dominios
-            cache: 'no-cache',
-            body: JSON.stringify(cart)
-        });
-        console.log("Inventario actualizado en el Sheets");
-    } catch (e) {
-        console.error("Error al descontar stock:", e);
-        // No bloqueamos el pedido si falla internet, pero lo registramos
-    }
-
-    // 3. Lógica visual y cierre de carga
-    Swal.close();
-    confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
-
-    // 4. Armado del mensaje para WhatsApp
-    let m = "*NUEVO PEDIDO - EL URU*%0A";
-    m += "👤 *Comercio:* " + n + "%0A";
-    m += "📍 *Dirección:* " + a + "%0A";
-    m += "🕒 *Entrega:* " + entrega + "%0A%0A";
-    m += "------------------------------%0A";
-    
-    Object.entries(cart).forEach(([id, q]) => {
-        const p = data[id];
-        let pre = p.pre;
-        if (p.pack_cantidad > 0 && q >= p.pack_cantidad) pre = p.pack_precio;
-        m += "🔸 *" + q + "* x " + p.nom + " ($" + pre.toLocaleString() + " c/u)%0A";
-    });
-    
-    m += "------------------------------%0A";
-    m += "💰 *TOTAL: $" + document.getElementById('total').innerText + "*";
-    
-    // 5. Abrir WhatsApp
-    window.open("https://wa.me/5492920248292?text=" + m);
-}
+            let m = "*NUEVO PEDIDO - EL URU*%0A";
+            m += "👤 *Comercio:* " + n + "%0A";
+            m += "📍 *Dirección:* " + a + "%0A";
+            m += "🕒 *Entrega:* " + entrega + "%0A%0A";
+            m += "------------------------------%0A";
+            
+            Object.entries(cart).forEach(([id, q]) => {
+                const p = data[id];
+                let pre = p.pre;
+                if (p.pack_cantidad > 0 && q >= p.pack_cantidad) pre = p.pack_precio;
+                m += "🔸 *" + q + "* x " + p.nom + " ($" + pre.toLocaleString() + " c/u)%0A";
+            });
             
             m += "------------------------------%0A";
             m += "💰 *TOTAL: $" + document.getElementById('total').innerText + "*";
