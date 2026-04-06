@@ -467,7 +467,7 @@
                             (qty === 0 ? `<button onclick="add(${p.id},1)" class="w-full bg-orange-600 py-5 rounded-2xl font-black text-[10px] text-white">Agregar</button>` :
                             `<div class="flex items-center bg-orange-600 rounded-2xl p-1 shadow-2xl">
                                 <button onclick="add(${p.id},-1)" class="w-12 h-12 text-white text-2xl font-black">－</button>
-                                 <input type="number" value="${qty}" step="0.5" min="0" class="qty-input flex-1"
+                                <input type="number" value="${qty}" class="qty-input flex-1" 
                                        onchange="setQty(${p.id}, this.value)" 
                                        onclick="this.select()">
                                 <button onclick="add(${p.id},1)" class="w-12 h-12 text-white text-2xl font-black">＋</button>
@@ -479,8 +479,7 @@
 
         window.setQty = (id, val) => {
             const p = data[id];
-           let n = parseFloat(val) || 0;
-           n = Math.round(n * 2) / 2;
+            let n = parseInt(val) || 0;
             if (n > p.stock) {
                 n = p.stock;
                 Swal.fire('Stock Máximo', `Solo hay ${p.stock} unidades.`, 'warning');
@@ -617,27 +616,63 @@
 
         function verFavoritos() { soloFavs = !soloFavs; document.getElementById('btn-favs').classList.toggle('text-red-500', soloFavs); render(); }
 
-        function enviarPedido() {
-            const n = document.getElementById('user-name').value;
-            const a = document.getElementById('user-address').value;
-            const entrega = document.getElementById('btn-whatsapp').dataset.entrega || "HOY";
+        async function enviarPedido() {
+    const n = document.getElementById('user-name').value;
+    const a = document.getElementById('user-address').value;
+    const entrega = document.getElementById('btn-whatsapp').dataset.entrega || "HOY";
 
-            if (!n || !a) return Swal.fire('Faltan Datos', 'Por favor completá nombre y dirección.', 'warning');
-            
-            confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
+    // 1. Validación inicial
+    if (!n || !a) return Swal.fire('Faltan Datos', 'Por favor completá nombre y dirección.', 'warning');
+    
+    // Mostramos un mensaje de "Procesando" para que el cliente espere un segundo
+    Swal.fire({
+        title: 'Procesando pedido...',
+        text: 'Estamos reservando tu stock',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
+    });
 
-            let m = "*NUEVO PEDIDO - EL URU*%0A";
-            m += "👤 *Comercio:* " + n + "%0A";
-            m += "📍 *Dirección:* " + a + "%0A";
-            m += "🕒 *Entrega:* " + entrega + "%0A%0A";
-            m += "------------------------------%0A";
-            
-            Object.entries(cart).forEach(([id, q]) => {
-                const p = data[id];
-                let pre = p.pre;
-                if (p.pack_cantidad > 0 && q >= p.pack_cantidad) pre = p.pack_precio;
-                m += "🔸 *" + q + "* x " + p.nom + " ($" + pre.toLocaleString() + " c/u)%0A";
-            });
+    // 2. CONEXIÓN CON GOOGLE SHEETS (Descuento de Stock)
+    const URL_CEREBRO = "https://script.google.com/macros/s/AKfycbx3JyHXqLjw7EBf1oPJcwwNgjcEOnNacg0XOv3ywfahqYlyt635C2dDXUP7q5V2cUz4/exec
+url web"; // ⚠️ PEGA ACÁ TU URL DEL PASO 2
+
+    try {
+        await fetch(URL_CEREBRO, {
+            method: 'POST',
+            mode: 'no-cors', // Evita problemas de permisos entre dominios
+            cache: 'no-cache',
+            body: JSON.stringify(cart)
+        });
+        console.log("Inventario actualizado en el Sheets");
+    } catch (e) {
+        console.error("Error al descontar stock:", e);
+        // No bloqueamos el pedido si falla internet, pero lo registramos
+    }
+
+    // 3. Lógica visual y cierre de carga
+    Swal.close();
+    confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
+
+    // 4. Armado del mensaje para WhatsApp
+    let m = "*NUEVO PEDIDO - EL URU*%0A";
+    m += "👤 *Comercio:* " + n + "%0A";
+    m += "📍 *Dirección:* " + a + "%0A";
+    m += "🕒 *Entrega:* " + entrega + "%0A%0A";
+    m += "------------------------------%0A";
+    
+    Object.entries(cart).forEach(([id, q]) => {
+        const p = data[id];
+        let pre = p.pre;
+        if (p.pack_cantidad > 0 && q >= p.pack_cantidad) pre = p.pack_precio;
+        m += "🔸 *" + q + "* x " + p.nom + " ($" + pre.toLocaleString() + " c/u)%0A";
+    });
+    
+    m += "------------------------------%0A";
+    m += "💰 *TOTAL: $" + document.getElementById('total').innerText + "*";
+    
+    // 5. Abrir WhatsApp
+    window.open("https://wa.me/5492920248292?text=" + m);
+}
             
             m += "------------------------------%0A";
             m += "💰 *TOTAL: $" + document.getElementById('total').innerText + "*";
