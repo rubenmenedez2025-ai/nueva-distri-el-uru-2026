@@ -616,33 +616,70 @@
 
         function verFavoritos() { soloFavs = !soloFavs; document.getElementById('btn-favs').classList.toggle('text-red-500', soloFavs); render(); }
 
-        function enviarPedido() {
-            const n = document.getElementById('user-name').value;
-            const a = document.getElementById('user-address').value;
-            const entrega = document.getElementById('btn-whatsapp').dataset.entrega || "HOY";
+        async function enviarPedido() {
+    const n = document.getElementById('user-name').value;
+    const a = document.getElementById('user-address').value;
+    const entrega = document.getElementById('btn-whatsapp').dataset.entrega || "HOY";
+    
+    if (!n || !a) return Swal.fire('Faltan Datos', 'Por favor completá nombre y dirección.', 'warning');
 
-            if (!n || !a) return Swal.fire('Faltan Datos', 'Por favor completá nombre y dirección.', 'warning');
-            
-            confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
+    // 1. Armamos una lista limpia con los productos del carrito
+    const detallesPedido = [];
+    Object.entries(cart).forEach(([id, q]) => {
+        const p = data[id];
+        let pre = p.pre;
+        if (p.pack_cantidad > 0 && q >= p.pack_cantidad) pre = p.pack_precio;
+        detallesPedido.push({
+            producto: p.nom,
+            cantidad: q,
+            precio_unitario: pre,
+            subtotal: q * pre
+        });
+    });
 
-            let m = "*NUEVO PEDIDO - EL URU*%0A";
-            m += "👤 *Comercio:* " + n + "%0A";
-            m += "📍 *Dirección:* " + a + "%0A";
-            m += "🕒 *Entrega:* " + entrega + "%0A%0A";
-            m += "------------------------------%0A";
-            
-            Object.entries(cart).forEach(([id, q]) => {
-                const p = data[id];
-                let pre = p.pre;
-                if (p.pack_cantidad > 0 && q >= p.pack_cantidad) pre = p.pack_precio;
-                m += "🔸 *" + q + "* x " + p.nom + " ($" + pre.toLocaleString() + " c/u)%0A";
-            });
-            
-            m += "------------------------------%0A";
-            m += "💰 *TOTAL: $" + document.getElementById('total').innerText + "*";
-            
-            window.open("https://wa.me/5492920248292?text=" + m);
-        }
+    // 2. Empaquetamos toda la información (Payload)
+    const payload = {
+        comercio: n,
+        direccion: a,
+        entrega: entrega,
+        total: document.getElementById('total').innerText,
+        items: detallesPedido,
+        fecha: new Date().toLocaleString()
+    };
+
+    // Cambiamos visualmente el botón para que el cliente sepa que está cargando
+    const btnW = document.getElementById('btn-whatsapp');
+    btnW.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROCESANDO...';
+    btnW.disabled = true;
+
+    try {
+        // 3. ACA VA EL ENLACE (WEBHOOK) QUE CREAREMOS EN MAKE.COM
+        const webhookUrl = 'https://hook.us2.make.com/5l5e2xqmg9crrn4dl9o3stabrazadudq'; 
+        
+        // Enviamos los datos silenciosamente
+        await fetch(webhookUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        // Festejo visual y aviso de éxito
+        confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
+        Swal.fire('¡Pedido Recibido!', 'Ya ingresó a nuestro sistema. Te enviaremos la confirmación por WhatsApp enseguida.', 'success');
+        
+        // Vaciamos el carrito y cerramos la ventana
+        cart = {};
+        update(); 
+        render();
+        document.getElementById('cart').style.display='none';
+
+    } catch (error) {
+        Swal.fire('Error', 'Hubo un problema de conexión. Intentá de nuevo.', 'error');
+    } finally {
+        btnW.innerHTML = 'ENVIAR POR WHATSAPP';
+        btnW.disabled = false;
+    }
+}
 
         /* FUNCIONES DE LOGÍSTICA INTEGRADAS */
         function abrirLogistica() {
