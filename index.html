@@ -623,18 +623,15 @@
     
     if (!n || !a) return Swal.fire('Faltan Datos', 'Por favor completá nombre y dirección.', 'warning');
 
-    // 1. Armamos una lista limpia con los productos del carrito
-    const detallesPedido = [];
+    // 1. Armamos los productos como un TEXTO ordenado (¡esta es la magia!)
+    let detallesTexto = "";
     Object.entries(cart).forEach(([id, q]) => {
         const p = data[id];
         let pre = p.pre;
         if (p.pack_cantidad > 0 && q >= p.pack_cantidad) pre = p.pack_precio;
-        detallesPedido.push({
-            producto: p.nom,
-            cantidad: q,
-            precio_unitario: pre,
-            subtotal: q * pre
-        });
+        
+        // Sumamos cada producto renglón por renglón
+        detallesTexto += `${q}x ${p.nom} ($${pre} c/u)\n`;
     });
 
     // 2. Empaquetamos toda la información (Payload)
@@ -643,31 +640,28 @@
         direccion: a,
         entrega: entrega,
         total: document.getElementById('total').innerText,
-        items: detallesPedido,
+        items: detallesTexto, // Ahora Make recibe un texto listo para leer
         fecha: new Date().toLocaleString()
     };
 
-    // Cambiamos visualmente el botón para que el cliente sepa que está cargando
+    // Cambiamos visualmente el botón
     const btnW = document.getElementById('btn-whatsapp');
     btnW.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROCESANDO...';
     btnW.disabled = true;
 
     try {
-        // 3. ACA VA EL ENLACE (WEBHOOK) QUE CREAREMOS EN MAKE.COM
+        // Tu webhook de Make
         const webhookUrl = 'https://hook.us2.make.com/5l5e2xqmg9crrn4dl9o3stabrazadudq'; 
         
-        // Enviamos los datos silenciosamente
         await fetch(webhookUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
 
-        // Festejo visual y aviso de éxito
         confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
-        Swal.fire('¡Pedido Recibido!', 'Ya ingresó a nuestro sistema. Te enviaremos la confirmación por WhatsApp enseguida.', 'success');
+        Swal.fire('¡Pedido Recibido!', 'Ya ingresó a nuestro sistema.', 'success');
         
-        // Vaciamos el carrito y cerramos la ventana
         cart = {};
         update(); 
         render();
