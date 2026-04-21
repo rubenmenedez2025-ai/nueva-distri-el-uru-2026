@@ -360,7 +360,7 @@
 
     <script>
         const TSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQEemzCvTezcjzZhIUIRIayZ7U81xgssl9G1Vr6Odx7dHGHOARY0iJ-VOL43E17qLVkiIRb0LTurcZU/pub?output=tsv';
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyHN32Qn5DTMgYhu9AhJk7ThtTnt7U7DA4bpJlGqGOREkX_IzTjbnKg_TWKeZLJznYzEg/exec';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwNPrbUme0FpIsPXt1ZonGGV8nQ4kCXL6y27sb6MUrlCMM6EeGs3HtrNmoRZ-sKvNoEcg/exec';
         const MIN_COMPRA = 25000;
         let data = [], cart = {}, activeCat = 'TODOS', soloFavs = false;
         let favoritos = JSON.parse(localStorage.getItem('uru_favs')) || [];
@@ -630,25 +630,20 @@
     }));
 
     try {
-        await fetch(APPS_SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                comercio: n,
-                direccion: a,
-                entrega: entrega,
-                total: document.getElementById('total').innerText,
-                items: itemsParaDescontar.map(item => ({
-                    ...item,
-                    nombre: data[item.rowIndex - 2]?.nom || ''
-                }))
-            })
-        });
-    } catch(err) {
-        console.warn('Error al descontar stock:', err);
-    }
-
+    const params = new URLSearchParams({
+        comercio: n,
+        direccion: a,
+        entrega: entrega,
+        total: document.getElementById('total').innerText,
+        items: JSON.stringify(itemsParaDescontar.map(item => ({
+            ...item,
+            nombre: data[item.rowIndex - 2]?.nom || ''
+        })))
+    });
+    await fetch(APPS_SCRIPT_URL + '?' + params.toString());
+} catch(err) {
+    console.warn('Error al descontar stock:', err);
+}
     // Actualizar stock local inmediatamente
     itemsParaDescontar.forEach(item => {
         const id = item.rowIndex - 2;
