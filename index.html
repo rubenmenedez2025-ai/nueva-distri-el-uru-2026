@@ -640,7 +640,7 @@
             nombre: data[item.rowIndex - 2]?.nom || ''
         })))
     });
-    await fetch(APPS_SCRIPT_URL + '?' + params.toString());
+    await fetch(APPS_SCRIPT_URL + '?' + params.toString(), { mode: 'no-cors' });
 } catch(err) {
     console.warn('Error al descontar stock:', err);
 }
