@@ -377,21 +377,21 @@
         }
 
         window.onload = () => {
-            if(localStorage.getItem('uru_theme') === 'light') toggleTheme();
-            document.getElementById('user-name').value = localStorage.getItem('uru_name') || '';
-            document.getElementById('user-address').value = localStorage.getItem('uru_address') || '';
-            
-            const catScroll = document.getElementById('category-filters');
-            catScroll.addEventListener('wheel', (e) => {
-                if (e.deltaY !== 0) {
-                    e.preventDefault();
-                    catScroll.scrollLeft += e.deltaY;
-                }
-            });
-
-            update(); load();
-            setInterval(verificarHorarioCierre, 60000); 
-        };
+    if(localStorage.getItem('uru_theme') === 'light') toggleTheme();
+    document.getElementById('user-name').value = localStorage.getItem('uru_name') || '';
+    document.getElementById('user-address').value = localStorage.getItem('uru_address') || '';
+    
+    const catScroll = document.getElementById('category-filters');
+    catScroll.addEventListener('wheel', (e) => {
+        if (e.deltaY !== 0) {
+            e.preventDefault();
+            catScroll.scrollLeft += e.deltaY;
+        }
+    });
+    update(); load();
+    setInterval(verificarHorarioCierre, 60000);
+    setInterval(load, 30 * 1000);
+};
 
         function saveUserData() {
             localStorage.setItem('uru_name', document.getElementById('user-name').value);
