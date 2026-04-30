@@ -1043,7 +1043,7 @@
                 renderCats();
                 render();
                 verificarHorarioCierre();
-                mostrarPopupSiCorresponde();
+               if (!window._promoYaMostrada) { mostrarPopupSiCorresponde(); window._promoYaMostrada = true; }
 
             } catch (e) {
                 console.error('[URU ERROR]', e);
