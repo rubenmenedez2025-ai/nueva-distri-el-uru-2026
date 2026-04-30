@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DISTRI EL URU | Tu Mejor Opcion</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
@@ -711,13 +711,13 @@
             <p class="text-[10px] text-[var(--text-muted)] font-bold uppercase">
                 Tip: escribí "<span class="text-orange-500">Azúcar o Stevia</span>" para ver variantes
             </p>
-            <button onclick="compartirPresupuesto()" class="flex items-center gap-2 text-[10px] font-black uppercase text-[var(--text-muted)] border border-[var(--border-color)] px-5 py-2.5 rounded-full hover:border-orange-500 hover:text-orange-500 transition-all flex-shrink-0">
+            <button onclick="compartirPresupuesto()" class="flex items-center gap-2 text-[10px] font-black uppercase text-[var(--text-muted)] border border-[var(--border-color)] px-5 py-3 rounded-full hover:border-orange-500 hover:text-orange-500 transition-all flex-shrink-0" style="min-height:44px">
                 <i class="fas fa-share-alt"></i> Compartir presupuesto
             </button>
         </div>
     </div>
 
-    <main id="catalogo" class="p-4 max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-24">
+    <main id="catalogo" class="p-4 max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-24">
         <div class="col-span-full text-center py-20 space-y-4" id="loading-state">
             <div class="text-5xl animate-spin inline-block">⏳</div>
             <p class="font-black text-[var(--text-muted)] uppercase text-sm tracking-widest">Cargando catálogo...</p>
@@ -893,7 +893,7 @@
         // ── FEATURE 1: TEMA ──────────────────────────────────────────────────
         const CICLO_TEMAS  = ['auto', 'light', 'dark'];
         const LABEL_TEMAS  = { auto: 'AUTO', light: '☀️ CLARO', dark: '🌙 OSCURO' };
-        let temaActual = localStorage.getItem('uru_tema') || 'auto';
+        let temaActual = localStorage.getItem('uru_tema') || 'light';
 
         function aplicarTema(tema) {
             document.body.classList.remove('force-light', 'force-dark');
@@ -1517,10 +1517,6 @@
 
         // ── POPUP NOVEDADES — FIX #6: usa campo esNuevo real ─────────────────
         function mostrarPopupSiCorresponde() {
-            const HOY     = new Date().toDateString();
-            const yaVisto = localStorage.getItem('uru_promo_vista');
-            if (yaVisto === HOY) return;
-
             const nuevos = data.filter(p => p.stock > 0 && p.esNuevo).slice(0, 4);
             if (nuevos.length === 0) return;
 
@@ -1561,7 +1557,6 @@
 
         function cerrarPromo() {
             document.getElementById('promo-overlay').classList.remove('visible');
-            localStorage.setItem('uru_promo_vista', new Date().toDateString());
         }
 
         function cerrarPromoSiClick(e) {
