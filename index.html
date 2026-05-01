@@ -1498,33 +1498,56 @@
                        </div>`
                     : `<div class="pn-status ${cfg.claseStatus}">${cfg.icono}</div>`;
 
-                // ── Selector de variantes (multi, fallback) ──
+                // ── Selector de variantes con checkbox + cantidad individual ──
                 const mostrarSelector = item.estado === 'multi' || item.estado === 'fallback';
                 const selectorVariantes = mostrarSelector ? `
-                    <div class="mt-3 space-y-1 max-h-56 overflow-y-auto pr-1" style="scrollbar-width:thin">
+                    <div class="mt-3 space-y-2 max-h-64 overflow-y-auto pr-1" style="scrollbar-width:thin">
                         ${item.estado === 'fallback' ? `
                             <p class="text-[9px] font-black uppercase text-yellow-600 px-1 mb-2">
-                                📦 ${item.fallback?.tipo === 'categoria' ? `Otros productos de la categoría "${item.fallback.cat}"` : 'Productos similares disponibles'}:
-                            </p>` : ''}
+                                📦 ${item.fallback?.tipo === 'categoria' ? `Otros de "${item.fallback.cat}"` : 'Similares disponibles'}:
+                            </p>` : `
+                            <p class="text-[9px] font-black uppercase text-orange-500 px-1 mb-1">
+                                Seleccioná una o más variantes:
+                            </p>`}
                         ${item.matches.slice(0,8).map(p => `
-                            <label class="flex items-center gap-3 cursor-pointer p-2 rounded-xl hover:bg-orange-500/10 transition border border-transparent hover:border-orange-500/30">
-                                <input type="radio" name="pn-var-${idx}" value="${p.id}"
-                                       onchange="seleccionarVariantePN(${idx}, ${p.id})"
-                                       class="accent-orange-500 w-4 h-4 flex-shrink-0">
-                                <div class="w-10 h-10 flex-shrink-0 rounded-lg bg-[var(--input-bg)] border border-[var(--border-color)] flex items-center justify-center overflow-hidden">
-                                    <img src="${p.img}" class="max-w-full max-h-full object-contain p-0.5"
-                                         onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'">
+                            <div class="rounded-xl border border-[var(--border-color)] bg-[var(--card-inner)] overflow-hidden"
+                                 id="var-row-${idx}-${p.id}">
+                                <label class="flex items-center gap-3 cursor-pointer p-2 hover:bg-orange-500/5 transition"
+                                       onclick="toggleVariantePN(${idx}, ${p.id})">
+                                    <div class="w-5 h-5 flex-shrink-0 rounded-md border-2 border-[var(--border-color)] flex items-center justify-center transition"
+                                         id="chk-${idx}-${p.id}" style="background:transparent">
+                                    </div>
+                                    <div class="w-10 h-10 flex-shrink-0 rounded-lg bg-[var(--input-bg)] border border-[var(--border-color)] flex items-center justify-center overflow-hidden">
+                                        <img src="${p.img}" class="max-w-full max-h-full object-contain p-0.5"
+                                             onerror="this.src='https://i.ibb.co/yB7ffL4T/unnamed.jpg'">
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <span class="text-xs font-bold text-[var(--text-main)] block leading-tight">${p.nom}</span>
+                                        <span class="text-[10px] font-black text-orange-500">$${p.pre.toLocaleString()}</span>
+                                        <span class="text-[9px] text-green-500 ml-1">${p.stock} disp.</span>
+                                    </div>
+                                </label>
+                                <!-- Cantidad individual — aparece al seleccionar -->
+                                <div id="cant-row-${idx}-${p.id}"
+                                     style="display:none"
+                                     class="flex items-center justify-between px-3 pb-2 gap-2">
+                                    <span class="text-[10px] text-[var(--text-muted)] font-black uppercase">Cantidad:</span>
+                                    <div class="flex items-center gap-1">
+                                        <button onclick="cambiarCantVarPN(${idx},${p.id},-1)"
+                                                class="w-7 h-7 rounded-lg bg-[var(--input-bg)] border border-[var(--border-color)] text-[var(--text-muted)] font-black text-sm flex items-center justify-center hover:border-orange-500 hover:text-orange-500 transition">－</button>
+                                        <span class="w-8 text-center font-black text-sm text-[var(--text-main)]"
+                                              id="cant-val-${idx}-${p.id}">1</span>
+                                        <button onclick="cambiarCantVarPN(${idx},${p.id},1)"
+                                                class="w-7 h-7 rounded-lg bg-[var(--input-bg)] border border-[var(--border-color)] text-[var(--text-muted)] font-black text-sm flex items-center justify-center hover:border-orange-500 hover:text-orange-500 transition">＋</button>
+                                    </div>
                                 </div>
-                                <div class="flex-1 min-w-0">
-                                    <span class="text-xs font-bold text-[var(--text-main)] block leading-tight">${p.nom}</span>
-                                    <span class="text-[10px] font-black text-orange-500">$${p.pre.toLocaleString()}</span>
-                                    <span class="text-[9px] text-green-500 ml-1">${p.stock} disp.</span>
-                                </div>
-                            </label>
+                            </div>
                         `).join('')}
                     </div>` : '';
 
                 const cantDeshabilitado = item.estado === 'vacio' || item.estado === 'agotado' || item.estado === 'cond_skip';
+                // Para estado ok: mostrar cantidad global; para multi: se maneja por variante
+                const mostrarCantGlobal = item.estado === 'ok';
                 const claseItem = { ok:'ok', multi:'multi', fallback:'multi', agotado:'vacio', vacio:'vacio', cond_skip:'cond-skip' }[item.estado] || 'vacio';
 
                 return `
@@ -1536,11 +1559,12 @@
                                     <span class="text-[var(--text-main)] font-black text-sm uppercase block">${item.raw.busqueda}</span>
                                     <div class="mt-0.5">${cfg.label}</div>
                                 </div>
+                                ${mostrarCantGlobal ? `
                                 <div class="flex items-center gap-1 flex-shrink-0 ${cantDeshabilitado ? 'opacity-30 pointer-events-none' : ''}">
                                     <button onclick="cambiarCantidadPN(${idx},-1)" class="w-7 h-7 rounded-lg bg-[var(--input-bg)] border border-[var(--border-color)] text-[var(--text-muted)] font-black text-sm flex items-center justify-center hover:border-orange-500 hover:text-orange-500 transition">－</button>
                                     <span class="w-7 text-center font-black text-sm text-[var(--text-main)]" id="pn-cant-${idx}">${item.cantidad}</span>
                                     <button onclick="cambiarCantidadPN(${idx},1)" class="w-7 h-7 rounded-lg bg-[var(--input-bg)] border border-[var(--border-color)] text-[var(--text-muted)] font-black text-sm flex items-center justify-center hover:border-orange-500 hover:text-orange-500 transition">＋</button>
-                                </div>
+                                </div>` : ''}
                             </div>
                             ${selectorVariantes}
                         </div>
@@ -1549,8 +1573,41 @@
             }).join('');
         }
 
-        function seleccionarVariantePN(idx, prodId) {
-            pedidoNaturalItems[idx].seleccionado = parseInt(prodId);
+        // Mapa: "idx-prodId" → cantidad seleccionada
+        const varianteCantidades = {};
+
+        function toggleVariantePN(idx, prodId) {
+            const key     = `${idx}-${prodId}`;
+            const chk     = document.getElementById(`chk-${idx}-${prodId}`);
+            const cantRow = document.getElementById(`cant-row-${idx}-${prodId}`);
+            const row     = document.getElementById(`var-row-${idx}-${prodId}`);
+
+            if (varianteCantidades[key] !== undefined) {
+                // Deseleccionar
+                delete varianteCantidades[key];
+                chk.innerHTML = '';
+                chk.style.background = 'transparent';
+                chk.style.borderColor = '';
+                cantRow.style.display = 'none';
+                row.style.borderColor = '';
+            } else {
+                // Seleccionar
+                varianteCantidades[key] = 1;
+                chk.innerHTML = '<svg width="12" height="12" viewBox="0 0 12 12"><polyline points="1,6 4,10 11,2" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/></svg>';
+                chk.style.background = '#ff6b00';
+                chk.style.borderColor = '#ff6b00';
+                cantRow.style.display = 'flex';
+                row.style.borderColor = 'rgba(255,107,0,0.5)';
+            }
+        }
+
+        function cambiarCantVarPN(idx, prodId, delta) {
+            const key = `${idx}-${prodId}`;
+            if (varianteCantidades[key] === undefined) return;
+            const p = data[prodId];
+            varianteCantidades[key] = Math.min(Math.max(1, varianteCantidades[key] + delta), p?.stock || 99);
+            const el = document.getElementById(`cant-val-${idx}-${prodId}`);
+            if (el) el.textContent = varianteCantidades[key];
         }
 
         function cambiarCantidadPN(idx, delta) {
@@ -1564,27 +1621,66 @@
             const errores   = [];
             const agregados = [];
 
-            pedidoNaturalItems.forEach(item => {
+            pedidoNaturalItems.forEach((item, idx) => {
                 if (item.estado === 'vacio' || item.estado === 'agotado') {
-                    errores.push(`"${item.raw.busqueda}": ${item.estado === 'agotado' ? 'sin stock en ninguna variante' : 'no encontrado'}`);
+                    errores.push(`"${item.raw.busqueda}": ${item.estado === 'agotado' ? 'sin stock' : 'no encontrado'}`);
                     return;
                 }
-                if (item.estado === 'cond_skip') { return; }
-                if (item.seleccionado === null || item.seleccionado === undefined) {
-                    if (item.estado === 'multi' || item.estado === 'fallback')
-                        errores.push(`"${item.raw.busqueda}": seleccioná una variante`);
-                    return;
+                if (item.estado === 'cond_skip') return;
+
+                if (item.estado === 'ok') {
+                    // Producto único — usar cantidad global
+                    const p = data[item.seleccionado];
+                    if (!p) return;
+                    const cantFinal = Math.min(item.cantidad, p.stock);
+                    if (cantFinal <= 0) { errores.push(`"${p.nom}" sin stock`); return; }
+                    cart[item.seleccionado] = (cart[item.seleccionado] || 0) + cantFinal;
+                    agregados.push(`${cantFinal}x ${p.nom}`);
+
+                } else if (item.estado === 'multi' || item.estado === 'fallback') {
+                    // Múltiples variantes — leer checkboxes seleccionados
+                    const seleccionados = item.matches
+                        .map(p => ({ p, cant: varianteCantidades[`${idx}-${p.id}`] }))
+                        .filter(x => x.cant !== undefined);
+
+                    if (seleccionados.length === 0) {
+                        errores.push(`"${item.raw.busqueda}": seleccioná al menos una variante`);
+                        return;
+                    }
+
+                    seleccionados.forEach(({ p, cant }) => {
+                        const cantFinal = Math.min(cant, p.stock);
+                        if (cantFinal <= 0) { errores.push(`"${p.nom}" sin stock`); return; }
+                        cart[p.id] = (cart[p.id] || 0) + cantFinal;
+                        agregados.push(`${cantFinal}x ${p.nom}`);
+                    });
                 }
-
-                const p = data[item.seleccionado];
-                if (!p) return;
-
-                const cantFinal = Math.min(item.cantidad, p.stock);
-                if (cantFinal <= 0) { errores.push(`"${p.nom}" sin stock suficiente`); return; }
-
-                cart[item.seleccionado] = (cart[item.seleccionado] || 0) + cantFinal;
-                agregados.push(`${cantFinal}x ${p.nom}`);
             });
+
+            // Limpiar mapa de cantidades de variantes
+            Object.keys(varianteCantidades).forEach(k => delete varianteCantidades[k]);
+
+            cerrarPedidoNatural();
+            guardarCarrito();
+            update();
+            render();
+            document.getElementById('search').value = '';
+            document.getElementById('btn-pedido-natural').classList.remove('visible');
+
+            if (agregados.length > 0) {
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                Swal.fire({
+                    title: '🛒 ¡Pedido cargado!',
+                    html:  agregados.map(a => `<div class="text-sm text-left">✓ ${a}</div>`).join('') +
+                           (errores.length ? `<div class="mt-3 text-xs text-red-400 text-left">${errores.join('<br>')}</div>` : ''),
+                    icon:  'success',
+                    confirmButtonColor: '#ff6b00',
+                    confirmButtonText:  'Ver carrito'
+                }).then(() => { document.getElementById('cart').style.display = 'flex'; });
+            } else {
+                Swal.fire({ title: 'No se agregó nada', html: errores.join('<br>'), icon: 'warning', confirmButtonColor: '#ff6b00' });
+            }
+        }
 
             cerrarPedidoNatural();
             update();
@@ -1610,6 +1706,7 @@
         function cerrarPedidoNatural() {
             document.getElementById('pedido-natural-overlay').classList.remove('visible');
             pedidoNaturalItems = [];
+            Object.keys(varianteCantidades).forEach(k => delete varianteCantidades[k]);
         }
 
         function cerrarPedidoNaturalSiClick(e) {
