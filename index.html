@@ -1275,66 +1275,51 @@
         }
 
         // Detecta si un array de tokens contiene múltiples productos distintos
-        // y los divide. Ej: ["vino","harina","yerba"] → [["vino"],["harina"],["yerba"]]
+        // Agrupa tokens consecutivos que refieren al mismo producto, separa los que refieren a distintos.
         function detectarBoundaries(tokens) {
             if (tokens.length <= 1) return [tokens];
 
-            // Puntuar cada token individual contra el catálogo
-            const scores = tokens.map(t => {
-                if (STOP_WORDS_SET.has(t) || /^\d+$/.test(t)) return 0;
-                return data.reduce((max, p) => {
-                    const s = puntuar(p.nom, [t]);
-                    return s > max ? s : max;
-                }, 0);
-            });
+            const significativos = tokens.filter(t => !STOP_WORDS_SET.has(t) && t.length >= 3);
+            if (significativos.length <= 1) return [tokens];
 
-            // Si todos tienen score 0 o hay solo 1 token significativo → no dividir
-            const significativos = scores.filter(s => s > 0).length;
-            if (significativos <= 1) return [tokens];
+            // Mapear cada token → producto top que matchea
+            const topPorToken = {};
+            for (const t of significativos) {
+                const matches = data
+                    .map(p => ({ p, pts: puntuar(p.nom, [t]) }))
+                    .filter(x => x.pts > 0)
+                    .sort((a,b) => b.pts - a.pts);
+                topPorToken[t] = matches.length > 0 ? { prod: matches[0].p, pts: matches[0].pts } : null;
+            }
 
-            // Detectar "picos" de score: cada pico es un nuevo producto
-            // Un pico es un token con score alto precedido de score bajo o diferente categoría
+            // Agrupar tokens consecutivos con el mismo producto top → mismo ítem
+            // Tokens con producto top diferente al anterior → nuevo ítem
             const grupos = [];
-            let grupoActual = [];
-            let lastAncla = -1;
+            let grupoActual = [significativos[0]];
+            let topActual = topPorToken[significativos[0]]?.prod?.id ?? null;
 
-            for (let i = 0; i < tokens.length; i++) {
-                const t = tokens[i];
-                const s = scores[i];
+            for (let i = 1; i < significativos.length; i++) {
+                const t = significativos[i];
+                const info = topPorToken[t];
+                const topEste = info?.prod?.id ?? null;
 
-                if (s === 0) {
-                    // token sin score: va con el grupo actual si ya hay uno
-                    if (grupoActual.length > 0) grupoActual.push(t);
-                    continue;
-                }
-
-                // Es un token con score. Ver si matchea el mismo "cluster" que el ancla anterior
-                // o si es mejor interpretarlo como inicio de nuevo producto
-                if (grupoActual.length === 0) {
+                if (topEste === null) {
+                    // Sin match → va con grupo actual
                     grupoActual.push(t);
-                    lastAncla = i;
+                } else if (topEste === topActual) {
+                    // Mismo producto top → mismo ítem (ej: "coca" + "cola", "perro" + "viejo")
+                    grupoActual.push(t);
                 } else {
-                    // Comparar: ¿los mejores matches de grupoActual+t son los mismos que solo t?
-                    const matchesConActual = buscarEnCatalogo([...grupoActual.filter(w => !STOP_WORDS_SET.has(w)), t]);
-                    const matchesSolo      = buscarEnCatalogo([t]);
-
-                    // Si t solo ya matchea productos completamente distintos al grupo → nuevo segmento
-                    const idsConActual = new Set(matchesConActual.map(p => p.id));
-                    const idsSolo      = matchesSolo.map(p => p.id);
-                    const overlap      = idsSolo.filter(id => idsConActual.has(id)).length;
-
-                    // Si hay poca superposición Y el score del token solo es fuerte → nuevo segmento
-                    if (overlap === 0 && s >= 4 && grupoActual.filter(w => !STOP_WORDS_SET.has(w)).length >= 1) {
-                        grupos.push([...grupoActual]);
-                        grupoActual = [t];
-                        lastAncla = i;
-                    } else {
-                        grupoActual.push(t);
-                    }
+                    // Producto diferente → nuevo ítem
+                    grupos.push([...grupoActual]);
+                    grupoActual = [t];
+                    topActual = topEste;
                 }
             }
             if (grupoActual.length > 0) grupos.push(grupoActual);
-            return grupos.length > 0 ? grupos : [tokens];
+
+            // Si solo quedó 1 grupo → no dividir (texto es un solo producto)
+            return grupos.length > 1 ? grupos : [tokens];
         }
 
         // Busca alternativas en stock cuando el producto pedido no tiene stock
@@ -1913,11 +1898,34 @@
                 ? q.split(/\s+[oo]\s+/i).map(t => t.trim()).filter(Boolean)
                 : [];
 
+            // Si la búsqueda matchea productos, detectar si hay una categoría dominante
+            // y expandir para mostrar toda esa categoría + los matches directos
+            let categoriasExpandir = new Set();
+            if (terminos.length > 0 && terminos[0].length >= 3) {
+                const qNorm = normStr(q);
+                const matchesDirectos = data
+                    .map(p => ({ p, pts: puntuar(p.nom, terminos.map(normStr)) }))
+                    .filter(x => x.pts > 0)
+                    .sort((a,b) => b.pts - a.pts)
+                    .slice(0, 5);
+                if (matchesDirectos.length > 0) {
+                    const topPts = matchesDirectos[0].pts;
+                    // Si los top matches comparten categoría → expandir esa categoría
+                    const catTop = matchesDirectos[0].p.cat;
+                    const todosEnCat = matchesDirectos.filter(x => x.pts >= topPts * 0.5 && x.p.cat === catTop).length;
+                    if (todosEnCat >= 1) categoriasExpandir.add(catTop);
+                }
+            }
+
             let filtered = data.filter(p => {
                 if (activeCat !== 'TODOS' && p.cat !== activeCat) return false;
                 if (soloConStock && p.stock <= 0) return false;
                 if (terminos.length === 0) return true;
-                return terminos.some(t => p.nom.toLowerCase().includes(t));
+                // Match directo por nombre
+                if (terminos.some(t => p.nom.toLowerCase().includes(t))) return true;
+                // Match por categoría expandida
+                if (categoriasExpandir.has(p.cat)) return true;
+                return false;
             });
 
             if (soloFavs) filtered = filtered.filter(p => favoritos.includes(p.id));
