@@ -840,7 +840,7 @@
                     ENVIAR POR WHATSAPP
                 </button>
                 <button onclick="vaciarCarrito()" class="w-full text-red-500 text-[10px] font-black uppercase tracking-widest py-1">
-                    <i class="fas fa-trash-alt mr-2"></i> Vaciar carrito
+                    <i class="fas fa-trash-alt mr-2"></i> Vaciar carrito / Nueva orden
                 </button>
             </div>
         </div>
@@ -2235,13 +2235,8 @@
         }
 
         function vaciarCarrito() {
-            if (confirm('¿Vaciar el carrito?')) {
-                cart  = {};
-                notas = {};
-                localStorage.removeItem('uru_cart');
-                localStorage.removeItem('uru_notas');
-                update();
-                render();
+            if (confirm('¿Vaciar el carrito y empezar un pedido nuevo?')) {
+                nuevaOrden();
             }
         }
 
@@ -2277,6 +2272,9 @@
             }
         }
 
+        // snapshot del último envío al sheet — para calcular diferencia en reenvíos
+        let cartEnviado = {};
+
         // ── ENVIAR PEDIDO ─────────────────────────────────────────────────────
         async function enviarPedido() {
             const nombre    = document.getElementById('user-name').value.trim();
@@ -2292,61 +2290,95 @@
                 if (ids[idx] !== undefined) guardarNota(ids[idx], ta.value);
             });
 
-            const items = Object.entries(cart).map(([idStr, cantidad]) => ({
-                nombre: data[parseInt(idStr)].nom,
-                cantidad
-            }));
+            // ── Solo enviar al sheet la DIFERENCIA respecto al último envío ──
+            const esReenvio = Object.keys(cartEnviado).length > 0;
+            const itemsDiff = [];
 
             Object.entries(cart).forEach(([idStr, cantidad]) => {
-                const id = parseInt(idStr);
-                if (data[id]) data[id].stock = Math.max(0, data[id].stock - cantidad);
+                const id        = parseInt(idStr);
+                const cantAntes = cartEnviado[id] || 0;
+                const cantNueva = cantidad - cantAntes;
+                if (cantNueva > 0) itemsDiff.push({ nombre: data[id].nom, cantidad: cantNueva });
             });
 
-            fetch(APPS_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({
-                    token: SECRET_TOKEN,
-                    items,
-                    comercio: nombre,
-                    direccion,
-                    entrega,
-                    total: document.getElementById('total').innerText
-                })
-            }).catch(err => console.warn('Error al registrar pedido:', err));
+            if (itemsDiff.length > 0) {
+                // Descontar stock solo para los ítems nuevos
+                itemsDiff.forEach(item => {
+                    const p = data.find(d => d.nom === item.nombre);
+                    if (p) p.stock = Math.max(0, p.stock - item.cantidad);
+                });
+
+                fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({
+                        token: SECRET_TOKEN,
+                        items: itemsDiff,
+                        comercio: nombre,
+                        direccion,
+                        entrega,
+                        total: document.getElementById('total').innerText
+                    })
+                }).catch(err => console.warn('Error al registrar pedido:', err));
+            }
+
+            // Guardar snapshot actual
+            cartEnviado = { ...cart };
 
             confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
 
-            let msg = `*NUEVO PEDIDO — EL URU*%0A`;
-            msg    += `👤 *Comercio:* ${nombre}%0A`;
-            msg    += `📍 *Dirección:* ${direccion}%0A`;
-            msg    += `🕒 *Entrega:* ${entrega}%0A%0A`;
-            msg    += `-------------------------------%0A`;
+            // ── WhatsApp: siempre el pedido COMPLETO ──────────────────────────
+            let msg = esReenvio
+                ? `*📦 PEDIDO ACTUALIZADO — EL URU*%0A`
+                : `*NUEVO PEDIDO — EL URU*%0A`;
+            msg += `👤 *Comercio:* ${nombre}%0A`;
+            msg += `📍 *Dirección:* ${direccion}%0A`;
+            msg += `🕒 *Entrega:* ${entrega}%0A%0A`;
+            msg += `-------------------------------%0A`;
 
             Object.entries(cart).forEach(([idStr, q]) => {
                 const id = parseInt(idStr);
                 const p  = data[id];
                 let precio = p.pre;
                 if (p.pack_cantidad > 0 && q >= p.pack_cantidad) precio = p.pack_precio;
-
                 msg += `🔸 *${q}* x ${p.nom} ($${precio.toLocaleString()} c/u)`;
                 if (notas[id]) msg += `%0A   📝 _${notas[id]}_`;
                 msg += `%0A`;
             });
 
+            if (esReenvio && itemsDiff.length > 0) {
+                msg += `%0A➕ *AGREGADO AHORA:*%0A`;
+                itemsDiff.forEach(i => { msg += `   • ${i.cantidad}x ${i.nombre}%0A`; });
+            }
+
             msg += `-------------------------------%0A`;
             msg += `💰 *TOTAL: $${document.getElementById('total').innerText}*`;
 
-            cart  = {};
-            notas = {};
+            // ── Carrito queda activo — NO se vacía ───────────────────────────
+            guardarCarrito();
+            update();
+            document.getElementById('cart').style.display = 'none';
+
+            // Actualizar botón para indicar que es reenvío
+            const btnW = document.getElementById('btn-whatsapp');
+            if (btnW) btnW.innerHTML = '📦 ACTUALIZAR PEDIDO';
+
+            setTimeout(() => load(), 3000);
+            window.open(`https://wa.me/${WA_NUM}?text=${msg}`);
+        }
+
+        // ── NUEVA ORDEN: limpia todo y resetea estado ─────────────────────────
+        function nuevaOrden() {
+            cart        = {};
+            notas       = {};
+            cartEnviado = {};
             localStorage.removeItem('uru_cart');
             localStorage.removeItem('uru_notas');
-            update(); render();
-            document.getElementById('cart').style.display = 'none';
-            setTimeout(() => load(), 3000);
-
-            window.open(`https://wa.me/${WA_NUM}?text=${msg}`);
+            const btnW = document.getElementById('btn-whatsapp');
+            if (btnW) btnW.innerHTML = 'ENVIAR POR WHATSAPP';
+            update();
+            render();
         }
 
         // ── LOGÍSTICA ─────────────────────────────────────────────────────────
