@@ -2528,7 +2528,7 @@
                         comercio: nombre,
                         direccion,
                         entrega,
-                        total: document.getElementById('total').innerText
+                        total: parseInt((document.getElementById('total').innerText || '0').replace(/\./g, '').replace(',', '.')) || 0
                     })
                 }).catch(err => console.warn('Error al registrar pedido:', err));
             } else if (itemsDiff.length > 0) {
@@ -2547,7 +2547,7 @@
                         comercio: nombre,
                         direccion,
                         entrega,
-                        total: document.getElementById('total').innerText
+                        total: parseInt((document.getElementById('total').innerText || '0').replace(/\./g, '').replace(',', '.')) || 0
                     })
                 }).catch(err => console.warn('Error al registrar pedido:', err));
             }
