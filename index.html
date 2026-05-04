@@ -2361,11 +2361,19 @@
                 const id        = parseInt(idStr);
                 const cantAntes = cartEnviado[id] || 0;
                 const cantNueva = cantidad - cantAntes;
-                if (cantNueva > 0) itemsDiff.push({ nombre: data[id].nom, cantidad: cantNueva });
+                if (cantNueva > 0) {
+                    const p = data[id];
+                    const precio = (p.pack_cantidad > 0 && cantidad >= p.pack_cantidad) ? p.pack_precio : p.pre;
+                    itemsDiff.push({ nombre: p.nom, cantidad: cantNueva, precio });
+                }
             });
 
             if (esReenvio) {
-                const itemsCompletos = Object.entries(cart).map(([idStr, cantidad]) => ({ nombre: data[parseInt(idStr)].nom, cantidad }));
+                const itemsCompletos = Object.entries(cart).map(([idStr, cantidad]) => {
+                    const p = data[parseInt(idStr)];
+                    const precio = (p.pack_cantidad > 0 && cantidad >= p.pack_cantidad) ? p.pack_precio : p.pre;
+                    return { nombre: p.nom, cantidad, precio };
+                });
                 itemsDiff.forEach(item => { const p = data.find(d => d.nom === item.nombre); if (p) p.stock = Math.max(0, p.stock - item.cantidad); });
                 fetch(APPS_SCRIPT_URL, {
                     method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' },
