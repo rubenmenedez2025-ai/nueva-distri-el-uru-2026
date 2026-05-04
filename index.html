@@ -2351,8 +2351,6 @@
                 if (ids[idx] !== undefined) guardarNota(ids[idx], ta.value);
             });
 
-            // FIX: usar la variable numérica directa, no parsear el DOM
-            // (evita bug en Android donde toLocaleString usa comas → parseInt falla)
             const totalBruto = _totalBrutoActual;
 
             const esReenvio = Object.keys(cartEnviado).length > 0;
@@ -2368,29 +2366,7 @@
                 }
             });
 
-            if (esReenvio) {
-                const itemsCompletos = Object.entries(cart).map(([idStr, cantidad]) => {
-                    const p = data[parseInt(idStr)];
-                    const precio = (p.pack_cantidad > 0 && cantidad >= p.pack_cantidad) ? p.pack_precio : p.pre;
-                    return { nombre: p.nom, cantidad, precio };
-                });
-                itemsDiff.forEach(item => { const p = data.find(d => d.nom === item.nombre); if (p) p.stock = Math.max(0, p.stock - item.cantidad); });
-                fetch(APPS_SCRIPT_URL, {
-                    method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify({ token: SECRET_TOKEN, items: itemsCompletos, itemsDiff, esActualizacion: true, comercio: nombre, direccion, entrega, total: totalBruto })
-                }).catch(err => console.warn('Error al registrar pedido:', err));
-            } else if (itemsDiff.length > 0) {
-                itemsDiff.forEach(item => { const p = data.find(d => d.nom === item.nombre); if (p) p.stock = Math.max(0, p.stock - item.cantidad); });
-                fetch(APPS_SCRIPT_URL, {
-                    method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify({ token: SECRET_TOKEN, items: itemsDiff, comercio: nombre, direccion, entrega, total: totalBruto })
-                }).catch(err => console.warn('Error al registrar pedido:', err));
-            }
-
-            cartEnviado = { ...cart };
-            confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
-
-            // ── Mensaje WhatsApp — incluye desglose de descuento si aplica ────
+            // ── Armar mensaje WhatsApp ────────────────────────────────────────
             let msg = esReenvio
                 ? `*📦 PEDIDO ACTUALIZADO — EL URU*%0A`
                 : `*NUEVO PEDIDO — EL URU*%0A`;
@@ -2425,15 +2401,68 @@
                 msg += `✅ *TOTAL: $${totalBruto.toLocaleString()}*`;
             }
 
+            // ── PASO 1: Abrir WhatsApp PRIMERO, cerrar carrito ───────────────
+            document.getElementById('cart').style.display = 'none';
+            window.open(`https://wa.me/${WA_NUM}?text=${msg}`);
+
+            // ── PASO 2: Pedir confirmación — recién ahí registrar en Sheet ────
+            const result = await Swal.fire({
+                title: '📱 ¿Enviaste el mensaje?',
+                html: `
+                    <p style="color:var(--text-muted);font-size:13px;margin-bottom:14px;">
+                        Se abrió WhatsApp con tu pedido.<br>
+                        <strong>Presioná ENVIAR en WhatsApp</strong> y después confirmá acá.
+                    </p>
+                    <div style="background:rgba(22,163,74,0.1);border:1px solid rgba(22,163,74,0.3);border-radius:14px;padding:12px 16px;font-size:11px;color:#16a34a;font-weight:700;">
+                        💡 El pedido se registra en nuestro sistema solo cuando confirmás el envío
+                    </div>
+                `,
+                icon: 'question',
+                confirmButtonText: '✅ Sí, lo envié',
+                cancelButtonText: '↩️ Volver al carrito',
+                showCancelButton: true,
+                confirmButtonColor: '#16a34a',
+                cancelButtonColor: '#ff6b00',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+            });
+
+            // ── Cliente NO confirmó → volver al carrito sin registrar nada ────
+            if (!result.isConfirmed) {
+                document.getElementById('cart').style.display = 'flex';
+                return;
+            }
+
+            // ── PASO 3: Confirmó → recién ahora registrar en el Sheet ─────────
+            const itemsCompletos = Object.entries(cart).map(([idStr, cantidad]) => {
+                const p = data[parseInt(idStr)];
+                const precio = (p.pack_cantidad > 0 && cantidad >= p.pack_cantidad) ? p.pack_precio : p.pre;
+                return { nombre: p.nom, cantidad, precio };
+            });
+
+            if (esReenvio) {
+                itemsDiff.forEach(item => { const p = data.find(d => d.nom === item.nombre); if (p) p.stock = Math.max(0, p.stock - item.cantidad); });
+                fetch(APPS_SCRIPT_URL, {
+                    method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({ token: SECRET_TOKEN, items: itemsCompletos, itemsDiff, esActualizacion: true, comercio: nombre, direccion, entrega, total: totalBruto })
+                }).catch(err => console.warn('Error al registrar pedido:', err));
+            } else {
+                itemsCompletos.forEach(item => { const p = data.find(d => d.nom === item.nombre); if (p) p.stock = Math.max(0, p.stock - item.cantidad); });
+                fetch(APPS_SCRIPT_URL, {
+                    method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({ token: SECRET_TOKEN, items: itemsCompletos, comercio: nombre, direccion, entrega, total: totalBruto })
+                }).catch(err => console.warn('Error al registrar pedido:', err));
+            }
+
+            cartEnviado = { ...cart };
+            confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
             guardarCarrito();
             update();
-            document.getElementById('cart').style.display = 'none';
 
             const btnW = document.getElementById('btn-whatsapp');
             if (btnW) { btnW.innerHTML = '📦 ACTUALIZAR PEDIDO'; btnW.style.background = 'linear-gradient(135deg,#2563eb,#1d4ed8)'; }
 
             setTimeout(() => load(false), 3000);
-            window.open(`https://wa.me/${WA_NUM}?text=${msg}`);
         }
 
         function nuevaOrden() {
