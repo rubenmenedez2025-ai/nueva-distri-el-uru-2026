@@ -307,25 +307,29 @@
         }
         .btn-ver-todo:hover { background: rgba(255, 107, 0, 0.08); }
 
-        /* ── POPUP DESCUENTO APP ── */
+        /* ── POPUP DESCUENTO APP — REDISEÑADO ── */
+        @keyframes floatEmoji {
+            0%,100% { transform: translateY(0) rotate(-3deg); }
+            50%      { transform: translateY(-8px) rotate(3deg); }
+        }
         #descuento-overlay {
             position: fixed; inset: 0; z-index: 450;
-            background: rgba(0,0,0,0.82);
-            backdrop-filter: blur(10px);
+            background: rgba(0,0,0,0.88);
+            backdrop-filter: blur(12px);
             display: flex; align-items: center; justify-content: center;
             padding: 16px;
             opacity: 0; pointer-events: none;
-            transition: opacity 0.4s ease;
+            transition: opacity 0.45s ease;
         }
         #descuento-overlay.visible { opacity: 1; pointer-events: all; }
         #descuento-modal {
             background: var(--modal-bg);
-            border: 1px solid rgba(34,197,94,0.35);
+            border: 1px solid rgba(22,163,74,0.4);
             border-radius: 32px;
             width: 100%; max-width: 400px;
-            box-shadow: 0 40px 80px rgba(0,0,0,0.6);
-            transform: translateY(30px) scale(0.95);
-            transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(22,163,74,0.12);
+            transform: translateY(40px) scale(0.93);
+            transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1);
             overflow: hidden;
         }
         #descuento-overlay.visible #descuento-modal { transform: translateY(0) scale(1); }
@@ -599,22 +603,22 @@
 
     <div id="share-toast">📋 Link copiado al portapapeles</div>
 
-    <!-- ── POPUP DESCUENTO APP ── -->
+    <!-- ── POPUP DESCUENTO APP — REDISEÑADO ── -->
     <div id="descuento-overlay" onclick="cerrarDescuentoSiClick(event)">
         <div id="descuento-modal">
-            <div style="background:linear-gradient(135deg,#16a34a,#15803d);padding:28px 24px 20px;text-align:center;">
-                <div style="font-size:48px;margin-bottom:8px;">📱</div>
-                <p style="color:rgba(255,255,255,0.8);font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.2em;margin-bottom:4px;">Beneficio exclusivo</p>
-                <h2 id="descuento-titulo" style="color:white;font-size:28px;font-weight:900;font-style:italic;text-transform:uppercase;line-height:1.1;">¡3% de<br>Descuento!</h2>
-            </div>
-            <div style="padding:20px 24px 24px;text-align:center;">
-                <p style="color:var(--text-main);font-weight:900;font-size:15px;margin-bottom:6px;">Comprando por la aplicación</p>
-                <p style="color:var(--text-muted);font-size:12px;font-weight:600;margin-bottom:20px;">El descuento se aplica automáticamente en tu total antes de enviar el pedido</p>
-                <div style="background:rgba(22,163,74,0.1);border:1px solid rgba(22,163,74,0.25);border-radius:16px;padding:12px 16px;margin-bottom:20px;">
-                    <p style="color:#16a34a;font-weight:900;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;">💬 Mencioná al hacer el pedido:<br><span style="font-size:14px;">"Compro por la app"</span></p>
+            <div style="background:linear-gradient(135deg,#16a34a,#15803d);padding:32px 24px 24px;text-align:center;position:relative;overflow:hidden;">
+                <div style="position:absolute;inset:0;background:radial-gradient(circle at 30% 50%,rgba(255,255,255,0.08),transparent 60%),radial-gradient(circle at 80% 20%,rgba(255,255,255,0.05),transparent 50%);pointer-events:none;"></div>
+                <span style="font-size:56px;display:block;margin-bottom:10px;animation:floatEmoji 2.5s ease-in-out infinite;position:relative;">🏷️</span>
+                <p style="color:rgba(255,255,255,0.75);font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:0.25em;margin-bottom:8px;position:relative;">Beneficio exclusivo · Solo hoy</p>
+                <div id="descuento-titulo" style="color:white;font-size:56px;font-weight:900;font-style:italic;line-height:1;text-transform:uppercase;position:relative;text-shadow:0 4px 20px rgba(0,0,0,0.3);">
+                    <span style="color:rgba(255,255,255,0.5);font-size:28px;">¡</span>3%<span style="color:rgba(255,255,255,0.5);font-size:28px;">!</span>
                 </div>
-                <button onclick="cerrarDescuento()" style="width:100%;padding:16px;border-radius:20px;background:linear-gradient(135deg,#ff6b00,#ff3d00);color:white;border:none;font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:0.08em;cursor:pointer;box-shadow:0 8px 24px rgba(255,107,0,0.35);">
-                    ¡Entendido, ir al catálogo!
+            </div>
+            <div style="padding:22px 24px 26px;text-align:center;">
+                <p style="color:var(--text-main);font-weight:900;font-size:17px;margin-bottom:6px;">Descuento directo en tu pedido</p>
+                <p style="color:var(--text-muted);font-size:12px;font-weight:600;margin-bottom:22px;">Se aplica automáticamente en el total antes de enviar</p>
+                <button onclick="cerrarDescuento()" style="width:100%;padding:16px;border-radius:20px;background:linear-gradient(135deg,#ff6b00,#ff3d00);color:white;border:none;font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;cursor:pointer;box-shadow:0 10px 30px rgba(255,107,0,0.4);">
+                    ¡Entendido — ir al catálogo! →
                 </button>
             </div>
         </div>
@@ -1062,8 +1066,6 @@
 
         // ════════════════════════════════════════════════════════
         // INICIO
-        // FIX: verificarPromo() corre PRIMERO (await) para saber
-        // si hay descuento ANTES de mostrar cualquier popup.
         // ════════════════════════════════════════════════════════
         window.onload = async () => {
             aplicarTema(temaActual);
@@ -1096,8 +1098,6 @@
 
         // ════════════════════════════════════════════════════════
         // VERIFICAR PROMO
-        // FIX: separado del endpoint corregir/pedido_natural —
-        // no necesita CLAUDE_KEY, solo consulta estado de promo.
         // ════════════════════════════════════════════════════════
         async function verificarPromo() {
             try {
@@ -1109,9 +1109,9 @@
                     promoActiva     = true;
                     promoPorcentaje = json.porcentaje || 3;
 
-                    // Actualizar texto del popup con el % real
+                    // Actualizar texto del popup con el % real (estructura nueva con spans)
                     const titulo = document.getElementById('descuento-titulo');
-                    if (titulo) titulo.innerHTML = `¡${promoPorcentaje}% de<br>Descuento!`;
+                    if (titulo) titulo.innerHTML = `<span style="color:rgba(255,255,255,0.5);font-size:28px;">¡</span>${promoPorcentaje}%<span style="color:rgba(255,255,255,0.5);font-size:28px;">!</span>`;
 
                     // Mostrar banner
                     const banner = document.getElementById('banner-promo');
@@ -1134,20 +1134,14 @@
 
         // ════════════════════════════════════════════════════════
         // POPUP DESCUENTO
-        // FIX: usa sessionStorage para mostrar 1 vez por sesión
-        // (no bloquea si la promo se activa durante el día)
-        // Solo se muestra si promoActiva === true.
         // ════════════════════════════════════════════════════════
         function mostrarDescuento() {
             if (!promoActiva) {
-                // Sin promo activa: ir directo al popup de novedades
                 if (!window._promoMostrada) { mostrarPopupSiCorresponde(); window._promoMostrada = true; }
                 return;
             }
-            // Con promo: mostrar popup de descuento una vez por sesión
             const sessionKey = `uru_promo_vista_${promoPorcentaje}`;
             if (sessionStorage.getItem(sessionKey)) {
-                // Ya se mostró en esta sesión, saltar al de novedades
                 if (!window._promoMostrada) { mostrarPopupSiCorresponde(); window._promoMostrada = true; }
                 return;
             }
@@ -1168,7 +1162,6 @@
 
         // ════════════════════════════════════════════════════════
         // CARGA DE DATOS DESDE GOOGLE SHEETS
-        // showPopups: true en primera carga, false en reloads
         // ════════════════════════════════════════════════════════
         async function load(showPopups = true) {
             try {
@@ -1237,10 +1230,9 @@
                 verificarHorarioCierre();
                 renderCarrusel();
 
-                // Popups solo en la primera carga y una vez
                 if (showPopups && !window._popupsMostrados) {
                     window._popupsMostrados = true;
-                    mostrarDescuento(); // muestra descuento si hay promo, o novedades si no
+                    mostrarDescuento();
                 }
 
             } catch (e) {
@@ -1257,7 +1249,6 @@
             }
         }
 
-        // ── TOGGLE SOLO CON STOCK ─────────────────────────────────────────────
         function toggleSoloConStock() {
             soloConStock = !soloConStock;
             const btn = document.getElementById('btn-stock');
@@ -1265,7 +1256,6 @@
             render();
         }
 
-        // ── BÚSQUEDA POR VOZ ──────────────────────────────────────────────────
         let recognition = null;
 
         function activarVoz() {
@@ -1319,7 +1309,6 @@
             micIcon.className = 'fas fa-microphone';
         }
 
-        // ── BÚSQUEDA CON VARIANTES + CORRECTOR IA ────────────────────────────
         function manejarBusqueda() {
             render();
             const q = document.getElementById('search').value.trim();
@@ -1367,7 +1356,6 @@
             }
         }
 
-        // ── PEDIDO NATURAL: parser local ──────────────────────────────────────
         let pedidoNaturalItems = [];
 
         function normStr(s) {
@@ -1732,7 +1720,6 @@
             if (e.target === document.getElementById('pedido-natural-overlay')) cerrarPedidoNatural();
         }
 
-        // ── CORRECTOR CON CLAUDE ──────────────────────────────────────────────
         async function corregirConClaude(queryOriginal) {
             if (aiSearchActive) return;
             aiSearchActive = true;
@@ -1763,7 +1750,6 @@
         function aplicarCorreccionIA(texto) { document.getElementById('search').value = texto; limpiarSugerenciaIA(); manejarBusqueda(); }
         function limpiarSugerenciaIA() { const el = document.getElementById('ai-sugerencia'); if (el) el.innerHTML = ''; }
 
-        // ── VARIANTES ─────────────────────────────────────────────────────────
         let variantesCantidades = {};
 
         function abrirVariantes(busqueda, productos) {
@@ -1839,7 +1825,6 @@
             if (e.target === document.getElementById('variantes-overlay')) cerrarVariantes();
         }
 
-        // ── COMPARTIR PRESUPUESTO ─────────────────────────────────────────────
         function compartirPresupuesto() {
             if (Object.keys(cart).length === 0) {
                 Swal.fire({ title: 'Carrito vacío', text: 'Agregá productos antes de compartir.', icon: 'info', confirmButtonColor: '#ff6b00' });
@@ -1882,7 +1867,6 @@
             setTimeout(() => toast.classList.remove('show'), 2800);
         }
 
-        // ── CARRUSEL ──────────────────────────────────────────────────────────
         let carruselTab = 'nuevos';
 
         function renderCarrusel() {
@@ -1937,7 +1921,6 @@
             if (btn) { btn.classList.add('car-agregado'); btn.innerHTML = '<i class="fas fa-check mr-1"></i> ¡Listo!'; btn.disabled = true; }
         }
 
-        // ── POPUP NOVEDADES/OFERTAS ───────────────────────────────────────────
         function mostrarPopupSiCorresponde() {
             const nuevos  = data.filter(p => p.stock > 0 && p.esNuevo);
             const ofertas = data.filter(p => p.stock > 0 && p.esOferta);
@@ -1997,7 +1980,6 @@
         function cerrarPromo() { document.getElementById('promo-overlay').classList.remove('visible'); }
         function cerrarPromoSiClick(e) { if (e.target === document.getElementById('promo-overlay')) cerrarPromo(); }
 
-        // ── RENDER CATEGORÍAS ─────────────────────────────────────────────────
         function renderCats() {
             const uniqueCats = [...new Set(data.map(p => p.cat))];
             const cats = ['TODOS', ...uniqueCats];
@@ -2031,7 +2013,6 @@
             document.body.style.overflow = '';
         }
 
-        // ── RENDER CATÁLOGO ───────────────────────────────────────────────────
         function render() {
             const q = document.getElementById('search').value.toLowerCase().trim();
             const terminos = q
@@ -2130,7 +2111,6 @@
             }).join('');
         }
 
-        // ── CARRITO ───────────────────────────────────────────────────────────
         window.setQty = (id, val) => {
             const p = data[id];
             let n   = parseInt(val) || 0;
@@ -2160,13 +2140,6 @@
             guardarCarrito();
         }
 
-        // ════════════════════════════════════════════════════════
-        // UPDATE — calcula totales con descuento si promoActiva
-        // FIX: _totalBrutoActual guarda el número limpio para que
-        // enviarPedido() lo use directo, sin parsear el DOM.
-        // Esto evita el bug de Android donde toLocaleString() usa
-        // comas como separador de miles → parseInt("102,556") = 102
-        // ════════════════════════════════════════════════════════
         let _totalBrutoActual = 0;
 
         function update() {
@@ -2231,15 +2204,11 @@
                 </div>
             `;
 
-            // Guardar como número limpio ANTES de toLocaleString (fix Android)
             _totalBrutoActual = totalMonto;
 
-            // Subtotal siempre visible
             document.getElementById('total').innerText = totalMonto.toLocaleString();
             document.getElementById('count').innerText = totalItems;
 
-            // ── Descuento promocional ─────────────────────────────────────────
-            // FIX: solo mostrar si promoActiva === true Y hay items en el carrito
             const filaDesc     = document.getElementById('fila-descuento');
             const filaTotFinal = document.getElementById('fila-total-final');
 
@@ -2256,7 +2225,6 @@
                 if (filaTotFinal) filaTotFinal.style.display = 'none';
             }
 
-            // ── Barra mínimo ─────────────────────────────────────────────────
             const perc = Math.min(100, (totalMonto / MIN_COMPRA) * 100);
             const fill = document.getElementById('min-purchase-fill');
             if (fill) fill.style.width = perc + '%';
@@ -2282,7 +2250,6 @@
             }
         }
 
-        // ── FAVORITOS ─────────────────────────────────────────────────────────
         function toggleFav(id) {
             if (favoritos.includes(id)) favoritos = favoritos.filter(f => f !== id);
             else favoritos.push(id);
@@ -2313,7 +2280,6 @@
             }
         }
 
-        // ── HORARIO ───────────────────────────────────────────────────────────
         function verificarHorarioCierre() {
             const ahora       = new Date();
             const totalMin    = ahora.getHours() * 60 + ahora.getMinutes();
@@ -2331,12 +2297,6 @@
 
         let cartEnviado = {};
 
-        // ════════════════════════════════════════════════════════
-        // ENVIAR PEDIDO
-        // FIX CLAVE: siempre envía el total BRUTO al Apps Script.
-        // El Apps Script es el único que aplica y registra el descuento.
-        // Así se evita el doble descuento que había antes.
-        // ════════════════════════════════════════════════════════
         async function enviarPedido() {
             const nombre    = document.getElementById('user-name').value.trim();
             const direccion = document.getElementById('user-address').value.trim();
@@ -2366,7 +2326,6 @@
                 }
             });
 
-            // ── Armar mensaje WhatsApp ────────────────────────────────────────
             let msg = esReenvio
                 ? `*📦 PEDIDO ACTUALIZADO — EL URU*%0A`
                 : `*NUEVO PEDIDO — EL URU*%0A`;
@@ -2401,11 +2360,9 @@
                 msg += `✅ *TOTAL: $${totalBruto.toLocaleString()}*`;
             }
 
-            // ── PASO 1: Abrir WhatsApp PRIMERO, cerrar carrito ───────────────
             document.getElementById('cart').style.display = 'none';
             window.open(`https://wa.me/${WA_NUM}?text=${msg}`);
 
-            // ── PASO 2: Pedir confirmación — recién ahí registrar en Sheet ────
             const result = await Swal.fire({
                 title: '📱 ¿Enviaste el mensaje?',
                 html: `
@@ -2427,13 +2384,11 @@
                 allowEscapeKey: false,
             });
 
-            // ── Cliente NO confirmó → volver al carrito sin registrar nada ────
             if (!result.isConfirmed) {
                 document.getElementById('cart').style.display = 'flex';
                 return;
             }
 
-            // ── PASO 3: Confirmó → recién ahora registrar en el Sheet ─────────
             const itemsCompletos = Object.entries(cart).map(([idStr, cantidad]) => {
                 const p = data[parseInt(idStr)];
                 const precio = (p.pack_cantidad > 0 && cantidad >= p.pack_cantidad) ? p.pack_precio : p.pre;
@@ -2474,7 +2429,6 @@
             update(); render();
         }
 
-        // ── LOGÍSTICA ─────────────────────────────────────────────────────────
         function abrirLogistica() {
             const hoy = new Date();
             document.getElementById('fecha-logistica').innerText =
