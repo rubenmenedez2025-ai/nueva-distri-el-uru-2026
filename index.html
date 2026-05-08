@@ -1161,75 +1161,83 @@
             localStorage.setItem('uru_address', document.getElementById('user-address').value);
         }
 
-        // ════════════════════════════════════════════════════════
-        // VERIFICAR PROMO
-        // ════════════════════════════════════════════════════════
-        async function verificarPromo() {
-            try {
-                const url  = `${APPS_SCRIPT_URL}?action=promo&token=${encodeURIComponent(SECRET_TOKEN)}`;
-                const res  = await fetch(url);
-                const json = await res.json();
+       // ══════════════════════════════════════════════════════════════════
+// REEMPLAZA TU FUNCIÓN verificarPromo() CON ESTA:
+// ══════════════════════════════════════════════════════════════════
+async function verificarPromo() {
+    try {
+        const url = `${APPS_SCRIPT_URL}?action=promo&token=${encodeURIComponent(SECRET_TOKEN)}`;
+        const res = await fetch(url);
+        const json = await res.json();
 
-                if (json.ok && json.activa) {
-                    promoActiva     = true;
-                    promoPorcentaje = json.porcentaje || 3;
+        if (json.ok && json.activa) {
+            promoActiva = true;
+            promoPorcentaje = json.porcentaje || 3;
 
-                    const titulo = document.getElementById('descuento-titulo');
-                    if (titulo) titulo.innerHTML = `<span style="color:rgba(255,255,255,0.5);font-size:28px;">¡</span>${promoPorcentaje}%<span style="color:rgba(255,255,255,0.5);font-size:28px;">!</span>`;
+            const titulo = document.getElementById('descuento-titulo');
+            if (titulo) titulo.innerHTML = `<span style="color:rgba(255,255,255,0.5);font-size:28px;">¡</span>${promoPorcentaje}%<span style="color:rgba(255,255,255,0.5);font-size:28px;">!</span>`;
 
-                    const banner = document.getElementById('banner-promo');
-                    if (banner) {
-                        document.getElementById('banner-promo-porc').textContent = promoPorcentaje;
-                        banner.style.display = 'block';
-                    }
-                    // Ocultar banner oferta si hay descuento activo
-                    const bannerOferta = document.getElementById('banner-oferta');
-                    if (bannerOferta) bannerOferta.style.display = 'none';
-
-                    update();
-
-                    if (!window._descuentoVisto) {
-                        window._descuentoVisto  = true;
-                        window._popupsMostrados = true;
-                        setTimeout(() => {
-                            document.getElementById('descuento-overlay').classList.add('visible');
-                        }, 1800);
-                    }
-
-                } else {
-                    // Sin descuento: verificar si hay oferta especial
-                    promoActiva = false;
-                    const banner = document.getElementById('banner-promo');
-                    if (banner) banner.style.display = 'none';
-
-                    if (json.oferta_especial) {
-                        ofertaEspecialData = json.oferta_especial;
-
-                        const bannerOferta = document.getElementById('banner-oferta');
-                        const bannerTexto  = document.getElementById('banner-oferta-texto');
-                        if (bannerOferta) {
-                            if (bannerTexto) bannerTexto.textContent = ofertaEspecialData.titulo.toUpperCase();
-                            bannerOferta.style.display = 'block';
-                        }
-
-                        if (!window._ofertaVista) {
-                            window._ofertaVista     = true;
-                            window._popupsMostrados = true;
-                            setTimeout(() => mostrarOfertaEspecial(), 1800);
-                        }
-                    } else {
-                        ofertaEspecialData = null;
-                        const bannerOferta = document.getElementById('banner-oferta');
-                        if (bannerOferta) bannerOferta.style.display = 'none';
-                    }
-
-                    update();
-                }
-            } catch(e) {
-                console.warn('[Promo]', e.message);
-                promoActiva = false;
+            const banner = document.getElementById('banner-promo');
+            if (banner) {
+                document.getElementById('banner-promo-porc').textContent = promoPorcentaje;
+                banner.style.display = 'block';
             }
+            const bannerOferta = document.getElementById('banner-oferta');
+            if (bannerOferta) bannerOferta.style.display = 'none';
+
+            update();
+
+            if (!window._descuentoVisto) {
+                window._descuentoVisto = true;
+                window._popupsMostrados = true;
+                setTimeout(() => {
+                    document.getElementById('descuento-overlay').classList.add('visible');
+                }, 1800);
+            }
+
+        } else {
+            promoActiva = false;
+            const banner = document.getElementById('banner-promo');
+            if (banner) banner.style.display = 'none';
+
+            if (json.oferta_especial) {
+                ofertaEspecialData = json.oferta_especial;
+
+                // --- CORRECCIÓN AQUÍ ---
+                const bannerOferta = document.getElementById('banner-oferta');
+                const bannerTexto = document.getElementById('banner-oferta-texto');
+                const imgOferta = document.getElementById('oferta-img');
+
+                if (bannerOferta) {
+                    if (bannerTexto) bannerTexto.textContent = ofertaEspecialData.titulo.toUpperCase();
+                    bannerOferta.style.display = 'block';
+                }
+
+                // Asignamos la imagen y forzamos que se muestre
+                if (imgOferta && ofertaEspecialData.imagen) {
+                    imgOferta.style.display = 'block';
+                    // Añadimos un timestamp para evitar que el navegador use una versión vieja/rota
+                    imgOferta.src = ofertaEspecialData.imagen + '?t=' + new Date().getTime();
+                }
+                // -----------------------
+
+                if (!window._ofertaVista) {
+                    window._ofertaVista = true;
+                    window._popupsMostrados = true;
+                    setTimeout(() => mostrarOfertaEspecial(), 1800);
+                }
+            } else {
+                ofertaEspecialData = null;
+                const bannerOferta = document.getElementById('banner-oferta');
+                if (bannerOferta) bannerOferta.style.display = 'none';
+            }
+            update();
         }
+    } catch (e) {
+        console.warn('[Promo]', e.message);
+        promoActiva = false;
+    }
+}
         // ════════════════════════════════════════════════════════
         // CARGA DE DATOS DESDE GOOGLE SHEETS
         // ════════════════════════════════════════════════════════
